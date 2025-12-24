@@ -36,7 +36,7 @@ export default function DayPhase({
     l.tag === 'PUBLIC' || (myPlayer && l.viewer_ids?.includes(myPlayer.id))
   );
   const cannotVote = myPlayer.flags?.cannot_vote;
-  const { t } = useTranslation();
+  const { t } = useTranslation({ playerId: myPlayer?.id });
   const isVoteCollector = myPlayer.role === '投票回收者';
   const isBalanceGuard = myPlayer.role === '均衡守护者' && !myPlayer.balance_guard_used;
   const maxStoredVotes = 3;

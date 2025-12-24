@@ -31,7 +31,7 @@ export default function NightPhase({
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
-  const { t } = useTranslation();
+  const { t } = useTranslation({ playerId: myPlayer?.id });
   const roundNumber = parseRoundNumber(roomState.round_state);
   const isFirst = isFirstNight(roomState.round_state);
   const roleConfig = myPlayer.role ? getRoleConfig(myPlayer.role) : null;

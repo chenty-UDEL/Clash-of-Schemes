@@ -227,7 +227,7 @@ export default function Home() {
       <div className="min-h-screen bg-gray-950 text-white flex flex-col items-center justify-center p-4">
         {/* 语言切换器 - 右上角 */}
         <div className="fixed top-4 right-4 z-50">
-          <LanguageSwitcher />
+          <LanguageSwitcher playerId={myPlayerId} />
         </div>
         
         <GameRules />
