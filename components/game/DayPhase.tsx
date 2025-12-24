@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { Player, GameLog } from '@/types/game';
 
 interface DayPhaseProps {
@@ -22,12 +22,58 @@ export default function DayPhase({
   const [hasVoted, setHasVoted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [storedVotes, setStoredVotes] = useState(0);
+  const [useStoredVotes, setUseStoredVotes] = useState(false);
 
   const alivePlayers = players.filter(p => p.is_alive);
   const myLogs = logs.filter(l => 
     l.tag === 'PUBLIC' || (myPlayer && l.viewer_ids?.includes(myPlayer.id))
   );
   const cannotVote = myPlayer.flags?.cannot_vote;
+  const isVoteCollector = myPlayer.role === '投票回收者';
+  const maxStoredVotes = 3;
+
+  // 获取存储的票数
+  useEffect(() => {
+    if (myPlayer.stored_votes !== undefined) {
+      setStoredVotes(myPlayer.stored_votes);
+    }
+  }, [myPlayer.stored_votes]);
+
+  const handleStoreVote = async () => {
+    if (!isVoteCollector) return;
+    if (storedVotes >= maxStoredVotes) {
+      setError(`最多只能存储 ${maxStoredVotes} 张票`);
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+
+    try {
+      const res = await fetch('/api/votes/store', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          roomCode,
+          playerId: myPlayer.id
+        })
+      });
+
+      const result = await res.json();
+
+      if (!res.ok) {
+        throw new Error(result.error || '存储失败');
+      }
+
+      setStoredVotes(result.data.storedVotes || storedVotes + 1);
+      onVoteSubmit();
+    } catch (err: any) {
+      setError(err.message || '存储失败');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSubmit = async () => {
     setLoading(true);
@@ -40,7 +86,8 @@ export default function DayPhase({
         body: JSON.stringify({
           roomCode,
           voterId: myPlayer.id,
-          targetId: selectedTargetId ? parseInt(selectedTargetId) : null
+          targetId: selectedTargetId ? parseInt(selectedTargetId) : null,
+          useStoredVotes: useStoredVotes && isVoteCollector ? storedVotes : 0
         })
       });
 
@@ -51,6 +98,10 @@ export default function DayPhase({
       }
 
       setHasVoted(true);
+      if (useStoredVotes && isVoteCollector) {
+        setStoredVotes(0);
+        setUseStoredVotes(false);
+      }
       onVoteSubmit();
     } catch (err: any) {
       setError(err.message || '投票失败');
@@ -105,6 +156,35 @@ export default function DayPhase({
               </div>
             )}
 
+            {/* 投票回收者特殊功能 */}
+            {isVoteCollector && !cannotVote && (
+              <div className="bg-purple-900/30 border border-purple-500 p-3 rounded space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-purple-300">存储的票数: {storedVotes}/{maxStoredVotes}</span>
+                  {storedVotes < maxStoredVotes && (
+                    <button
+                      onClick={handleStoreVote}
+                      disabled={loading}
+                      className="px-3 py-1 bg-purple-600 hover:bg-purple-700 rounded text-xs font-bold disabled:opacity-50"
+                    >
+                      存储本回合投票
+                    </button>
+                  )}
+                </div>
+                {storedVotes > 0 && (
+                  <label className="flex items-center gap-2 text-sm text-purple-300 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={useStoredVotes}
+                      onChange={(e) => setUseStoredVotes(e.target.checked)}
+                      className="w-4 h-4"
+                    />
+                    <span>同时使用所有存储的票 ({storedVotes} 张)</span>
+                  </label>
+                )}
+              </div>
+            )}
+
             <select
               className="w-full p-3 rounded bg-gray-700 text-white border border-gray-500"
               value={selectedTargetId}
@@ -128,7 +208,9 @@ export default function DayPhase({
                   : 'bg-yellow-600 hover:bg-yellow-700 text-black'
               }`}
             >
-              {loading ? '提交中...' : '确认投票'}
+              {loading ? '提交中...' : useStoredVotes && isVoteCollector && storedVotes > 0
+                ? `确认投票 (使用 ${storedVotes + 1} 张票)`
+                : '确认投票'}
             </button>
 
             {error && (

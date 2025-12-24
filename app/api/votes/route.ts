@@ -4,7 +4,7 @@ import { parseRoundNumber, isDayPhase } from '@/lib/game/constants';
 
 export async function POST(request: NextRequest) {
   try {
-    const { roomCode, voterId, targetId } = await request.json();
+    const { roomCode, voterId, targetId, useStoredVotes = 0 } = await request.json();
 
     // 1. 验证参数
     if (!roomCode || !voterId) {

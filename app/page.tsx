@@ -9,6 +9,7 @@ import BoardSelector from '@/components/game/BoardSelector';
 import NightPhase from '@/components/game/NightPhase';
 import DayPhase from '@/components/game/DayPhase';
 import GameOver from '@/components/game/GameOver';
+import RoleInfo from '@/components/game/RoleInfo';
 
 export default function Home() {
   const [name, setName] = useState('');
@@ -311,24 +312,29 @@ export default function Home() {
             <p className="text-gray-400 text-sm mt-2">存活人数: {alivePlayers.length}</p>
           </div>
 
-          {/* 玩家信息 */}
-          <div className="bg-gray-900 p-4 rounded-lg border border-gray-600 flex justify-between items-center shadow-md">
-            <div>
-              <p className="text-xs text-gray-500 uppercase font-bold tracking-wider">当前玩家</p>
-              <div className="flex items-baseline gap-2">
-                <span className="text-xl font-bold text-white">{myPlayer?.name}</span>
-                <span className="text-sm text-yellow-500">
-                  ({myPlayer?.role || '身份加载中...'})
-                </span>
+          {/* 玩家信息和角色详情 */}
+          <div className="space-y-4">
+            <div className="bg-gray-900 p-4 rounded-lg border border-gray-600 flex justify-between items-center shadow-md">
+              <div>
+                <p className="text-xs text-gray-500 uppercase font-bold tracking-wider">当前玩家</p>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-xl font-bold text-white">{myPlayer?.name}</span>
+                  <span className="text-sm text-yellow-500">
+                    ({myPlayer?.role || '身份加载中...'})
+                  </span>
+                </div>
+              </div>
+              <div className={`px-3 py-1 rounded-full text-sm font-bold border ${
+                myPlayer?.is_alive
+                  ? 'bg-green-900/30 border-green-500 text-green-400'
+                  : 'bg-red-900/30 border-red-500 text-red-500'
+              }`}>
+                {myPlayer?.is_alive ? '● 存活' : '💀 已出局'}
               </div>
             </div>
-            <div className={`px-3 py-1 rounded-full text-sm font-bold border ${
-              myPlayer?.is_alive
-                ? 'bg-green-900/30 border-green-500 text-green-400'
-                : 'bg-red-900/30 border-red-500 text-red-500'
-            }`}>
-              {myPlayer?.is_alive ? '● 存活' : '💀 已出局'}
-            </div>
+
+            {/* 角色详情 */}
+            {myPlayer && <RoleInfo player={myPlayer} />}
           </div>
 
           {/* 游戏阶段内容 */}

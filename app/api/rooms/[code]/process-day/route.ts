@@ -64,6 +64,17 @@ export async function POST(
 
       // [双票使者] 权重2
       let weight = (voter.role === '双票使者') ? 2 : 1;
+      
+      // [投票回收者] 使用存储的票
+      if (voter.role === '投票回收者' && voter.stored_votes) {
+        weight += voter.stored_votes;
+        // 清空存储的票
+        playerUpdates.push({
+          ...voter,
+          stored_votes: 0
+        });
+      }
+      
       voteCounts[v.target_id] += weight;
     });
 
