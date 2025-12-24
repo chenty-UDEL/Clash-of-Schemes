@@ -54,9 +54,83 @@ export const en = {
     canStart: 'Can start game'
   },
 
-  // Role related (placeholder, will be completed in update 3)
+  // Role related
   role: {
-    // Will be added in update 3
+    // Role names
+    names: {
+      '技能观测者': 'Skill Observer',
+      '利他守护者': 'Altruistic Guardian',
+      '投票阻断者': 'Vote Blocker',
+      '沉默制裁者': 'Silence Enforcer',
+      '同盟者': 'Ally',
+      '减票守护者': 'Vote Reducer',
+      '双票使者': 'Double Voter',
+      '平票终结者': 'Tie Breaker',
+      '影子胜者': 'Shadow Winner',
+      '集票胜者': 'Vote Collector Winner',
+      '三人王者': 'Three King',
+      '免票胜者': 'Vote-Free Winner',
+      '平票赢家': 'Tie Winner',
+      '票数平衡者': 'Vote Balancer',
+      '多选胜者': 'Multi-Target Winner',
+      '反向投票者': 'Reverse Voter',
+      '均衡守护者': 'Balance Guardian',
+      '命运复制者': 'Fate Copier',
+      '心灵胜者': 'Mind Reader',
+      '命运转移者': 'Fate Transferer',
+      '投票回收者': 'Vote Collector',
+      '胜利夺取者': 'Victory Stealer'
+    },
+    // Role tags
+    tags: {
+      '技能观测者': 'Check',
+      '利他守护者': 'Protect',
+      '投票阻断者': 'Control',
+      '沉默制裁者': 'Control',
+      '同盟者': 'Bind',
+      '减票守护者': 'Defense',
+      '双票使者': 'Attack',
+      '平票终结者': 'Stalemate',
+      '影子胜者': 'Predict',
+      '集票胜者': 'Burst',
+      '三人王者': 'Survive',
+      '免票胜者': 'Lurk',
+      '平票赢家': 'Gamble',
+      '票数平衡者': 'Control',
+      '多选胜者': 'Chain Kill',
+      '反向投票者': 'Counter',
+      '均衡守护者': 'Break Tie',
+      '命运复制者': 'Copy',
+      '心灵胜者': 'Predict',
+      '命运转移者': 'Transfer',
+      '投票回收者': 'Store',
+      '胜利夺取者': 'Steal'
+    },
+    // Role descriptions
+    descriptions: {
+      '技能观测者': 'Each night, designate a player to check their skill.',
+      '利他守护者': 'Each night, choose a player other than yourself to make their votes count as 0 the next day.',
+      '投票阻断者': 'Designate a player to make their vote invalid this round.',
+      '沉默制裁者': 'Designate a player to make them unable to speak this round.',
+      '同盟者': 'You and the designated player\'s votes against each other are invalid. If you vote for the same person, +1 vote (can only be used on the first night, then effective until game end).',
+      '减票守护者': 'When you are voted, your total votes are reduced by 1.',
+      '双票使者': 'Each of your votes counts as 2 votes.',
+      '平票终结者': 'If there are a consecutive ties (a = total players / 3, rounded up), you win.',
+      '影子胜者': 'Within one round before or after you are voted out, if the designated player is eliminated, you win (can only be used on the first night, then effective until game end).',
+      '集票胜者': 'When you are voted by 2/3 (rounded up) of the players present, you immediately win.',
+      '三人王者': 'When only 3 players remain, you immediately win.',
+      '免票胜者': 'If you are not voted for a consecutive rounds (a = total players / 3, rounded up), you win.',
+      '平票赢家': 'When you tie with other players, you immediately win.',
+      '票数平衡者': 'If in consecutive a rounds of voting, your vote count is exactly the same (regardless of amount), you immediately win. (a = total players / 2, rounded up)',
+      '多选胜者': 'If you vote for different players in consecutive a rounds, and all these players are eliminated in the following a rounds, you immediately win. (a = total players / 3, rounded up)',
+      '反向投票者': 'When you are voted out, choose a player who voted for you to be eliminated instead. Can only be used once.',
+      '均衡守护者': 'When there is a tie, you can break the tie. Can only be used once.',
+      '命运复制者': 'On the first night, choose a role to copy its skills. If the chosen player dies, you die too.',
+      '心灵胜者': 'Each night, you can predict another player\'s vote. If you predict correctly a consecutive times, you immediately win (a = total players / 2, rounded up).',
+      '命运转移者': 'Each night, you can choose to swap fates with another player. If that player is eliminated the next day, you are eliminated instead, and vice versa.',
+      '投票回收者': 'You can store one unused vote each day, up to 3. In any voting round, you can use all stored votes at once.',
+      '胜利夺取者': 'At night, you can choose a player and steal their special victory condition. If that player wins this round, you win instead. Otherwise, you die. You can also win normally.'
+    }
   },
 
   // Game phases
@@ -160,7 +234,19 @@ export const en = {
     selectCandidate: 'Select Player to Execute',
     breakTie: 'Break Tie',
     testingMode: 'Testing Mode: Select Role',
-    selectRole: 'Select Role'
+    selectRole: 'Select Role',
+    copiedRole: 'Copied Role',
+    fromPlayer: 'from Player',
+    waitingCopy: 'Waiting to copy role on first night...',
+    fateTransferred: 'Fate Transferred',
+    withPlayer: 'with Player',
+    fateSwapped: 'fate swapped',
+    targetLocked: 'Target Locked',
+    specialVictory: 'special victory condition',
+    skillUsed: 'Skill Used',
+    currentRole: 'Current Role',
+    unassigned: 'Unassigned',
+    usingCopiedRole: 'Using Copied Role Skill'
   }
 };
 

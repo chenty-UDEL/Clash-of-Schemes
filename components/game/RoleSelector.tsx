@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { ALL_ROLES, getRoleConfig } from '@/lib/game/roles';
+import { getRoleName, getRoleTag, getRoleDescription } from '@/lib/game/roleTranslations';
+import { useTranslation } from '@/hooks/useTranslation';
 import type { RoleName } from '@/lib/game/roles';
 
 interface RoleSelectorProps {
@@ -21,6 +23,7 @@ export default function RoleSelector({
   roomCode,
   onRoleChange
 }: RoleSelectorProps) {
+  const { t } = useTranslation();
   const [selectedRole, setSelectedRole] = useState<RoleName | ''>(currentRole as RoleName || '');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -66,7 +69,7 @@ export default function RoleSelector({
       <div className="bg-gray-900 rounded-xl shadow-2xl border border-gray-700 w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
         <div className="p-6 border-b border-gray-700">
           <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold text-yellow-400">🎭 选择角色 (测试模式)</h2>
+            <h2 className="text-2xl font-bold text-yellow-400">🎭 {t('gameUI.selectRole')} ({t('gameUI.testingMode')})</h2>
             <button
               onClick={onClose}
               className="text-gray-400 hover:text-white text-2xl"
@@ -74,7 +77,7 @@ export default function RoleSelector({
               ×
             </button>
           </div>
-          <p className="text-sm text-gray-400 mt-2">当前角色: {currentRole || '未分配'}</p>
+          <p className="text-sm text-gray-400 mt-2">{t('gameUI.currentRole')}: {currentRole ? getRoleName(currentRole as RoleName) : t('gameUI.unassigned')}</p>
         </div>
 
         <div className="flex-1 overflow-y-auto p-6">
@@ -86,7 +89,6 @@ export default function RoleSelector({
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {ALL_ROLES.map((role) => {
-              const config = getRoleConfig(role);
               const isSelected = selectedRole === role;
               
               return (
@@ -100,12 +102,12 @@ export default function RoleSelector({
                   }`}
                 >
                   <div className="flex items-start justify-between mb-2">
-                    <h3 className="font-bold text-white">{role}</h3>
+                    <h3 className="font-bold text-white">{getRoleName(role)}</h3>
                     <span className="text-xs text-gray-400 bg-gray-700 px-2 py-1 rounded">
-                      {config.tag}
+                      {getRoleTag(role)}
                     </span>
                   </div>
-                  <p className="text-xs text-gray-400 line-clamp-2">{config.desc}</p>
+                  <p className="text-xs text-gray-400 line-clamp-2">{getRoleDescription(role)}</p>
                 </button>
               );
             })}
@@ -117,14 +119,14 @@ export default function RoleSelector({
             onClick={onClose}
             className="flex-1 bg-gray-700 hover:bg-gray-600 text-white p-3 rounded-lg font-bold"
           >
-            取消
+            {t('common.cancel')}
           </button>
           <button
             onClick={handleSetRole}
             disabled={loading || !selectedRole}
             className="flex-1 bg-yellow-600 hover:bg-yellow-500 text-white p-3 rounded-lg font-bold disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? '设置中...' : '确认选择'}
+            {loading ? t('common.loading') : t('common.confirm')}
           </button>
         </div>
       </div>

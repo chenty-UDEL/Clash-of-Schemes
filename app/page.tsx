@@ -339,7 +339,14 @@ export default function Home() {
                 <div className="flex items-baseline gap-2">
                   <span className="text-xl font-bold text-white">{myPlayer?.name}</span>
                   <span className="text-sm text-yellow-500">
-                    ({myPlayer?.role || t('common.loading')})
+                    ({myPlayer?.role ? (() => {
+                      try {
+                        const { getRoleName } = require('@/lib/game/roleTranslations');
+                        return getRoleName(myPlayer.role as any);
+                      } catch {
+                        return myPlayer.role;
+                      }
+                    })() : t('common.loading')})
                   </span>
                 </div>
               </div>

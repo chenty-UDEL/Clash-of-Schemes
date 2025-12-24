@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import type { Player, RoomState } from '@/types/game';
 import { getRoleConfig } from '@/lib/game/roles';
+import { getRoleName, getRoleDescription } from '@/lib/game/roleTranslations';
 import { parseRoundNumber, isFirstNight } from '@/lib/game/constants';
 import { useTranslation } from '@/hooks/useTranslation';
 
@@ -179,9 +180,9 @@ export default function NightPhase({
               {isFateCopier && !isFirst && myPlayer.copied_role ? (
                 <>
                   <div className="text-xs text-blue-400 mb-1">
-                    使用复制的角色技能: <span className="font-bold">{myPlayer.copied_role}</span>
+                    {t('gameUI.usingCopiedRole')}: <span className="font-bold">{getRoleName(myPlayer.copied_role as any)}</span>
                   </div>
-                  <span className="font-bold text-purple-400">{myPlayer.copied_role}:</span> {getRoleConfig(myPlayer.copied_role)?.desc || '技能描述'}
+                  <span className="font-bold text-purple-400">{getRoleName(myPlayer.copied_role as any)}:</span> {getRoleDescription(myPlayer.copied_role as any)}
                 </>
               ) : (
                 <>
