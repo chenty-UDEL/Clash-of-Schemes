@@ -4,9 +4,8 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: false, // 改为false，确保类型安全
   },
-  eslint: {
-    ignoreDuringBuilds: false, // 改为false，确保代码质量
-  },
+  // 注意：Next.js 16+ 不再支持在 next.config.ts 中配置 eslint
+  // eslint 配置应该在 eslint.config.mjs 中
 };
 
 export default nextConfig;

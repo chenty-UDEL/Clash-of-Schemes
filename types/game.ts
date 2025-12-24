@@ -2,8 +2,7 @@
 // 权谋决战完整版 - 游戏类型定义
 // ==========================================
 
-// BoardType 从 roles.ts 导入
-export type { BoardType } from '@/lib/game/roles';
+import type { RoleName, BoardType } from '@/lib/game/roles';
 
 // ==========================================
 // 1. 游戏状态类型
@@ -14,7 +13,7 @@ export type GamePhase = 'LOBBY' | 'NIGHT' | 'DAY' | 'GAME OVER';
 export interface RoomState {
   code: string;
   round_state: GamePhase | string; // 'LOBBY' | 'NIGHT 1' | 'DAY 1' | 'GAME OVER'
-  board_type?: BoardType;
+  board_type?: 'fate' | 'balance' | 'strategy' | 'custom';
   deadlock_count?: number;
   last_state_hash?: string;
   created_at?: string;

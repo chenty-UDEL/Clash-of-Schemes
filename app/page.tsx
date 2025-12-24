@@ -4,7 +4,10 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase/client';
 import type { Player, RoomState, GameLog } from '@/types/game';
 import type { BoardType } from '@/lib/game/roles';
+import { isNightPhase, isDayPhase, parseRoundNumber } from '@/lib/game/constants';
 import BoardSelector from '@/components/game/BoardSelector';
+import NightPhase from '@/components/game/NightPhase';
+import DayPhase from '@/components/game/DayPhase';
 
 export default function Home() {
   const [name, setName] = useState('');
@@ -234,10 +237,147 @@ export default function Home() {
     );
   }
 
-  // 已加入房间 - 显示大厅
+  // 已加入房间
   const alivePlayers = players.filter(p => p.is_alive);
   const myPlayer = getMyPlayer();
 
+  // 如果游戏已开始，显示游戏界面
+  if (roomState && roomState.round_state !== 'LOBBY' && roomState.round_state !== 'GAME OVER') {
+    const isNight = isNightPhase(roomState.round_state);
+    const isDay = isDayPhase(roomState.round_state);
+
+    return (
+      <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center p-4">
+        <div className="w-full max-w-lg bg-gray-800 p-6 rounded-xl shadow-2xl space-y-6 border border-gray-700">
+          {/* 游戏状态显示 */}
+          <div className="border-b border-gray-700 pb-4 text-center">
+            <h2 className={`text-4xl font-extrabold tracking-wider animate-pulse ${
+              isNight ? 'text-red-500' : 'text-yellow-400'
+            }`}>
+              {roomState.round_state}
+            </h2>
+            <p className="text-gray-400 text-sm mt-2">存活人数: {alivePlayers.length}</p>
+          </div>
+
+          {/* 玩家信息 */}
+          <div className="bg-gray-900 p-4 rounded-lg border border-gray-600 flex justify-between items-center shadow-md">
+            <div>
+              <p className="text-xs text-gray-500 uppercase font-bold tracking-wider">当前玩家</p>
+              <div className="flex items-baseline gap-2">
+                <span className="text-xl font-bold text-white">{myPlayer?.name}</span>
+                <span className="text-sm text-yellow-500">
+                  ({myPlayer?.role || '身份加载中...'})
+                </span>
+              </div>
+            </div>
+            <div className={`px-3 py-1 rounded-full text-sm font-bold border ${
+              myPlayer?.is_alive
+                ? 'bg-green-900/30 border-green-500 text-green-400'
+                : 'bg-red-900/30 border-red-500 text-red-500'
+            }`}>
+              {myPlayer?.is_alive ? '● 存活' : '💀 已出局'}
+            </div>
+          </div>
+
+          {/* 游戏阶段内容 */}
+          {myPlayer?.is_alive ? (
+            isNight ? (
+              <NightPhase
+                roomCode={roomCode}
+                myPlayer={myPlayer}
+                players={players}
+                roomState={roomState}
+                onActionSubmit={() => {
+                  fetchRoomState(roomCode);
+                  fetchPlayers(roomCode);
+                  fetchLogs(roomCode);
+                }}
+              />
+            ) : (
+              <DayPhase
+                roomCode={roomCode}
+                myPlayer={myPlayer}
+                players={players}
+                logs={logs}
+                onVoteSubmit={() => {
+                  fetchRoomState(roomCode);
+                  fetchPlayers(roomCode);
+                  fetchLogs(roomCode);
+                }}
+              />
+            )
+          ) : (
+            <div className="bg-red-950/40 border-2 border-red-900/50 p-6 rounded-xl text-center space-y-4">
+              <div className="text-6xl">👻</div>
+              <h3 className="text-2xl font-bold text-red-500">你已出局</h3>
+              <p className="text-red-300/80">
+                你无法再参与投票或发动技能。<br />
+                请保持沉默，静待游戏结果。
+              </p>
+            </div>
+          )}
+
+          {/* 房主控制面板 */}
+          {isHost && (
+            <div className="mt-8 border-t border-gray-700 pt-6">
+              <p className="text-xs text-gray-500 mb-2 text-center">房主控制面板 (上帝视角)</p>
+              {isNight ? (
+                <button
+                  onClick={async () => {
+                    if (!confirm('确定要结束夜晚并进行结算吗？')) return;
+                    try {
+                      const res = await fetch(`/api/rooms/${roomCode}/process-night`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' }
+                      });
+                      if (!res.ok) throw new Error('结算失败');
+                      fetchRoomState(roomCode);
+                      fetchPlayers(roomCode);
+                      fetchLogs(roomCode);
+                    } catch (err) {
+                      alert('结算请求失败');
+                    }
+                  }}
+                  className="w-full bg-red-900 hover:bg-red-800 text-white p-4 rounded-lg font-bold border border-red-600 shadow-lg"
+                >
+                  🌕 天亮了 (结算)
+                </button>
+              ) : (
+                <button
+                  onClick={async () => {
+                    if (!confirm('确定要结束投票并公布结果吗？')) return;
+                    try {
+                      const res = await fetch(`/api/rooms/${roomCode}/process-day`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' }
+                      });
+                      if (!res.ok) throw new Error('结算失败');
+                      fetchRoomState(roomCode);
+                      fetchPlayers(roomCode);
+                      fetchLogs(roomCode);
+                    } catch (err) {
+                      alert('结算请求失败');
+                    }
+                  }}
+                  className="w-full bg-gradient-to-r from-red-900 to-red-800 hover:from-red-800 hover:to-red-700 text-red-100 p-4 rounded-lg font-bold border border-red-600 shadow-xl"
+                >
+                  ⚖️ 公布结果 (处决)
+                </button>
+              )}
+            </div>
+          )}
+
+          {error && (
+            <div className="fixed bottom-10 left-1/2 transform -translate-x-1/2 bg-red-900 text-white px-6 py-3 rounded-full shadow-2xl border border-red-500 z-50 flex items-center gap-2">
+              <span>⚠️</span> {error}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // 显示大厅
   return (
     <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-md text-center bg-gray-800 p-8 rounded-xl shadow-2xl border border-gray-700">

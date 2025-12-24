@@ -176,6 +176,16 @@ git commit -m "feat: 添加新功能"
 git push
 
 # 3. Vercel 会自动检测并重新部署
+
+
+# 1. 添加所有新文件
+git add .
+
+# 2. 提交
+git commit -m "feat: 添加角色配置系统、类型定义和基础API路由"
+
+# 3. 推送到 GitHub
+git push
 ```
 
 在 Vercel Dashboard 的 **"Deployments"** 中可以看到自动部署进度。
@@ -255,5 +265,4 @@ git push
 - [数据库设置指南.md](./数据库设置指南.md)
 - [部署指南.md](./部署指南.md)
 - [GitHub设置指南.md](./GitHub设置指南.md)
-
 
