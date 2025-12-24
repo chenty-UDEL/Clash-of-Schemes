@@ -11,6 +11,7 @@ import DayPhase from '@/components/game/DayPhase';
 import GameOver from '@/components/game/GameOver';
 import RoleInfo from '@/components/game/RoleInfo';
 import GameRules from '@/components/game/GameRules';
+import GameTips from '@/components/game/GameTips';
 
 export default function Home() {
   const [name, setName] = useState('');
@@ -337,7 +338,16 @@ export default function Home() {
             </div>
 
             {/* 角色详情 */}
-            {myPlayer && <RoleInfo player={myPlayer} />}
+            {myPlayer && (
+              <>
+                <RoleInfo player={myPlayer} />
+                <GameTips 
+                  myPlayer={myPlayer} 
+                  roomState={roomState.round_state}
+                  isHost={isHost}
+                />
+              </>
+            )}
           </div>
 
           {/* 游戏阶段内容 */}
@@ -375,6 +385,34 @@ export default function Home() {
                 你无法再参与投票或发动技能。<br />
                 请保持沉默，静待游戏结果。
               </p>
+            </div>
+          )}
+
+          {/* 游戏状态提示 */}
+          {roomState.round_state !== 'GAME OVER' && (
+            <div className="mt-4 p-4 bg-gray-800 rounded-lg border border-gray-700">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-400">
+                    {isNight ? '🌙 夜晚阶段' : isDay ? '☀️ 白天阶段' : '🏠 大厅'}
+                  </p>
+                  {isNight && (
+                    <p className="text-xs text-gray-500 mt-1">
+                      有技能的玩家可以发动技能，房主可以结算夜晚
+                    </p>
+                  )}
+                  {isDay && (
+                    <p className="text-xs text-gray-500 mt-1">
+                      所有玩家进行投票，房主可以结算白天
+                    </p>
+                  )}
+                </div>
+                {isHost && roomState.round_state !== 'LOBBY' && (
+                  <div className="text-xs text-yellow-400">
+                    ⚠️ 等待所有玩家行动后再结算
+                  </div>
+                )}
+              </div>
             </div>
           )}
 
@@ -544,9 +582,10 @@ export default function Home() {
 
               const result = await res.json();
 
-              if (!res.ok) {
-                throw new Error(result.error || '开始游戏失败');
-              }
+        if (!res.ok) {
+          throw new Error(result.error || '开始游戏失败');
+        }
+        setSuccessMessage('游戏已开始！');
 
               // 刷新数据
               fetchRoomState(roomCode);

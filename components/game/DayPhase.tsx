@@ -23,6 +23,7 @@ export default function DayPhase({
   const [hasVoted, setHasVoted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
   const [storedVotes, setStoredVotes] = useState(0);
   const [useStoredVotes, setUseStoredVotes] = useState(false);
   const [isTie, setIsTie] = useState(false);
@@ -178,6 +179,15 @@ export default function DayPhase({
             setIsTie(false);
           }}
         />
+      )}
+
+      {/* 投票提示 */}
+      {!hasVoted && !cannotVote && (
+        <div className="bg-blue-900/30 border border-blue-500/50 p-3 rounded-lg mb-4">
+          <p className="text-sm text-blue-300">
+            💡 选择一名玩家进行投票，得票最多者将被处决。平票则无人出局。
+          </p>
+        </div>
       )}
 
       {/* 投票区域 */}

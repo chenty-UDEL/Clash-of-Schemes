@@ -26,6 +26,7 @@ export default function NightPhase({
   const [hasActed, setHasActed] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
   const roundNumber = parseRoundNumber(roomState.round_state);
   const isFirst = isFirstNight(roomState.round_state);
