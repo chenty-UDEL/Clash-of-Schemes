@@ -1,12 +1,12 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase/server';
 
 export async function POST(
-  request: Request,
-  { params }: { params: { code: string } }
+  request: NextRequest,
+  { params }: { params: Promise<{ code: string }> }
 ) {
   try {
-    const { code } = params;
+    const { code } = await params;
     const { name } = await request.json();
 
     if (!name) {
