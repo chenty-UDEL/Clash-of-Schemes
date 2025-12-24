@@ -104,10 +104,12 @@ export default function NightPhase({
       const result = await res.json();
 
       if (!res.ok) {
-        throw new Error(result.error || '提交失败');
+        throw new Error(result.error || result.details || '提交失败');
       }
 
       setHasActed(true);
+      setSuccessMessage('技能已提交！');
+      setTimeout(() => setSuccessMessage(''), 3000);
       onActionSubmit();
     } catch (err: any) {
       setError(err.message || '提交失败');

@@ -61,17 +61,24 @@ export async function POST(request: NextRequest) {
     // 4. 获取当前回合号
     const roundNumber = parseRoundNumber(room.round_state);
 
-    // 5. 检查是否已经提交过行动（使用 upsert 覆盖）
+    // 5. 检查是否已经提交过行动（先删除旧记录，再插入新记录）
+    // 先删除该玩家本回合的旧行动
+    await supabase
+      .from('night_actions')
+      .delete()
+      .eq('room_code', roomCode)
+      .eq('actor_id', actorId)
+      .eq('round_number', roundNumber);
+
+    // 插入新行动
     const { error: actionError } = await supabase
       .from('night_actions')
-      .upsert({
+      .insert({
         room_code: roomCode,
         actor_id: actorId,
         target_id: targetId || null,
         action_type: actionType as ActionType,
         round_number: roundNumber
-      }, {
-        onConflict: 'room_code, actor_id, round_number'
       });
 
     // 6. 如果是心灵胜者，保存预测记录
