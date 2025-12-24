@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
     // 1. 验证参数
     if (!roomCode || !actorId || !actionType) {
       return NextResponse.json(
-        { success: false, error: '缺少必要参数' },
+        { success: false, error: 'error.missingParams' },
         { status: 400 }
       );
     }
@@ -24,14 +24,14 @@ export async function POST(request: NextRequest) {
 
     if (roomError || !room) {
       return NextResponse.json(
-        { success: false, error: '房间不存在' },
+        { success: false, error: 'error.roomNotFound' },
         { status: 404 }
       );
     }
 
     if (!isNightPhase(room.round_state)) {
       return NextResponse.json(
-        { success: false, error: '当前不是夜晚阶段' },
+        { success: false, error: 'error.notNightPhase' },
         { status: 400 }
       );
     }
@@ -46,14 +46,14 @@ export async function POST(request: NextRequest) {
 
     if (playerError || !player) {
       return NextResponse.json(
-        { success: false, error: '玩家不存在' },
+        { success: false, error: 'error.playerNotFound' },
         { status: 404 }
       );
     }
 
     if (!player.is_alive) {
       return NextResponse.json(
-        { success: false, error: '你已出局，无法发动技能' },
+        { success: false, error: 'error.playerDead' },
         { status: 400 }
       );
     }
@@ -72,14 +72,14 @@ export async function POST(request: NextRequest) {
 
       if (targetError || !targetPlayer) {
         return NextResponse.json(
-          { success: false, error: '目标玩家不存在' },
+          { success: false, error: 'error.targetNotFound' },
           { status: 400 }
         );
       }
 
       if (!targetPlayer.is_alive) {
         return NextResponse.json(
-          { success: false, error: '目标玩家已出局' },
+          { success: false, error: 'error.targetDeadAction' },
           { status: 400 }
         );
       }
@@ -130,18 +130,18 @@ export async function POST(request: NextRequest) {
 
     if (actionError) {
       return NextResponse.json(
-        { success: false, error: '提交行动失败', details: actionError.message },
+        { success: false, error: 'error.actionFailed', details: actionError.message },
         { status: 500 }
       );
     }
 
     return NextResponse.json({
       success: true,
-      message: '行动已记录'
+      message: 'success.actionSubmitted'
     });
   } catch (error: any) {
     return NextResponse.json(
-      { success: false, error: '服务器错误', details: error.message },
+      { success: false, error: 'error.serverError', details: error.message },
       { status: 500 }
     );
   }

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase/server';
 import { parseRoundNumber, getCollectorThreshold, getTieBreakerThreshold, getNoVoteThreshold, getBalanceThreshold, getMultiKillThreshold } from '@/lib/game/constants';
+import { t, tWithParams, getLanguage } from '@/lib/i18n';
+import { getRoleName } from '@/lib/game/roleTranslations';
 
 export async function POST(
   request: NextRequest,
@@ -34,7 +36,7 @@ export async function POST(
 
     if (playersError || !players || votesError || !votes || roomError || !room) {
       return NextResponse.json(
-        { success: false, error: '数据读取失败' },
+        { success: false, error: 'error.dataReadFailed' },
         { status: 500 }
       );
     }
@@ -45,6 +47,10 @@ export async function POST(
     const totalPlayers = players.length;
     const alivePlayers = players.filter(p => p.is_alive);
     const aliveCount = alivePlayers.length;
+    
+    // 获取语言（从请求头或使用默认）
+    const acceptLanguage = request.headers.get('accept-language') || 'zh-CN';
+    const lang: 'zh' | 'en' = acceptLanguage.startsWith('en') ? 'en' : 'zh';
 
     const logs: Array<{ message: string; viewer_ids: number[] | null; tag: 'PUBLIC' | 'PRIVATE' }> = [];
     const playerUpdates: any[] = [];
@@ -147,11 +153,11 @@ export async function POST(
 
     if (!winner) {
       if (maxVotes === 0) {
-        logs.push({ message: '今日无人投票。', viewer_ids: null, tag: 'PUBLIC' });
+        logs.push({ message: t('gameLog.noVotesToday', lang), viewer_ids: null, tag: 'PUBLIC' });
       } else if (candidates.length > 1) {
         // === 平票 ===
         const names = candidates.map(id => getName(id)).join(', ');
-        logs.push({ message: `平票！${names} 均获得 ${maxVotes} 票。无人出局。`, viewer_ids: null, tag: 'PUBLIC' });
+        logs.push({ message: tWithParams('gameLog.tieVote', { names, votes: maxVotes }, lang), viewer_ids: null, tag: 'PUBLIC' });
 
         // 4.1 [平票赢家]
         const tieWinner = players.find(p => p.role === '平票赢家' && p.is_alive && candidates.includes(p.id));
@@ -212,7 +218,7 @@ export async function POST(
                     reverse_vote_used: true
                   });
                   logs.push({
-                    message: `【反向投票者】发动反击！玩家【${getName(targetVoterId)}】代替出局。`,
+                    message: tWithParams('gameLog.reverseVoteActivated', { name: getName(targetVoterId) }, lang),
                     viewer_ids: null,
                     tag: 'PUBLIC'
                   });
@@ -236,7 +242,7 @@ export async function POST(
                     death_type: 'VOTE'
                   });
                   logs.push({
-                    message: `【命运转移者】命运调换生效！玩家【${getName(oldEliminatedId)}】被投票，但玩家【${getName(actualEliminatedId)}】代替出局。`,
+                    message: tWithParams('gameLog.fateTransferActivated', { oldName: getName(oldEliminatedId), newName: getName(actualEliminatedId) }, lang),
                     viewer_ids: null,
                     tag: 'PUBLIC'
                   });
@@ -250,7 +256,7 @@ export async function POST(
                   death_type: 'VOTE'
                 });
                 logs.push({
-                  message: `玩家【${getName(actualEliminatedId)}】被投票出局。`,
+                  message: tWithParams('gameLog.playerEliminated', { name: getName(actualEliminatedId) }, lang),
                   viewer_ids: null,
                   tag: 'PUBLIC'
                 });
@@ -270,11 +276,11 @@ export async function POST(
                   death_round: currentRoundNum,
                   death_type: 'SKILL'
                 });
-                logs.push({
-                  message: `【命运复制者】玩家【${getName(copyPlayer.id)}】因复制的目标死亡而一同出局。`,
-                  viewer_ids: null,
-                  tag: 'PUBLIC'
-                });
+                  logs.push({
+                    message: tWithParams('gameLog.copyPlayerDied', { name: getName(copyPlayer.id) }, lang),
+                    viewer_ids: null,
+                    tag: 'PUBLIC'
+                  });
               });
             }
           }
@@ -421,7 +427,8 @@ export async function POST(
                 winReason = `【胜利夺取者】夺取了【心灵胜者】的胜利条件，获胜！`;
               } else {
                 winner = mindReader;
-                winReason = `【心灵胜者】连续 ${streak} 次预测成功，获胜！`;
+                const roleName = getRoleName('心灵胜者');
+                winReason = tWithParams('gameLog.mindReaderWin', { role: roleName, streak }, lang);
               }
             } else {
               logs.push({
@@ -440,7 +447,7 @@ export async function POST(
               }
             });
             logs.push({
-              message: '预测失败，连胜已重置。',
+              message: t('gameLog.predictionFailed', lang),
               viewer_ids: [mindReader.id],
               tag: 'PRIVATE'
             });
@@ -624,7 +631,7 @@ export async function POST(
     }
   } catch (error: any) {
     return NextResponse.json(
-      { success: false, error: '服务器错误', details: error.message },
+      { success: false, error: 'error.serverError', details: error.message },
       { status: 500 }
     );
   }

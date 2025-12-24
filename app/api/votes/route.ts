@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
     // 1. 验证参数
     if (!roomCode || !voterId) {
       return NextResponse.json(
-        { success: false, error: '缺少必要参数' },
+        { success: false, error: 'error.missingParams' },
         { status: 400 }
       );
     }
@@ -23,14 +23,14 @@ export async function POST(request: NextRequest) {
 
     if (roomError || !room) {
       return NextResponse.json(
-        { success: false, error: '房间不存在' },
+        { success: false, error: 'error.roomNotFound' },
         { status: 404 }
       );
     }
 
     if (!isDayPhase(room.round_state)) {
       return NextResponse.json(
-        { success: false, error: '当前不是投票阶段' },
+        { success: false, error: 'error.notDayPhase' },
         { status: 400 }
       );
     }
@@ -45,14 +45,14 @@ export async function POST(request: NextRequest) {
 
     if (playerError || !player) {
       return NextResponse.json(
-        { success: false, error: '玩家不存在' },
+        { success: false, error: 'error.playerNotFound' },
         { status: 404 }
       );
     }
 
     if (!player.is_alive) {
       return NextResponse.json(
-        { success: false, error: '你已出局，无法投票' },
+        { success: false, error: 'error.playerDeadVote' },
         { status: 400 }
       );
     }
@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
     // 4. 检查是否被禁止投票
     if (player.flags?.cannot_vote) {
       return NextResponse.json(
-        { success: false, error: '你被【投票阻断者】限制，今日无法投票！' },
+        { success: false, error: 'error.cannotVote' },
         { status: 403 }
       );
     }
@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
       const currentStored = player.stored_votes || 0;
       if (useStoredVotes > currentStored) {
         return NextResponse.json(
-          { success: false, error: `存储的票数不足（当前：${currentStored}）` },
+          { success: false, error: 'error.storedVotesInsufficientWithCount', errorParams: { count: currentStored } },
           { status: 400 }
         );
       }
@@ -83,7 +83,7 @@ export async function POST(request: NextRequest) {
       
       if (updateError) {
         return NextResponse.json(
-          { success: false, error: '更新存储票数失败', details: updateError.message },
+          { success: false, error: 'error.updateVotesFailed', details: updateError.message },
           { status: 500 }
         );
       }
@@ -107,18 +107,18 @@ export async function POST(request: NextRequest) {
 
     if (voteError) {
       return NextResponse.json(
-        { success: false, error: '投票失败', details: voteError.message },
+        { success: false, error: 'error.voteFailed', details: voteError.message },
         { status: 500 }
       );
     }
 
     return NextResponse.json({
       success: true,
-      message: '投票已记录'
+      message: 'success.voteSubmitted'
     });
   } catch (error: any) {
     return NextResponse.json(
-      { success: false, error: '服务器错误', details: error.message },
+      { success: false, error: 'error.serverError', details: error.message },
       { status: 500 }
     );
   }

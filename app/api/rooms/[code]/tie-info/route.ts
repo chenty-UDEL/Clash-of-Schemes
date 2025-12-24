@@ -95,7 +95,7 @@ export async function GET(
     });
   } catch (error: any) {
     return NextResponse.json(
-      { success: false, error: '服务器错误', details: error.message },
+      { success: false, error: 'error.serverError', details: error.message },
       { status: 500 }
     );
   }

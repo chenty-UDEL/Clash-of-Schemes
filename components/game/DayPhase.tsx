@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import type { Player, GameLog } from '@/types/game';
 import TieBreaker from './TieBreaker';
 import { useTranslation } from '@/hooks/useTranslation';
+import { translateError } from '@/lib/i18n/errorHandler';
 
 interface DayPhaseProps {
   roomCode: string;
@@ -126,7 +127,8 @@ export default function DayPhase({
       const result = await res.json();
 
       if (!res.ok) {
-        throw new Error(result.error || '投票失败');
+        const errorMsg = result.error ? translateError(result.error, result.errorParams) : t('error.voteFailed');
+        throw new Error(errorMsg);
       }
 
       setHasVoted(true);

@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
 
     if (updateError) {
       return NextResponse.json(
-        { success: false, error: '存储失败', details: updateError.message },
+        { success: false, error: 'error.updateVotesFailed', details: updateError.message },
         { status: 500 }
       );
     }
@@ -68,11 +68,11 @@ export async function POST(request: NextRequest) {
       data: {
         storedVotes: currentStored + 1
       },
-      message: '投票已存储'
+      message: 'success.voteStored'
     });
   } catch (error: any) {
     return NextResponse.json(
-      { success: false, error: '服务器错误', details: error.message },
+      { success: false, error: 'error.serverError', details: error.message },
       { status: 500 }
     );
   }

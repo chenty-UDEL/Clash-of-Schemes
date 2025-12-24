@@ -11,7 +11,7 @@ export async function POST(
 
     if (!name) {
       return NextResponse.json(
-        { success: false, error: '请输入名字' },
+        { success: false, error: 'error.enterName' },
         { status: 400 }
       );
     }
@@ -25,7 +25,7 @@ export async function POST(
 
     if (roomError || !room) {
       return NextResponse.json(
-        { success: false, error: '房间不存在' },
+        { success: false, error: 'error.roomNotFound' },
         { status: 404 }
       );
     }
@@ -33,7 +33,7 @@ export async function POST(
     // 检查房间是否已开始游戏
     if (room.round_state !== 'LOBBY') {
       return NextResponse.json(
-        { success: false, error: '游戏已开始，无法加入' },
+        { success: false, error: 'error.gameStarted' },
         { status: 400 }
       );
     }
@@ -46,7 +46,7 @@ export async function POST(
 
     if (count && count >= 12) {
       return NextResponse.json(
-        { success: false, error: '房间已满（最多12人）' },
+        { success: false, error: 'error.roomFull' },
         { status: 400 }
       );
     }
@@ -65,7 +65,7 @@ export async function POST(
 
     if (playerError) {
       return NextResponse.json(
-        { success: false, error: '加入房间失败', details: playerError.message },
+        { success: false, error: 'error.joinFailed', details: playerError.message },
         { status: 500 }
       );
     }
@@ -78,7 +78,7 @@ export async function POST(
     });
   } catch (error: any) {
     return NextResponse.json(
-      { success: false, error: '服务器错误', details: error.message },
+      { success: false, error: 'error.serverError', details: error.message },
       { status: 500 }
     );
   }

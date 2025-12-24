@@ -20,14 +20,14 @@ export async function POST(
 
     if (roomError || !room) {
       return NextResponse.json(
-        { success: false, error: '房间不存在' },
+        { success: false, error: 'error.roomNotFound' },
         { status: 404 }
       );
     }
 
     if (room.round_state !== 'LOBBY') {
       return NextResponse.json(
-        { success: false, error: '游戏已开始' },
+        { success: false, error: 'error.gameStarted' },
         { status: 400 }
       );
     }
@@ -40,7 +40,7 @@ export async function POST(
 
     if (playersError || !players) {
       return NextResponse.json(
-        { success: false, error: '获取玩家失败' },
+        { success: false, error: 'error.dataReadFailed' },
         { status: 500 }
       );
     }
@@ -48,14 +48,14 @@ export async function POST(
     // 2. 验证玩家数量
     if (players.length < MIN_PLAYERS) {
       return NextResponse.json(
-        { success: false, error: `至少需要 ${MIN_PLAYERS} 人才能开始游戏` },
+        { success: false, error: 'error.minPlayers', errorParams: { min: MIN_PLAYERS } },
         { status: 400 }
       );
     }
 
     if (players.length > MAX_PLAYERS) {
       return NextResponse.json(
-        { success: false, error: `最多支持 ${MAX_PLAYERS} 人` },
+        { success: false, error: 'error.maxPlayers', errorParams: { max: MAX_PLAYERS } },
         { status: 400 }
       );
     }
@@ -112,7 +112,7 @@ export async function POST(
 
     if (updateError) {
       return NextResponse.json(
-        { success: false, error: '分配角色失败', details: updateError.message },
+        { success: false, error: 'error.assignRoleFailed', details: updateError.message },
         { status: 500 }
       );
     }
@@ -137,26 +137,30 @@ export async function POST(
 
     if (roomUpdateError) {
       return NextResponse.json(
-        { success: false, error: '更新房间状态失败', details: roomUpdateError.message },
+        { success: false, error: 'error.updateRoomFailed', details: roomUpdateError.message },
         { status: 500 }
       );
     }
 
     // 11. 创建游戏日志
+    const lang = getLanguage();
+    const boardName = boardType === 'custom' ? (lang === 'zh' ? '自定义' : 'Custom') : boardType;
+    const logMessage = tWithParams('gameLog.gameStarted', { board: boardName, count: players.length }, lang);
+    
     await supabase.from('game_logs').insert([{
       room_code: code,
-      message: `🎮 游戏开始！板子：${boardType === 'custom' ? '自定义' : boardType}，共 ${players.length} 名玩家。`,
+      message: logMessage,
       viewer_ids: null,
       tag: 'PUBLIC'
     }]);
 
     return NextResponse.json({
       success: true,
-      message: '游戏开始！'
+      message: 'success.gameStarted'
     });
   } catch (error: any) {
     return NextResponse.json(
-      { success: false, error: '服务器错误', details: error.message },
+      { success: false, error: 'error.serverError', details: error.message },
       { status: 500 }
     );
   }

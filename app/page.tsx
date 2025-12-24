@@ -16,6 +16,7 @@ import GameManual from '@/components/game/GameManual';
 import RoleSelector from '@/components/game/RoleSelector';
 import LanguageSwitcher from '@/components/common/LanguageSwitcher';
 import { useTranslation } from '@/hooks/useTranslation';
+import { translateError } from '@/lib/i18n/errorHandler';
 
 export default function Home() {
   const [name, setName] = useState('');
@@ -150,7 +151,7 @@ export default function Home() {
   // 创建房间
   const handleCreateRoom = async () => {
     if (!name) {
-      setError('请输入名字');
+      setError(t('error.enterName'));
       return;
     }
 
@@ -167,7 +168,8 @@ export default function Home() {
       const result = await res.json();
 
       if (!res.ok) {
-        throw new Error(result.error || '创建房间失败');
+        const errorMsg = result.error ? translateError(result.error, result.errorParams) : t('error.createRoomFailed');
+        throw new Error(errorMsg);
       }
 
       setRoomCode(result.data.roomCode);
@@ -184,7 +186,7 @@ export default function Home() {
   // 加入房间
   const handleJoinRoom = async () => {
     if (!name || !roomCode) {
-      setError('请输入名字和房间号');
+      setError(t('error.enterNameAndRoom'));
       return;
     }
 
@@ -201,7 +203,8 @@ export default function Home() {
       const result = await res.json();
 
       if (!res.ok) {
-        throw new Error(result.error || '加入房间失败');
+        const errorMsg = result.error ? translateError(result.error, result.errorParams) : t('error.joinFailed');
+        throw new Error(errorMsg);
       }
 
       setIsInRoom(true);
@@ -209,7 +212,8 @@ export default function Home() {
       fetchRoomState(roomCode);
       fetchLogs(roomCode);
     } catch (err: any) {
-      setError(err.message || '加入房间失败');
+      const errorMsg = err.message ? translateError(err.message) : t('error.joinFailed');
+      setError(errorMsg);
     } finally {
       setLoading(false);
     }

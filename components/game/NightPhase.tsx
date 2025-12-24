@@ -6,6 +6,7 @@ import { getRoleConfig } from '@/lib/game/roles';
 import { getRoleName, getRoleDescription } from '@/lib/game/roleTranslations';
 import { parseRoundNumber, isFirstNight } from '@/lib/game/constants';
 import { useTranslation } from '@/hooks/useTranslation';
+import { translateError } from '@/lib/i18n/errorHandler';
 
 interface NightPhaseProps {
   roomCode: string;
@@ -131,7 +132,8 @@ export default function NightPhase({
       const result = await res.json();
 
       if (!res.ok) {
-        throw new Error(result.error || result.details || '提交失败');
+        const errorMsg = result.error ? translateError(result.error, result.errorParams) : (result.details || t('error.actionFailed'));
+        throw new Error(errorMsg);
       }
 
       setHasActed(true);

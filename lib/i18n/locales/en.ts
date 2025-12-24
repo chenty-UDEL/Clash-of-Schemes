@@ -161,9 +161,73 @@ export const en = {
     cancel: 'Cancel'
   },
 
-  // Error messages (placeholder, will be completed in update 4)
+  // Error messages
   error: {
-    // Will be added in update 4
+    missingParams: 'Missing required parameters',
+    invalidRole: 'Invalid role',
+    playerNotFound: 'Player not found',
+    roomNotFound: 'Room not found',
+    gameStarted: 'Game has started, cannot join',
+    roomFull: 'Room is full (max 12 players)',
+    notNightPhase: 'Not in night phase',
+    notDayPhase: 'Not in voting phase',
+    playerDead: 'You are dead, cannot use skill',
+    playerDeadVote: 'You are dead, cannot vote',
+    targetNotFound: 'Target player not found',
+    targetDead: 'Target player is dead',
+    targetDeadAction: 'Target player is dead, cannot use skill on them',
+    actionFailed: 'Failed to submit action',
+    voteFailed: 'Failed to vote',
+    joinFailed: 'Failed to join room',
+    createRoomFailed: 'Failed to create room',
+    createPlayerFailed: 'Failed to create player',
+    updateRoleFailed: 'Failed to update role',
+    updateVotesFailed: 'Failed to update stored votes',
+    dataReadFailed: 'Failed to read data',
+    updatePlayerFailed: 'Failed to update player',
+    serverError: 'Server error',
+    onlyHost: 'Only host can use this feature',
+    roomMismatch: 'Room mismatch',
+    storedVotesInsufficient: 'Insufficient stored votes',
+    cannotVote: 'You are restricted by [Vote Blocker], cannot vote today!',
+    enterName: 'Please enter name',
+    storedVotesInsufficientWithCount: 'Insufficient stored votes (current: {count})',
+    onlyVoteCollector: 'Only Vote Collector can store votes',
+    maxStoredVotes: 'Can store up to {max} votes',
+    onlyBalanceGuard: 'Only Balance Guardian can break tie',
+    skillUsed: 'Skill already used',
+    onlyDayPhase: 'Can only break tie during day phase',
+    minPlayers: 'Need at least {min} players to start game',
+    maxPlayers: 'Maximum {max} players supported',
+    assignRoleFailed: 'Failed to assign roles',
+    updateRoomFailed: 'Failed to update room state',
+    enterNameAndRoom: 'Please enter name and room code',
+    enterName: 'Please enter name'
+  },
+
+  // Game log messages (for process-night and process-day)
+  gameLog: {
+    observationResult: 'Observation Result: Player 【{name}】\'s role is 【{role}】.',
+    protectionSuccess: 'You successfully protected player 【{name}】, they will be immune to votes tomorrow.',
+    silenced: 'You have been silenced by [Silence Enforcer]! Cannot speak tomorrow, but your skills still work.',
+    voteBlocked: 'You feel an invisible force blocking you, you will be unable to vote tomorrow.',
+    allyFormed: 'Alliance formed! You have allied with player 【{name}】.',
+    shadowTarget: 'Target locked! You have selected player 【{name}】 as your shadow target.',
+    copySuccess: 'Copy successful! You have gained player 【{name}】\'s role 【{role}】 skills. If that player dies, you die too.',
+    fateTransferred: 'Fate transferred! You have swapped fates with player 【{name}】. If that player is eliminated next day, you will be eliminated instead, and vice versa.',
+    fateTransferredTarget: 'Your fate has been swapped with player 【{name}】.',
+    predictionRecorded: 'Prediction recorded: You have predicted a player\'s vote.',
+    victoryStealLocked: 'Victory steal locked! You have locked player 【{name}】\'s special victory condition. If that player wins this round, you win instead.',
+    noVotesToday: 'No votes today.',
+    tieVote: 'Tie! {names} all received {votes} votes. No elimination.',
+    reverseVoteActivated: '[Reverse Voter] activated counterattack! Player 【{name}】 is eliminated instead.',
+    fateTransferActivated: '[Fate Transferer] fate swap activated! Player 【{oldName}】 was voted, but player 【{newName}】 is eliminated instead.',
+    playerEliminated: 'Player 【{name}】 was voted out.',
+    copyPlayerDied: '[Fate Copier] Player 【{name}】 died because the copied target died.',
+    predictionSuccess: 'Prediction successful! Consecutive {streak}/{threshold} times.',
+    predictionFailed: 'Prediction failed, streak reset.',
+    nightProcessed: 'Night phase processed',
+    dayProcessed: 'Day phase processed'
   },
 
   // Success messages
@@ -171,7 +235,10 @@ export const en = {
     actionSubmitted: 'Action submitted',
     voteSubmitted: 'Vote submitted',
     roleUpdated: 'Role updated',
-    gameStarted: 'Game started'
+    gameStarted: 'Game started',
+    voteStored: 'Vote stored',
+    nightProcessed: 'Night phase processed',
+    dayProcessed: 'Day phase processed'
   },
 
   // Tips and instructions

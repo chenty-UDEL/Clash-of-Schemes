@@ -8,7 +8,7 @@ export async function POST(request: NextRequest) {
 
     if (!roomCode || !playerId || !targetId) {
       return NextResponse.json(
-        { success: false, error: '缺少必要参数' },
+        { success: false, error: 'error.missingParams' },
         { status: 400 }
       );
     }
@@ -23,28 +23,28 @@ export async function POST(request: NextRequest) {
 
     if (playerError || !player) {
       return NextResponse.json(
-        { success: false, error: '玩家不存在' },
+        { success: false, error: 'error.playerNotFound' },
         { status: 404 }
       );
     }
 
     if (player.role !== '均衡守护者') {
       return NextResponse.json(
-        { success: false, error: '只有均衡守护者可以打破平局' },
+        { success: false, error: 'error.onlyBalanceGuard' },
         { status: 403 }
       );
     }
 
     if (player.balance_guard_used) {
       return NextResponse.json(
-        { success: false, error: '技能已使用' },
+        { success: false, error: 'error.skillUsed' },
         { status: 400 }
       );
     }
 
     if (!player.is_alive) {
       return NextResponse.json(
-        { success: false, error: '你已出局，无法使用技能' },
+        { success: false, error: 'error.playerDead' },
         { status: 400 }
       );
     }
@@ -58,14 +58,14 @@ export async function POST(request: NextRequest) {
 
     if (roomError || !room) {
       return NextResponse.json(
-        { success: false, error: '房间不存在' },
+        { success: false, error: 'error.roomNotFound' },
         { status: 404 }
       );
     }
 
     if (!isDayPhase(room.round_state)) {
       return NextResponse.json(
-        { success: false, error: '只能在白天阶段打破平局' },
+        { success: false, error: 'error.onlyDayPhase' },
         { status: 400 }
       );
     }
@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
 
     if (updateError) {
       return NextResponse.json(
-        { success: false, error: '更新失败', details: updateError.message },
+        { success: false, error: 'error.updatePlayerFailed', details: updateError.message },
         { status: 500 }
       );
     }
@@ -92,7 +92,7 @@ export async function POST(request: NextRequest) {
 
     await supabase.from('game_logs').insert({
       room_code: roomCode,
-      message: `【均衡守护者】打破平局！玩家【${targetPlayer?.name || targetId}】被处决。`,
+      message: `gameLog.balanceGuardBreakTie:${targetPlayer?.name || targetId}`,
       viewer_ids: null,
       tag: 'PUBLIC'
     });
@@ -110,11 +110,11 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: '平局已打破'
+      message: 'success.tieBroken'
     });
   } catch (error: any) {
     return NextResponse.json(
-      { success: false, error: '服务器错误', details: error.message },
+      { success: false, error: 'error.serverError', details: error.message },
       { status: 500 }
     );
   }

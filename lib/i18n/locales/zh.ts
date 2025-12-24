@@ -161,9 +161,48 @@ export const zh = {
     cancel: '取消'
   },
 
-  // 错误消息（占位，第4次更新时完善）
+  // 错误消息
   error: {
-    // 将在第4次更新时添加
+    missingParams: '缺少必要参数',
+    invalidRole: '无效的角色',
+    playerNotFound: '玩家不存在',
+    roomNotFound: '房间不存在',
+    gameStarted: '游戏已开始，无法加入',
+    roomFull: '房间已满（最多12人）',
+    notNightPhase: '当前不是夜晚阶段',
+    notDayPhase: '当前不是投票阶段',
+    playerDead: '你已出局，无法发动技能',
+    playerDeadVote: '你已出局，无法投票',
+    targetNotFound: '目标玩家不存在',
+    targetDead: '目标玩家已出局',
+    targetDeadAction: '目标玩家已出局，无法对其发动技能',
+    actionFailed: '提交行动失败',
+    voteFailed: '投票失败',
+    joinFailed: '加入房间失败',
+    createRoomFailed: '创建房间失败',
+    createPlayerFailed: '创建玩家失败',
+    updateRoleFailed: '更新角色失败',
+    updateVotesFailed: '更新存储票数失败',
+    dataReadFailed: '数据读取失败',
+    updatePlayerFailed: '更新玩家失败',
+    serverError: '服务器错误',
+    onlyHost: '只有房主可以使用此功能',
+    roomMismatch: '房间不匹配',
+    storedVotesInsufficient: '存储的票数不足',
+    cannotVote: '你被【投票阻断者】限制，今日无法投票！',
+    enterName: '请输入名字',
+    storedVotesInsufficientWithCount: '存储的票数不足（当前：{count}）',
+    onlyVoteCollector: '只有投票回收者可以存储投票',
+    maxStoredVotes: '最多只能存储 {max} 张票',
+    onlyBalanceGuard: '只有均衡守护者可以打破平局',
+    skillUsed: '技能已使用',
+    onlyDayPhase: '只能在白天阶段打破平局',
+    minPlayers: '至少需要 {min} 人才能开始游戏',
+    maxPlayers: '最多支持 {max} 人',
+    assignRoleFailed: '分配角色失败',
+    updateRoomFailed: '更新房间状态失败',
+    enterNameAndRoom: '请输入名字和房间号',
+    enterName: '请输入名字'
   },
 
   // 成功消息
@@ -171,7 +210,26 @@ export const zh = {
     actionSubmitted: '行动已提交',
     voteSubmitted: '投票已提交',
     roleUpdated: '角色已更新',
-    gameStarted: '游戏已开始'
+    gameStarted: '游戏已开始',
+    voteStored: '投票已存储',
+    nightProcessed: '夜晚结算完成',
+    dayProcessed: '白天结算完成',
+    tieBroken: '平局已打破',
+    balanceGuardBreakTie: '【均衡守护者】打破平局！玩家【{name}】被处决。',
+    gameStarted: '🎮 游戏开始！板子：{board}，共 {count} 名玩家。',
+    mindReaderWin: '【{role}】连续 {streak} 次预测成功，获胜！'
+  },
+
+  // 成功消息扩展
+  success: {
+    actionSubmitted: '行动已提交',
+    voteSubmitted: '投票已提交',
+    roleUpdated: '角色已更新',
+    gameStarted: '游戏已开始',
+    voteStored: '投票已存储',
+    nightProcessed: '夜晚结算完成',
+    dayProcessed: '白天结算完成',
+    gameEndedNoWinner: '游戏结束，无人获胜'
   },
 
   // 提示和说明

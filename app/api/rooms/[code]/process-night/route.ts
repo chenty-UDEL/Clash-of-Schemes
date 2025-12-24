@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase/server';
 import { parseRoundNumber, isFirstNight } from '@/lib/game/constants';
 import { NIGHT_ACTION_ORDER, getRoleConfig } from '@/lib/game/roles';
+import { t, tWithParams, getLanguage } from '@/lib/i18n';
+import { getRoleName } from '@/lib/game/roleTranslations';
 import type { ActionType } from '@/types/game';
 
 export async function POST(
@@ -30,13 +32,17 @@ export async function POST(
 
     if (playersError || !players || actionsError || !actions || roomError || !room) {
       return NextResponse.json(
-        { success: false, error: '数据读取失败' },
+        { success: false, error: 'error.dataReadFailed' },
         { status: 500 }
       );
     }
 
     const roundNumber = parseRoundNumber(room.round_state);
     const isFirst = isFirstNight(room.round_state);
+    
+    // 获取语言（从请求头或使用默认）
+    const acceptLanguage = request.headers.get('accept-language') || 'zh-CN';
+    const lang: 'zh' | 'en' = acceptLanguage.startsWith('en') ? 'en' : 'zh';
 
     // 2. 初始化更新对象
     const updates: Record<number, any> = {};
@@ -100,8 +106,9 @@ export async function POST(
             if (action.target_id) {
               const target = players.find(p => p.id === action.target_id);
               if (target) {
+                const roleName = getRoleName(target.role as any);
                 logs.push({
-                  message: `观测结果：玩家【${target.name}】的身份是【${target.role}】。`,
+                  message: tWithParams('gameLog.observationResult', { name: target.name, role: roleName }, lang),
                   viewer_ids: [player.id],
                   tag: 'PRIVATE'
                 });
@@ -113,7 +120,7 @@ export async function POST(
             if (action.target_id && updates[action.target_id]) {
               updates[action.target_id].flags.is_protected = true;
               logs.push({
-                message: `你成功守护了玩家【${getName(action.target_id)}】，他明天将免疫投票。`,
+                message: tWithParams('gameLog.protectionSuccess', { name: getName(action.target_id) }, lang),
                 viewer_ids: [player.id],
                 tag: 'PRIVATE'
               });
@@ -124,7 +131,7 @@ export async function POST(
             if (action.target_id && updates[action.target_id]) {
               updates[action.target_id].flags.is_silenced = true;
               logs.push({
-                message: '你被【沉默制裁者】禁言了！明天白天无法发言，但你的技能依然生效。',
+                message: t('gameLog.silenced', lang),
                 viewer_ids: [action.target_id],
                 tag: 'PRIVATE'
               });
@@ -135,7 +142,7 @@ export async function POST(
             if (action.target_id && updates[action.target_id]) {
               updates[action.target_id].flags.cannot_vote = true;
               logs.push({
-                message: '你感到一股无形的力量阻止了你，明天你将无法投票。',
+                message: t('gameLog.voteBlocked', lang),
                 viewer_ids: [action.target_id],
                 tag: 'PRIVATE'
               });
@@ -146,7 +153,7 @@ export async function POST(
             if (action.target_id && isFirst) {
               updates[player.id].flags.ally_id = action.target_id;
               logs.push({
-                message: `契约已成！你已与玩家【${getName(action.target_id)}】结为同盟。`,
+                message: tWithParams('gameLog.allyFormed', { name: getName(action.target_id) }, lang),
                 viewer_ids: [player.id],
                 tag: 'PRIVATE'
               });
@@ -157,7 +164,7 @@ export async function POST(
             if (action.target_id && isFirst) {
               updates[player.id].flags.shadow_target_id = action.target_id;
               logs.push({
-                message: `目标锁定！你已选定玩家【${getName(action.target_id)}】为你的影子目标。`,
+                message: tWithParams('gameLog.shadowTarget', { name: getName(action.target_id) }, lang),
                 viewer_ids: [player.id],
                 tag: 'PRIVATE'
               });
@@ -170,8 +177,9 @@ export async function POST(
               if (target && target.role) {
                 updates[player.id].copied_role = target.role;
                 updates[player.id].copied_from_id = action.target_id;
+                const copiedRoleName = getRoleName(target.role as any);
                 logs.push({
-                  message: `复制成功！你已获得玩家【${getName(action.target_id)}】的角色【${target.role}】的技能。如果该玩家死亡，你也会死亡。`,
+                  message: tWithParams('gameLog.copySuccess', { name: getName(action.target_id), role: copiedRoleName }, lang),
                   viewer_ids: [player.id],
                   tag: 'PRIVATE'
                 });
@@ -194,12 +202,12 @@ export async function POST(
                   };
                 }
                 logs.push({
-                  message: `命运已转移！你与玩家【${getName(action.target_id)}】的命运已调换。如果该玩家在接下来的白天被淘汰，你将代替他出局，反之亦然。`,
+                  message: tWithParams('gameLog.fateTransferred', { name: getName(action.target_id) }, lang),
                   viewer_ids: [player.id],
                   tag: 'PRIVATE'
                 });
                 logs.push({
-                  message: `你的命运已与玩家【${getName(player.id)}】调换。`,
+                  message: tWithParams('gameLog.fateTransferredTarget', { name: getName(player.id) }, lang),
                   viewer_ids: [action.target_id],
                   tag: 'PRIVATE'
                 });
@@ -213,7 +221,7 @@ export async function POST(
             // 暂时使用 target_id 作为预测的目标，predicted_voter_id 需要从其他地方获取
             if (action.target_id) {
               logs.push({
-                message: `预测已记录：你已预测一名玩家的投票。`,
+                message: t('gameLog.predictionRecorded', lang),
                 viewer_ids: [player.id],
                 tag: 'PRIVATE'
               });
@@ -226,11 +234,11 @@ export async function POST(
               if (target) {
                 updates[player.id].flags.victory_steal_target_id = action.target_id;
                 updates[player.id].flags.victory_steal_role = target.role;
-                logs.push({
-                  message: `夺取已锁定！你已锁定玩家【${getName(action.target_id)}】的特殊胜利条件。如果该玩家本轮获胜，你将代替他获胜。`,
-                  viewer_ids: [player.id],
-                  tag: 'PRIVATE'
-                });
+                  logs.push({
+                    message: tWithParams('gameLog.victoryStealLocked', { name: getName(action.target_id) }, lang),
+                    viewer_ids: [player.id],
+                    tag: 'PRIVATE'
+                  });
               }
             }
             break;
@@ -256,7 +264,7 @@ export async function POST(
 
     if (updateError) {
       return NextResponse.json(
-        { success: false, error: '更新玩家失败', details: updateError.message },
+        { success: false, error: 'error.updatePlayerFailed', details: updateError.message },
         { status: 500 }
       );
     }
@@ -287,11 +295,11 @@ export async function POST(
 
     return NextResponse.json({
       success: true,
-      message: '夜晚结算完成'
+      message: 'success.nightProcessed'
     });
   } catch (error: any) {
     return NextResponse.json(
-      { success: false, error: '服务器错误', details: error.message },
+      { success: false, error: 'error.serverError', details: error.message },
       { status: 500 }
     );
   }

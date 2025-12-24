@@ -7,7 +7,7 @@ export async function POST(request: NextRequest) {
 
     if (!name) {
       return NextResponse.json(
-        { success: false, error: '请输入名字' },
+        { success: false, error: 'error.enterName' },
         { status: 400 }
       );
     }
@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
 
     if (roomError) {
       return NextResponse.json(
-        { success: false, error: '创建房间失败', details: roomError.message },
+        { success: false, error: 'error.createRoomFailed', details: roomError.message },
         { status: 500 }
       );
     }
@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
       // 如果创建玩家失败，删除房间
       await supabase.from('rooms').delete().eq('code', code);
       return NextResponse.json(
-        { success: false, error: '创建玩家失败', details: playerError.message },
+        { success: false, error: 'error.createPlayerFailed', details: playerError.message },
         { status: 500 }
       );
     }
@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: any) {
     return NextResponse.json(
-      { success: false, error: '服务器错误', details: error.message },
+      { success: false, error: 'error.serverError', details: error.message },
       { status: 500 }
     );
   }
