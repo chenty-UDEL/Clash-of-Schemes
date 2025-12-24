@@ -20,6 +20,12 @@ export async function POST(
       .select('*')
       .eq('room_code', code);
 
+    const { data: predictions, error: predictionsError } = await supabase
+      .from('vote_predictions')
+      .select('*')
+      .eq('room_code', code)
+      .is('is_correct', null); // 只获取未验证的预测
+
     const { data: room, error: roomError } = await supabase
       .from('rooms')
       .select('round_state')
@@ -32,6 +38,8 @@ export async function POST(
         { status: 500 }
       );
     }
+    
+    const predictionsData = predictions || [];
 
     const currentRoundNum = parseRoundNumber(room.round_state);
     const totalPlayers = players.length;
@@ -105,12 +113,29 @@ export async function POST(
     // 3. 胜利判定 I (投票结算前触发)
     let winner: any = null;
     let winReason = '';
+    let victoryStealTarget: any = null; // 胜利夺取者目标
+
+    // 3.0 [胜利夺取者] 检查（在判定其他胜利前）
+    const victoryStealer = players.find(p => 
+      p.role === '胜利夺取者' && 
+      p.is_alive && 
+      p.flags?.victory_steal_target_id
+    );
+    if (victoryStealer) {
+      victoryStealTarget = players.find(p => p.id === victoryStealer.flags?.victory_steal_target_id);
+    }
 
     // 3.1 [集票胜者]
     const collector = players.find(p => p.role === '集票胜者' && p.is_alive);
     if (collector && voteCounts[collector.id] >= getCollectorThreshold(aliveCount) && voteCounts[collector.id] > 0) {
-      winner = collector;
-      winReason = '【集票胜者】获得超过 2/3 票数，直接获胜！';
+      // 检查是否被胜利夺取者夺取
+      if (victoryStealer && victoryStealTarget && victoryStealTarget.id === collector.id) {
+        winner = victoryStealer;
+        winReason = `【胜利夺取者】夺取了【集票胜者】的胜利条件，获胜！`;
+      } else {
+        winner = collector;
+        winReason = '【集票胜者】获得超过 2/3 票数，直接获胜！';
+      }
     }
 
     // 4. 处决逻辑
@@ -130,8 +155,14 @@ export async function POST(
         // 4.1 [平票赢家]
         const tieWinner = players.find(p => p.role === '平票赢家' && p.is_alive && candidates.includes(p.id));
         if (tieWinner) {
-          winner = tieWinner;
-          winReason = '【平票赢家】在平局中幸存并获胜！';
+          // 检查是否被胜利夺取者夺取
+          if (victoryStealer && victoryStealTarget && victoryStealTarget.id === tieWinner.id) {
+            winner = victoryStealer;
+            winReason = `【胜利夺取者】夺取了【平票赢家】的胜利条件，获胜！`;
+          } else {
+            winner = tieWinner;
+            winReason = '【平票赢家】在平局中幸存并获胜！';
+          }
         }
 
         // 4.2 [平票终结者]
@@ -143,10 +174,16 @@ export async function POST(
             ...tieBreaker,
             flags: { ...tieBreaker.flags, tie_streak: streak }
           });
-          if (streak >= threshold) {
-            winner = tieBreaker;
-            winReason = `【平票终结者】连续 ${streak} 局平票，获胜！`;
-          }
+                if (streak >= threshold) {
+                  // 检查是否被胜利夺取者夺取
+                  if (victoryStealer && victoryStealTarget && victoryStealTarget.id === tieBreaker.id) {
+                    winner = victoryStealer;
+                    winReason = `【胜利夺取者】夺取了【平票终结者】的胜利条件，获胜！`;
+                  } else {
+                    winner = tieBreaker;
+                    winReason = `【平票终结者】连续 ${streak} 局平票，获胜！`;
+                  }
+                }
         }
 
         // 4.3 [均衡守护者] 打破平局
@@ -205,8 +242,14 @@ export async function POST(
             p.flags?.shadow_target_id === eliminatedPlayerId
           );
           if (shadowWinner) {
-            winner = shadowWinner;
-            winReason = '【影子胜者】的目标被投出，获胜！';
+            // 检查是否被胜利夺取者夺取
+            if (victoryStealer && victoryStealTarget && victoryStealTarget.id === shadowWinner.id) {
+              winner = victoryStealer;
+              winReason = `【胜利夺取者】夺取了【影子胜者】的胜利条件，获胜！`;
+            } else {
+              winner = shadowWinner;
+              winReason = '【影子胜者】的目标被投出，获胜！';
+            }
           }
 
           // 4.6 [三人王者] 检查
@@ -214,8 +257,14 @@ export async function POST(
           if (remainingAlive.length === 3) {
             const threeKing = remainingAlive.find(p => p.role === '三人王者');
             if (threeKing) {
-              winner = threeKing;
-              winReason = '【三人王者】在仅剩3人时获胜！';
+              // 检查是否被胜利夺取者夺取
+              if (victoryStealer && victoryStealTarget && victoryStealTarget.id === threeKing.id) {
+                winner = victoryStealer;
+                winReason = `【胜利夺取者】夺取了【三人王者】的胜利条件，获胜！`;
+              } else {
+                winner = threeKing;
+                winReason = '【三人王者】在仅剩3人时获胜！';
+              }
             }
           }
         }
@@ -233,10 +282,16 @@ export async function POST(
           ...noVoteWinner,
           flags: { ...noVoteWinner.flags, no_vote_streak: streak }
         });
-        if (streak >= threshold) {
-          winner = noVoteWinner;
-          winReason = `【免票胜者】连续 ${streak} 局未被投票，获胜！`;
-        } else {
+            if (streak >= threshold) {
+              // 检查是否被胜利夺取者夺取
+              if (victoryStealer && victoryStealTarget && victoryStealTarget.id === noVoteWinner.id) {
+                winner = victoryStealer;
+                winReason = `【胜利夺取者】夺取了【免票胜者】的胜利条件，获胜！`;
+              } else {
+                winner = noVoteWinner;
+                winReason = `【免票胜者】连续 ${streak} 局未被投票，获胜！`;
+              }
+            } else {
           // 重置
           playerUpdates.push({
             ...noVoteWinner,
@@ -262,8 +317,14 @@ export async function POST(
             }
           });
           if (streak >= threshold) {
-            winner = balanceWinner;
-            winReason = `【票数平衡者】连续 ${streak} 局得票相同，获胜！`;
+            // 检查是否被胜利夺取者夺取
+            if (victoryStealer && victoryStealTarget && victoryStealTarget.id === balanceWinner.id) {
+              winner = victoryStealer;
+              winReason = `【胜利夺取者】夺取了【票数平衡者】的胜利条件，获胜！`;
+            } else {
+              winner = balanceWinner;
+              winReason = `【票数平衡者】连续 ${streak} 局得票相同，获胜！`;
+            }
           }
         } else {
           playerUpdates.push({
@@ -280,15 +341,21 @@ export async function POST(
       // 5.4 [心灵胜者] 预测验证
       const mindReader = players.find(p => p.role === '心灵胜者' && p.is_alive);
       if (mindReader && !winner) {
-        // 获取预测记录（需要从 vote_predictions 表或 night_actions 中获取）
-        // 这里简化处理，假设预测信息存储在 player 的 flags 中
-        const prediction = mindReader.flags?.last_prediction;
+        // 获取该玩家的预测记录
+        const prediction = predictionsData.find(p => p.predictor_id === mindReader.id);
         if (prediction) {
-          const predictedVote = votes.find(v => v.voter_id === prediction.voterId);
+          // 查找被预测玩家的实际投票
+          const predictedVote = votes.find(v => v.voter_id === prediction.predicted_player_id);
           const isCorrect = predictedVote && (
-            (prediction.targetId === null && predictedVote.target_id === null) ||
-            (prediction.targetId === predictedVote.target_id)
+            (prediction.predicted_target_id === null && predictedVote.target_id === null) ||
+            (prediction.predicted_target_id === predictedVote.target_id)
           );
+          
+          // 更新预测记录
+          await supabase
+            .from('vote_predictions')
+            .update({ is_correct: isCorrect })
+            .eq('id', prediction.id);
           
           if (isCorrect) {
             const streak = (mindReader.flags?.mind_reader_streak || 0) + 1;
@@ -301,8 +368,20 @@ export async function POST(
               }
             });
             if (streak >= threshold) {
-              winner = mindReader;
-              winReason = `【心灵胜者】连续 ${streak} 次预测成功，获胜！`;
+              // 检查是否被胜利夺取者夺取
+              if (victoryStealer && victoryStealTarget && victoryStealTarget.id === mindReader.id) {
+                winner = victoryStealer;
+                winReason = `【胜利夺取者】夺取了【心灵胜者】的胜利条件，获胜！`;
+              } else {
+                winner = mindReader;
+                winReason = `【心灵胜者】连续 ${streak} 次预测成功，获胜！`;
+              }
+            } else {
+              logs.push({
+                message: `预测成功！连续 ${streak}/${threshold} 次。`,
+                viewer_ids: [mindReader.id],
+                tag: 'PRIVATE'
+              });
             }
           } else {
             // 预测失败，重置
@@ -312,6 +391,11 @@ export async function POST(
                 ...mindReader.flags,
                 mind_reader_streak: 0
               }
+            });
+            logs.push({
+              message: '预测失败，连胜已重置。',
+              viewer_ids: [mindReader.id],
+              tag: 'PRIVATE'
             });
           }
         }
@@ -336,8 +420,14 @@ export async function POST(
               flags: { ...multiKillWinner.flags, vote_history: newHistory }
             });
             if (streak >= threshold) {
-              winner = multiKillWinner;
-              winReason = `【多选胜者】连续投死 ${streak} 个不同玩家，获胜！`;
+              // 检查是否被胜利夺取者夺取
+              if (victoryStealer && victoryStealTarget && victoryStealTarget.id === multiKillWinner.id) {
+                winner = victoryStealer;
+                winReason = `【胜利夺取者】夺取了【多选胜者】的胜利条件，获胜！`;
+              } else {
+                winner = multiKillWinner;
+                winReason = `【多选胜者】连续投死 ${streak} 个不同玩家，获胜！`;
+              }
             }
           }
         }
@@ -360,7 +450,55 @@ export async function POST(
       await supabase.from('game_logs').insert(logsPayload);
     }
 
-    // 8. 检查游戏结束
+    // 8. 死局检测
+    // 计算当前状态哈希（存活玩家ID列表 + 投票结果）
+    const aliveIds = players.filter(p => p.is_alive).map(p => p.id).sort().join(',');
+    const voteHash = Object.entries(voteCounts)
+      .filter(([_, count]) => count > 0)
+      .sort(([a], [b]) => parseInt(a) - parseInt(b))
+      .map(([id, count]) => `${id}:${count}`)
+      .join(',');
+    const stateHash = `${aliveIds}|${voteHash}`;
+
+    // 获取最近的状态记录
+    const { data: recentStates } = await supabase
+      .from('game_states')
+      .select('state_hash')
+      .eq('room_code', code)
+      .order('created_at', { ascending: false })
+      .limit(3);
+
+    // 检查是否连续3次相同
+    const sameCount = recentStates?.filter(s => s.state_hash === stateHash).length || 0;
+    if (sameCount >= 2) { // 加上当前这次就是3次
+      // 死局判定
+      await supabase.from('game_logs').insert({
+        room_code: code,
+        message: '⚠️ 死局！连续3次出现相同情况，游戏结束。',
+        viewer_ids: null,
+        tag: 'PUBLIC'
+      });
+
+      await supabase
+        .from('rooms')
+        .update({ round_state: 'GAME OVER' })
+        .eq('code', code);
+
+      return NextResponse.json({
+        success: true,
+        message: '游戏结束（死局）',
+        deadlock: true
+      });
+    }
+
+    // 保存当前状态
+    await supabase.from('game_states').insert({
+      room_code: code,
+      round_number: currentRoundNum,
+      state_hash: stateHash
+    });
+
+    // 9. 检查游戏结束
     const remainingAlive = players.filter(p => p.is_alive && (!eliminatedPlayerId || p.id !== eliminatedPlayerId));
     const finalAliveCount = remainingAlive.length;
 

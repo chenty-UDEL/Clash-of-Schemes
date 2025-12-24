@@ -7,6 +7,7 @@ interface TieBreakerProps {
   roomCode: string;
   myPlayer: Player;
   candidates: number[];
+  players: Player[];
   onBreak: () => void;
 }
 
@@ -14,6 +15,7 @@ export default function TieBreaker({
   roomCode,
   myPlayer,
   candidates,
+  players,
   onBreak
 }: TieBreakerProps) {
   const [selectedCandidate, setSelectedCandidate] = useState<string>('');
@@ -68,10 +70,10 @@ export default function TieBreaker({
       >
         <option value="">-- 选择要处决的玩家 --</option>
         {candidates.map((id) => {
-          const player = candidates.find(p => p === id);
+          const candidatePlayer = players.find(p => p.id === id);
           return (
             <option key={id} value={id}>
-              玩家 {id}
+              {candidatePlayer?.name || `玩家 ${id}`}
             </option>
           );
         })}

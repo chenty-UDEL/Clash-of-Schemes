@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import type { Player, GameLog } from '@/types/game';
+import TieBreaker from './TieBreaker';
 
 interface DayPhaseProps {
   roomCode: string;
@@ -24,6 +25,8 @@ export default function DayPhase({
   const [error, setError] = useState('');
   const [storedVotes, setStoredVotes] = useState(0);
   const [useStoredVotes, setUseStoredVotes] = useState(false);
+  const [isTie, setIsTie] = useState(false);
+  const [tieCandidates, setTieCandidates] = useState<number[]>([]);
 
   const alivePlayers = players.filter(p => p.is_alive);
   const myLogs = logs.filter(l => 
@@ -31,7 +34,30 @@ export default function DayPhase({
   );
   const cannotVote = myPlayer.flags?.cannot_vote;
   const isVoteCollector = myPlayer.role === '投票回收者';
+  const isBalanceGuard = myPlayer.role === '均衡守护者' && !myPlayer.balance_guard_used;
   const maxStoredVotes = 3;
+
+  // 检查是否平票
+  useEffect(() => {
+    const checkTie = async () => {
+      try {
+        const res = await fetch(`/api/rooms/${roomCode}/tie-info`);
+        const result = await res.json();
+        if (result.success) {
+          setIsTie(result.isTie);
+          setTieCandidates(result.candidates || []);
+        }
+      } catch (err) {
+        console.error('检查平票失败:', err);
+      }
+    };
+
+    // 定期检查（每2秒）
+    const interval = setInterval(checkTie, 2000);
+    checkTie();
+
+    return () => clearInterval(interval);
+  }, [roomCode, hasVoted]);
 
   // 获取存储的票数
   useEffect(() => {
@@ -139,6 +165,20 @@ export default function DayPhase({
           ))
         )}
       </div>
+
+      {/* 均衡守护者打破平局 */}
+      {isTie && isBalanceGuard && tieCandidates.length > 0 && (
+        <TieBreaker
+          roomCode={roomCode}
+          myPlayer={myPlayer}
+          candidates={tieCandidates}
+          players={players}
+          onBreak={() => {
+            onVoteSubmit();
+            setIsTie(false);
+          }}
+        />
+      )}
 
       {/* 投票区域 */}
       <div className="bg-gray-800 p-5 rounded-lg border border-gray-600 shadow-lg">

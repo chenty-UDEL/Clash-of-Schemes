@@ -74,6 +74,20 @@ export async function POST(request: NextRequest) {
         onConflict: 'room_code, actor_id, round_number'
       });
 
+    // 6. 如果是心灵胜者，保存预测记录
+    if (actionType === 'predict_vote' && predictedVoterId) {
+      await supabase
+        .from('vote_predictions')
+        .insert({
+          room_code: roomCode,
+          predictor_id: actorId,
+          predicted_player_id: predictedVoterId,
+          predicted_target_id: targetId || null,
+          round_number: roundNumber,
+          is_correct: null // 白天结算时验证
+        });
+    }
+
     if (actionError) {
       return NextResponse.json(
         { success: false, error: '提交行动失败', details: actionError.message },

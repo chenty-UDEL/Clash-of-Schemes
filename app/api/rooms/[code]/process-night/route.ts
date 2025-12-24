@@ -192,12 +192,16 @@ export async function POST(
 
           case 'victory_steal': // 胜利夺取者
             if (action.target_id) {
-              updates[player.id].flags.victory_steal_target_id = action.target_id;
-              logs.push({
-                message: `夺取已锁定！你已锁定玩家【${getName(action.target_id)}】的特殊胜利条件。`,
-                viewer_ids: [player.id],
-                tag: 'PRIVATE'
-              });
+              const target = players.find(p => p.id === action.target_id);
+              if (target) {
+                updates[player.id].flags.victory_steal_target_id = action.target_id;
+                updates[player.id].flags.victory_steal_role = target.role;
+                logs.push({
+                  message: `夺取已锁定！你已锁定玩家【${getName(action.target_id)}】的特殊胜利条件。如果该玩家本轮获胜，你将代替他获胜。`,
+                  viewer_ids: [player.id],
+                  tag: 'PRIVATE'
+                });
+              }
             }
             break;
         }
