@@ -33,12 +33,14 @@ export default function Home() {
   const [selectedBoardForManual, setSelectedBoardForManual] = useState<string | null>(null);
   const [showRoleSelector, setShowRoleSelector] = useState(false);
 
-  // 国际化
-  const { t } = useTranslation();
-
   // 获取我的玩家信息
   const getMyPlayer = () => players.find(p => p.name === name);
-  const isHost = getMyPlayer()?.is_host;
+  const myPlayer = getMyPlayer();
+  const isHost = myPlayer?.is_host;
+  const myPlayerId = myPlayer?.id;
+
+  // 国际化（使用玩家ID）
+  const { t } = useTranslation({ playerId: myPlayerId });
 
   // 获取数据
   const fetchPlayers = async (code: string) => {
@@ -168,7 +170,7 @@ export default function Home() {
       const result = await res.json();
 
       if (!res.ok) {
-        const errorMsg = result.error ? translateError(result.error, result.errorParams) : t('error.createRoomFailed');
+        const errorMsg = result.error ? translateError(result.error, result.errorParams, myPlayerId) : t('error.createRoomFailed');
         throw new Error(errorMsg);
       }
 
@@ -203,7 +205,7 @@ export default function Home() {
       const result = await res.json();
 
       if (!res.ok) {
-        const errorMsg = result.error ? translateError(result.error, result.errorParams) : t('error.joinFailed');
+        const errorMsg = result.error ? translateError(result.error, result.errorParams, myPlayerId) : t('error.joinFailed');
         throw new Error(errorMsg);
       }
 
@@ -212,7 +214,7 @@ export default function Home() {
       fetchRoomState(roomCode);
       fetchLogs(roomCode);
     } catch (err: any) {
-      const errorMsg = err.message ? translateError(err.message) : t('error.joinFailed');
+      const errorMsg = err.message ? translateError(err.message, undefined, myPlayerId) : t('error.joinFailed');
       setError(errorMsg);
     } finally {
       setLoading(false);

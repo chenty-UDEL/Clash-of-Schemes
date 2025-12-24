@@ -23,7 +23,7 @@ export default function RoleSelector({
   roomCode,
   onRoleChange
 }: RoleSelectorProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation({ playerId });
   const [selectedRole, setSelectedRole] = useState<RoleName | ''>(currentRole as RoleName || '');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');

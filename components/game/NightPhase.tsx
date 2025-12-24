@@ -132,7 +132,7 @@ export default function NightPhase({
       const result = await res.json();
 
       if (!res.ok) {
-        const errorMsg = result.error ? translateError(result.error, result.errorParams) : (result.details || t('error.actionFailed'));
+        const errorMsg = result.error ? translateError(result.error, result.errorParams, myPlayer?.id) : (result.details || t('error.actionFailed'));
         throw new Error(errorMsg);
       }
 

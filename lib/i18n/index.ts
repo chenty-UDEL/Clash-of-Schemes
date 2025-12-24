@@ -53,20 +53,39 @@ export function tWithParams(
   return text;
 }
 
-// 获取语言设置（从 localStorage）
-export function getLanguage(): Language {
+// 获取语言设置（从 sessionStorage，按玩家ID独立存储）
+export function getLanguage(playerId?: number | null): Language {
   if (typeof window === 'undefined') {
     return 'zh'; // 服务端默认中文
   }
   
-  const saved = localStorage.getItem('language') as Language;
-  return saved && (saved === 'zh' || saved === 'en') ? saved : 'zh';
+  // 如果有playerId，使用玩家特定的语言设置
+  if (playerId) {
+    const saved = sessionStorage.getItem(`language_${playerId}`) as Language;
+    if (saved && (saved === 'zh' || saved === 'en')) {
+      return saved;
+    }
+  }
+  
+  // 如果没有playerId或找不到设置，尝试全局设置（向后兼容）
+  const globalSaved = sessionStorage.getItem('language') as Language;
+  if (globalSaved && (globalSaved === 'zh' || globalSaved === 'en')) {
+    return globalSaved;
+  }
+  
+  return 'zh'; // 默认中文
 }
 
-// 设置语言
-export function setLanguage(lang: Language): void {
+// 设置语言（按玩家ID独立存储）
+export function setLanguage(lang: Language, playerId?: number | null): void {
   if (typeof window !== 'undefined') {
-    localStorage.setItem('language', lang);
+    if (playerId) {
+      // 存储到玩家特定的key
+      sessionStorage.setItem(`language_${playerId}`, lang);
+    } else {
+      // 向后兼容：如果没有playerId，存储到全局key
+      sessionStorage.setItem('language', lang);
+    }
   }
 }
 

@@ -127,7 +127,7 @@ export default function DayPhase({
       const result = await res.json();
 
       if (!res.ok) {
-        const errorMsg = result.error ? translateError(result.error, result.errorParams) : t('error.voteFailed');
+        const errorMsg = result.error ? translateError(result.error, result.errorParams, myPlayer?.id) : t('error.voteFailed');
         throw new Error(errorMsg);
       }
 

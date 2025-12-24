@@ -12,7 +12,7 @@ interface RoleInfoProps {
 export default function RoleInfo({ player }: RoleInfoProps) {
   if (!player.role) return null;
 
-  const { t } = useTranslation();
+  const { t } = useTranslation({ playerId: player.id });
   const config = getRoleConfig(player.role);
 
   return (
