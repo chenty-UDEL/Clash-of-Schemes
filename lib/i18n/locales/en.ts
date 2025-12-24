@@ -227,7 +227,8 @@ export const en = {
     predictionSuccess: 'Prediction successful! Consecutive {streak}/{threshold} times.',
     predictionFailed: 'Prediction failed, streak reset.',
     nightProcessed: 'Night phase processed',
-    dayProcessed: 'Day phase processed'
+    dayProcessed: 'Day phase processed',
+    gameRestarted: '🎮 Play again! Board: {board}, {count} players.'
   },
 
   // Success messages
