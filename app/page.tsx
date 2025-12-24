@@ -27,21 +27,39 @@ export default function Home() {
 
   // 获取数据
   const fetchPlayers = async (code: string) => {
-    const { data } = await supabase
-      .from('players')
-      .select('*')
-      .eq('room_code', code)
-      .order('id');
-    if (data) setPlayers(data as Player[]);
+    try {
+      const { data, error } = await supabase
+        .from('players')
+        .select('*')
+        .eq('room_code', code)
+        .order('id');
+      if (error) {
+        console.error('获取玩家失败:', error);
+        return;
+      }
+      if (data) {
+        setPlayers(data as Player[]);
+      }
+    } catch (err) {
+      console.error('获取玩家异常:', err);
+    }
   };
 
   const fetchRoomState = async (code: string) => {
-    const { data } = await supabase
-      .from('rooms')
-      .select('code, round_state, board_type')
-      .eq('code', code)
-      .single();
-    if (data) setRoomState(data as RoomState);
+    try {
+      const { data, error } = await supabase
+        .from('rooms')
+        .select('code, round_state, board_type')
+        .eq('code', code)
+        .single();
+      if (error) {
+        console.error('获取房间状态失败:', error);
+        return;
+      }
+      if (data) setRoomState(data as RoomState);
+    } catch (err) {
+      console.error('获取房间状态异常:', err);
+    }
   };
 
   const fetchLogs = async (code: string) => {
@@ -58,8 +76,13 @@ export default function Home() {
   useEffect(() => {
     if (!isInRoom || !roomCode) return;
 
+    // 立即获取一次数据
+    fetchPlayers(roomCode);
+    fetchRoomState(roomCode);
+    fetchLogs(roomCode);
+
     const channel1 = supabase
-      .channel('room')
+      .channel(`room-${roomCode}`)
       .on('postgres_changes', {
         event: 'UPDATE',
         schema: 'public',
@@ -73,7 +96,7 @@ export default function Home() {
       .subscribe();
 
     const channel2 = supabase
-      .channel('players')
+      .channel(`players-${roomCode}`)
       .on('postgres_changes', {
         event: '*',
         schema: 'public',
@@ -85,7 +108,7 @@ export default function Home() {
       .subscribe();
 
     const channel3 = supabase
-      .channel('logs')
+      .channel(`logs-${roomCode}`)
       .on('postgres_changes', {
         event: 'INSERT',
         schema: 'public',
@@ -96,10 +119,17 @@ export default function Home() {
       })
       .subscribe();
 
+    // 定期刷新（作为备用）
+    const interval = setInterval(() => {
+      fetchPlayers(roomCode);
+      fetchRoomState(roomCode);
+    }, 2000);
+
     return () => {
       supabase.removeChannel(channel1);
       supabase.removeChannel(channel2);
       supabase.removeChannel(channel3);
+      clearInterval(interval);
     };
   }, [isInRoom, roomCode]);
 
@@ -391,24 +421,33 @@ export default function Home() {
         <div className="mb-8">
           <p className="text-left text-gray-400 text-sm mb-3">
             已加入玩家 ({players.length}/12)
+            {players.length === 0 && (
+              <span className="text-yellow-500 ml-2 animate-pulse">加载中...</span>
+            )}
           </p>
-          <div className="grid grid-cols-2 gap-3">
-            {players.map((p) => (
-              <div
-                key={p.id}
-                className="bg-gray-700 p-3 rounded flex items-center gap-2 border border-gray-600"
-              >
-                <span
-                  className={`w-2 h-2 rounded-full ${
-                    p.is_alive ? 'bg-green-500' : 'bg-red-500'
-                  }`}
-                ></span>
-                <span className="font-medium truncate">
-                  {p.name} {p.is_host && '👑'}
-                </span>
-              </div>
-            ))}
-          </div>
+          {players.length === 0 ? (
+            <div className="bg-gray-700 p-4 rounded text-center text-gray-400 border border-gray-600">
+              等待玩家加入...
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-3">
+              {players.map((p) => (
+                <div
+                  key={p.id}
+                  className="bg-gray-700 p-3 rounded flex items-center gap-2 border border-gray-600"
+                >
+                  <span
+                    className={`w-2 h-2 rounded-full ${
+                      p.is_alive ? 'bg-green-500' : 'bg-red-500'
+                    }`}
+                  ></span>
+                  <span className="font-medium truncate">
+                    {p.name} {p.is_host && '👑'}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {myPlayer && (
