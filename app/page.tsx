@@ -328,18 +328,18 @@ export default function Home() {
             }`}>
               {roomState.round_state}
             </h2>
-            <p className="text-gray-400 text-sm mt-2">存活人数: {alivePlayers.length}</p>
+            <p className="text-gray-400 text-sm mt-2">{t('player.alive')}: {alivePlayers.length}</p>
           </div>
 
           {/* 玩家信息和角色详情 */}
           <div className="space-y-4">
             <div className="bg-gray-900 p-4 rounded-lg border border-gray-600 flex justify-between items-center shadow-md">
               <div>
-                <p className="text-xs text-gray-500 uppercase font-bold tracking-wider">当前玩家</p>
+                <p className="text-xs text-gray-500 uppercase font-bold tracking-wider">{t('player.players')}</p>
                 <div className="flex items-baseline gap-2">
                   <span className="text-xl font-bold text-white">{myPlayer?.name}</span>
                   <span className="text-sm text-yellow-500">
-                    ({myPlayer?.role || '身份加载中...'})
+                    ({myPlayer?.role || t('common.loading')})
                   </span>
                 </div>
               </div>
@@ -434,11 +434,11 @@ export default function Home() {
           {/* 房主控制面板 */}
           {isHost && (
             <div className="mt-8 border-t border-gray-700 pt-6">
-              <p className="text-xs text-gray-500 mb-2 text-center">房主控制面板 (上帝视角)</p>
+              <p className="text-xs text-gray-500 mb-2 text-center">{t('tips.hostControl')}</p>
               {isNight ? (
                 <button
                   onClick={async () => {
-                    if (!confirm('确定要结束夜晚并进行结算吗？')) return;
+                    if (!confirm(t('tips.confirmProcessNight'))) return;
                     try {
                       const res = await fetch(`/api/rooms/${roomCode}/process-night`, {
                         method: 'POST',
@@ -449,17 +449,17 @@ export default function Home() {
                       fetchPlayers(roomCode);
                       fetchLogs(roomCode);
                     } catch (err) {
-                      alert('结算请求失败');
+                      alert(t('common.error'));
                     }
                   }}
                   className="w-full bg-red-900 hover:bg-red-800 text-white p-4 rounded-lg font-bold border border-red-600 shadow-lg"
                 >
-                  🌕 天亮了 (结算)
+                  🌕 {t('actions.processNight')}
                 </button>
               ) : (
                 <button
                   onClick={async () => {
-                    if (!confirm('确定要结束投票并公布结果吗？')) return;
+                    if (!confirm(t('tips.confirmProcessDay'))) return;
                     try {
                       const res = await fetch(`/api/rooms/${roomCode}/process-day`, {
                         method: 'POST',
@@ -480,7 +480,7 @@ export default function Home() {
                   }}
                   className="w-full bg-gradient-to-r from-red-900 to-red-800 hover:from-red-800 hover:to-red-700 text-red-100 p-4 rounded-lg font-bold border border-red-600 shadow-xl"
                 >
-                  ⚖️ 公布结果 (处决)
+                  ⚖️ {t('actions.processDay')}
                 </button>
               )}
             </div>
@@ -498,9 +498,9 @@ export default function Home() {
               <button
                 onClick={() => setShowRoleSelector(true)}
                 className="fixed bottom-6 left-6 bg-purple-700 hover:bg-purple-600 text-white px-4 py-2 rounded-lg shadow-lg border border-purple-500 z-40 flex items-center gap-2 text-sm font-bold"
-                title="测试模式：选择角色"
+                title={t('gameUI.testingMode')}
               >
-                🎭 选择角色
+                🎭 {t('gameUI.selectRole')}
               </button>
               <RoleSelector
                 isOpen={showRoleSelector}
@@ -522,25 +522,30 @@ export default function Home() {
   // 显示大厅
   return (
     <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center p-4">
+      {/* 语言切换器 - 右上角 */}
+      <div className="fixed top-4 right-4 z-50">
+        <LanguageSwitcher />
+      </div>
+      
       <GameRules />
       <div className="w-full max-w-md text-center bg-gray-800 p-8 rounded-xl shadow-2xl border border-gray-700">
-        <h1 className="text-3xl font-bold mb-6 text-yellow-500">等待大厅</h1>
+        <h1 className="text-3xl font-bold mb-6 text-yellow-500">{t('lobby.waitingLobby')}</h1>
 
         <div className="bg-gray-900 p-6 rounded-lg mb-6 border border-gray-600">
-          <p className="text-gray-400 text-xs uppercase tracking-widest mb-2">Room Code</p>
+          <p className="text-gray-400 text-xs uppercase tracking-widest mb-2">{t('lobby.roomCode')}</p>
           <p className="text-6xl font-mono font-bold text-blue-400 tracking-wider">{roomCode}</p>
         </div>
 
         <div className="mb-8">
           <p className="text-left text-gray-400 text-sm mb-3">
-            已加入玩家 ({players.length}/12)
+            {t('lobby.joinedPlayers')} {t('lobby.playersCount', { count: players.length })}
             {players.length === 0 && (
-              <span className="text-yellow-500 ml-2 animate-pulse">加载中...</span>
+              <span className="text-yellow-500 ml-2 animate-pulse">{t('lobby.loading')}</span>
             )}
           </p>
           {players.length === 0 ? (
             <div className="bg-gray-700 p-4 rounded text-center text-gray-400 border border-gray-600">
-              等待玩家加入...
+              {t('lobby.waitingForPlayers')}
             </div>
           ) : (
             <div className="grid grid-cols-2 gap-3">
@@ -565,10 +570,10 @@ export default function Home() {
 
         {myPlayer && (
           <div className="bg-gray-900 p-4 rounded-lg mb-6 border border-gray-600">
-            <p className="text-gray-400 text-sm mb-2">你的信息</p>
+            <p className="text-gray-400 text-sm mb-2">{t('lobby.yourInfo')}</p>
             <p className="text-lg font-bold">{myPlayer.name}</p>
             {myPlayer.is_host && (
-              <p className="text-yellow-400 text-sm mt-1">👑 房主</p>
+              <p className="text-yellow-400 text-sm mt-1">{t('lobby.host')}</p>
             )}
           </div>
         )}
@@ -577,8 +582,8 @@ export default function Home() {
           <div className="space-y-4">
             <p className="text-gray-500 text-sm">
               {players.length < 4
-                ? `等待更多玩家加入 (${players.length}/4)`
-                : `可以开始游戏 (${players.length}/12)`}
+                ? t('lobby.waitingMore', { count: players.length })
+                : t('lobby.canStart', { count: players.length })}
             </p>
             <button
               onClick={() => setShowBoardSelector(true)}
@@ -589,11 +594,11 @@ export default function Home() {
                   : 'bg-red-600 hover:bg-red-500'
               }`}
             >
-              {players.length < 4 ? '等待玩家' : '🔥 开始游戏'}
+              {players.length < 4 ? t('lobby.waitingMore', { count: players.length }) : `🔥 ${t('actions.startGame')}`}
             </button>
           </div>
         ) : (
-          <p className="text-gray-500 animate-pulse">等待房主开始游戏...</p>
+          <p className="text-gray-500 animate-pulse">{t('tips.waitForActions')}</p>
         )}
 
         {error && (

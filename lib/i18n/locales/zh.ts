@@ -107,7 +107,58 @@ export const zh = {
     noAction: '今晚无主动技能，请等待天亮。',
     firstNightOnly: '技能只能在第一夜发动。',
     selectTarget: '请先选择目标',
-    selectRole: '请选择一个角色'
+    selectRole: '请选择一个角色',
+    nightPhaseDesc: '有技能的玩家可以发动技能，房主可以结算夜晚',
+    dayPhaseDesc: '所有玩家进行投票，房主可以结算白天',
+    noCopiedRole: '你尚未复制角色，无法使用技能。',
+    skillSubmitted: '技能已提交',
+    voteSubmitted: '投票已提交',
+    confirmProcessNight: '确定要结束夜晚并进行结算吗？',
+    confirmProcessDay: '确定要结束投票并公布结果吗？'
+  },
+
+  // 大厅相关
+  lobby: {
+    waitingLobby: '等待大厅',
+    roomCode: 'Room Code',
+    joinedPlayers: '已加入玩家',
+    playersCount: '({count}/12)',
+    loading: '加载中...',
+    waitingForPlayers: '等待玩家加入...',
+    yourInfo: '你的信息',
+    host: '👑 房主',
+    waitingMore: '等待更多玩家加入 ({count}/4)',
+    canStart: '可以开始游戏 ({count}/12)',
+    viewRules: '查看规则',
+    selectBoard: '选择板子'
+  },
+
+  // 游戏界面
+  gameUI: {
+    roundState: '回合状态',
+    nightPhase: '🌙 夜晚阶段',
+    dayPhase: '☀️ 白天阶段',
+    lobby: '🏠 大厅',
+    skillActivation: '🔮 技能发动',
+    vote: '🗳️ 投票',
+    selectTarget: '选择目标',
+    submit: '提交',
+    submitted: '已提交',
+    processing: '处理中...',
+    selectPlayer: '选择玩家',
+    noTarget: '无目标',
+    abandon: '弃票',
+    storeVote: '存储投票',
+    storedVotes: '存储的票数',
+    useStoredVotes: '同时使用所有存储的票',
+    maxStored: '最多只能存储 {max} 张票',
+    useStored: '使用 {count} 张存储的票',
+    confirmVote: '确认投票 (使用 {count} 张票)',
+    tieBreaker: '打破平局',
+    selectCandidate: '选择要处决的玩家',
+    breakTie: '打破平局',
+    testingMode: '测试模式：选择角色',
+    selectRole: '选择角色'
   }
 };
 

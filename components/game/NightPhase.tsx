@@ -4,6 +4,7 @@ import { useState } from 'react';
 import type { Player, RoomState } from '@/types/game';
 import { getRoleConfig } from '@/lib/game/roles';
 import { parseRoundNumber, isFirstNight } from '@/lib/game/constants';
+import { useTranslation } from '@/hooks/useTranslation';
 
 interface NightPhaseProps {
   roomCode: string;
@@ -28,6 +29,7 @@ export default function NightPhase({
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
+  const { t } = useTranslation();
   const roundNumber = parseRoundNumber(roomState.round_state);
   const isFirst = isFirstNight(roomState.round_state);
   const roleConfig = myPlayer.role ? getRoleConfig(myPlayer.role) : null;
@@ -151,10 +153,10 @@ export default function NightPhase({
       <div className="bg-gray-900 p-6 rounded-lg border border-gray-700 text-center">
         <p className="text-gray-400">
           {isFateCopier && !isFirst && !myPlayer.copied_role ? (
-            '你尚未复制角色，无法使用技能。'
+            t('tips.noCopiedRole')
           ) : myPlayer.role === '同盟者' || myPlayer.role === '影子胜者' || (isFateCopier && isFirst)
-            ? '技能只能在第一夜发动。'
-            : '今晚无主动技能，请等待天亮。'}
+            ? t('tips.firstNightOnly')
+            : t('tips.noAction')}
         </p>
       </div>
     );
@@ -163,12 +165,12 @@ export default function NightPhase({
   return (
     <div className="bg-gray-900 p-6 rounded-lg border border-gray-700 space-y-4">
       <h3 className="text-lg font-bold text-purple-400 mb-4 flex items-center gap-2">
-        🔮 <span>技能发动</span>
+        🔮 <span>{t('gameUI.skillActivation')}</span>
       </h3>
 
       {hasActed ? (
         <div className="bg-green-900/20 border border-green-500/50 text-green-400 font-bold py-4 rounded text-center">
-          ✅ 技能已提交
+          ✅ {t('tips.skillSubmitted')}
         </div>
       ) : (
         <div className="space-y-4">

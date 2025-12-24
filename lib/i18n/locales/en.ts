@@ -107,7 +107,58 @@ export const en = {
     noAction: 'No active skill tonight, please wait for dawn.',
     firstNightOnly: 'Skill can only be used on the first night.',
     selectTarget: 'Please select a target first',
-    selectRole: 'Please select a role'
+    selectRole: 'Please select a role',
+    nightPhaseDesc: 'Players with skills can activate them, host can process night',
+    dayPhaseDesc: 'All players vote, host can process day',
+    noCopiedRole: 'You have not copied a role yet, cannot use skills.',
+    skillSubmitted: 'Skill submitted',
+    voteSubmitted: 'Vote submitted',
+    confirmProcessNight: 'Are you sure you want to end the night and process?',
+    confirmProcessDay: 'Are you sure you want to end voting and announce results?'
+  },
+
+  // Lobby related
+  lobby: {
+    waitingLobby: 'Waiting Lobby',
+    roomCode: 'Room Code',
+    joinedPlayers: 'Joined Players',
+    playersCount: '({count}/12)',
+    loading: 'Loading...',
+    waitingForPlayers: 'Waiting for players...',
+    yourInfo: 'Your Info',
+    host: '👑 Host',
+    waitingMore: 'Waiting for more players ({count}/4)',
+    canStart: 'Can start game ({count}/12)',
+    viewRules: 'View Rules',
+    selectBoard: 'Select Board'
+  },
+
+  // Game UI
+  gameUI: {
+    roundState: 'Round State',
+    nightPhase: '🌙 Night Phase',
+    dayPhase: '☀️ Day Phase',
+    lobby: '🏠 Lobby',
+    skillActivation: '🔮 Skill Activation',
+    vote: '🗳️ Vote',
+    selectTarget: 'Select Target',
+    submit: 'Submit',
+    submitted: 'Submitted',
+    processing: 'Processing...',
+    selectPlayer: 'Select Player',
+    noTarget: 'No Target',
+    abandon: 'Abstain',
+    storeVote: 'Store Vote',
+    storedVotes: 'Stored Votes',
+    useStoredVotes: 'Use All Stored Votes',
+    maxStored: 'Can store up to {max} votes',
+    useStored: 'Use {count} stored votes',
+    confirmVote: 'Confirm Vote (using {count} votes)',
+    tieBreaker: 'Break Tie',
+    selectCandidate: 'Select Player to Execute',
+    breakTie: 'Break Tie',
+    testingMode: 'Testing Mode: Select Role',
+    selectRole: 'Select Role'
   }
 };
 
