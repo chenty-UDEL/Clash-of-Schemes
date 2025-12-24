@@ -362,7 +362,9 @@ export const en = {
     boardFateTheme: 'Fate & Prediction',
     boardBalanceTheme: 'Balance & Voting',
     boardStrategyTheme: 'Strategy & Cooperation',
-    customBoardTheme: 'Random Combination'
+    customBoardTheme: 'Random Combination',
+    understoodSelectBoard: 'Understood, Select Board',
+    rolesOverview: 'Roles Overview'
   },
 
   // Game Rules

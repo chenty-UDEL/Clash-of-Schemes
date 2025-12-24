@@ -4,7 +4,7 @@ import { useState } from 'react';
 import type { Player } from '@/types/game';
 import { getRoleConfig } from '@/lib/game/roles';
 import { useTranslation } from '@/hooks/useTranslation';
-import { getRoleName } from '@/lib/game/roleTranslations';
+import { getRoleName, getRoleDescription } from '@/lib/game/roleTranslations';
 
 interface GameTipsProps {
   myPlayer: Player | null;
@@ -38,7 +38,7 @@ export default function GameTips({ myPlayer, roomState, isHost }: GameTipsProps)
       const actionType = getActionType(myPlayer.role, roomState);
       if (actionType) {
         tips.push(`🌙 ${t('gameTips.nightCanUse', { role: getRoleName(myPlayer.role) })}`);
-        tips.push(`📖 ${getRoleDescription(myPlayer.role)}`);
+        tips.push(`📖 ${getRoleDescription(myPlayer.role as any)}`);
         if (myPlayer.role === '命运复制者' && !myPlayer.copied_role) {
           tips.push(`⚠️ ${t('gameTips.fateCopierFirstNight')}`);
         }
@@ -119,7 +119,3 @@ function getActionType(role: string, roundState: string): string | null {
   }
 }
 
-function getRoleDescription(role: string): string {
-  const { getRoleDescription } = require('@/lib/game/roleTranslations');
-  return getRoleDescription(role as any);
-}
