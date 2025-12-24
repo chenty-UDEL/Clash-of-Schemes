@@ -5,7 +5,7 @@ import type { ActionType } from '@/types/game';
 
 export async function POST(request: NextRequest) {
   try {
-    const { roomCode, actorId, targetId, actionType } = await request.json();
+    const { roomCode, actorId, targetId, actionType, predictedVoterId } = await request.json();
 
     // 1. 验证参数
     if (!roomCode || !actorId || !actionType) {

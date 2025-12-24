@@ -178,10 +178,12 @@ export async function POST(
             break;
 
           case 'predict_vote': // 心灵胜者
+            // 需要从 action 中获取预测的投票者和目标
+            // 这里需要扩展 night_actions 表或使用其他方式存储预测信息
+            // 暂时使用 target_id 作为预测的目标，predicted_voter_id 需要从其他地方获取
             if (action.target_id) {
-              // 预测记录会在白天结算时验证
               logs.push({
-                message: `预测已记录：你预测玩家【${getName(action.target_id)}】的投票目标。`,
+                message: `预测已记录：你已预测一名玩家的投票。`,
                 viewer_ids: [player.id],
                 tag: 'PRIVATE'
               });

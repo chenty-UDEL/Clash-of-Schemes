@@ -21,6 +21,8 @@ export default function NightPhase({
   onActionSubmit
 }: NightPhaseProps) {
   const [selectedTargetId, setSelectedTargetId] = useState<string>('');
+  const [predictedVoterId, setPredictedVoterId] = useState<string>(''); // 心灵胜者：预测谁投票
+  const [predictedTargetId, setPredictedTargetId] = useState<string>(''); // 心灵胜者：预测投给谁
   const [hasActed, setHasActed] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -54,6 +56,8 @@ export default function NightPhase({
         return 'predict_vote';
       case '胜利夺取者':
         return 'victory_steal';
+      case '心灵胜者':
+        return 'predict_vote';
       default:
         return null;
     }
@@ -61,10 +65,20 @@ export default function NightPhase({
 
   const actionType = getActionType();
   const alivePlayers = players.filter(p => p.is_alive && p.id !== myPlayer.id);
+  
+  // 心灵胜者需要预测两个目标：预测谁投给谁
+  const isMindReader = myPlayer.role === '心灵胜者';
 
   const handleSubmit = async () => {
     if (!actionType) return;
-    if (!selectedTargetId && actionType !== 'store_vote') {
+    
+    // 心灵胜者需要两个目标
+    if (isMindReader) {
+      if (!predictedVoterId || !predictedTargetId) {
+        setError('请选择预测的投票者和目标');
+        return;
+      }
+    } else if (!selectedTargetId && actionType !== 'store_vote') {
       setError('请先选择目标');
       return;
     }
@@ -79,8 +93,10 @@ export default function NightPhase({
         body: JSON.stringify({
           roomCode,
           actorId: myPlayer.id,
-          targetId: selectedTargetId ? parseInt(selectedTargetId) : null,
-          actionType
+          targetId: isMindReader ? parseInt(predictedTargetId) : (selectedTargetId ? parseInt(selectedTargetId) : null),
+          actionType,
+          // 心灵胜者额外参数
+          predictedVoterId: isMindReader ? parseInt(predictedVoterId) : null
         })
       });
 
@@ -129,18 +145,54 @@ export default function NightPhase({
             </div>
           )}
 
-          <select
-            className="w-full p-3 bg-gray-800 text-white rounded border border-gray-700 focus:border-purple-500 outline-none"
-            value={selectedTargetId}
-            onChange={(e) => setSelectedTargetId(e.target.value)}
-          >
-            <option value="">-- 选择目标 --</option>
-            {alivePlayers.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.name}
-              </option>
-            ))}
-          </select>
+          {isMindReader ? (
+            <div className="space-y-3">
+              <div>
+                <label className="text-xs text-gray-400 mb-1 block">预测谁投票</label>
+                <select
+                  className="w-full p-3 bg-gray-800 text-white rounded border border-gray-700 focus:border-purple-500 outline-none"
+                  value={predictedVoterId}
+                  onChange={(e) => setPredictedVoterId(e.target.value)}
+                >
+                  <option value="">-- 选择投票者 --</option>
+                  {alivePlayers.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="text-xs text-gray-400 mb-1 block">预测投给谁</label>
+                <select
+                  className="w-full p-3 bg-gray-800 text-white rounded border border-gray-700 focus:border-purple-500 outline-none"
+                  value={predictedTargetId}
+                  onChange={(e) => setPredictedTargetId(e.target.value)}
+                >
+                  <option value="">-- 选择目标 --</option>
+                  <option value="null">弃票</option>
+                  {alivePlayers.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          ) : (
+            <select
+              className="w-full p-3 bg-gray-800 text-white rounded border border-gray-700 focus:border-purple-500 outline-none"
+              value={selectedTargetId}
+              onChange={(e) => setSelectedTargetId(e.target.value)}
+            >
+              <option value="">-- 选择目标 --</option>
+              {alivePlayers.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name}
+                </option>
+              ))}
+            </select>
+          )}
 
           <button
             onClick={handleSubmit}

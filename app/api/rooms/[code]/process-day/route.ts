@@ -277,9 +277,49 @@ export async function POST(
         }
       }
 
-      // 5.3 [多选胜者]
+      // 5.4 [心灵胜者] 预测验证
+      const mindReader = players.find(p => p.role === '心灵胜者' && p.is_alive);
+      if (mindReader && !winner) {
+        // 获取预测记录（需要从 vote_predictions 表或 night_actions 中获取）
+        // 这里简化处理，假设预测信息存储在 player 的 flags 中
+        const prediction = mindReader.flags?.last_prediction;
+        if (prediction) {
+          const predictedVote = votes.find(v => v.voter_id === prediction.voterId);
+          const isCorrect = predictedVote && (
+            (prediction.targetId === null && predictedVote.target_id === null) ||
+            (prediction.targetId === predictedVote.target_id)
+          );
+          
+          if (isCorrect) {
+            const streak = (mindReader.flags?.mind_reader_streak || 0) + 1;
+            const threshold = Math.ceil(totalPlayers / 2);
+            playerUpdates.push({
+              ...mindReader,
+              flags: {
+                ...mindReader.flags,
+                mind_reader_streak: streak
+              }
+            });
+            if (streak >= threshold) {
+              winner = mindReader;
+              winReason = `【心灵胜者】连续 ${streak} 次预测成功，获胜！`;
+            }
+          } else {
+            // 预测失败，重置
+            playerUpdates.push({
+              ...mindReader,
+              flags: {
+                ...mindReader.flags,
+                mind_reader_streak: 0
+              }
+            });
+          }
+        }
+      }
+
+      // 5.5 [多选胜者]
       const multiKillWinner = players.find(p => p.role === '多选胜者' && p.is_alive);
-      if (multiKillWinner) {
+      if (multiKillWinner && !winner) {
         const vote = votes.find(v => v.voter_id === multiKillWinner.id);
         if (vote && vote.target_id !== null) {
           const voteHistory = multiKillWinner.flags?.vote_history || [];
