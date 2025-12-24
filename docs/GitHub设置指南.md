@@ -45,8 +45,12 @@ git add .
 # 4. 提交
 git commit -m "Initial commit: 完整版项目初始化"
 
+git config --global user.name "Tianyang Chen"
+git config --global user.email "chenty@udel.edu"
+
+
 # 5. 添加远程仓库（替换为你的实际仓库URL）
-git remote add origin https://github.com/你的用户名/quan-mou-jue-zhan-full.git
+git remote add origin https://github.com/chenty-UDEL/Clash-of-Schemes
 
 # 6. 设置主分支
 git branch -M main
@@ -161,5 +165,4 @@ A: 在仓库页面点击 "commits" 或使用 `git log`
 5. ✅ **添加LICENSE**
    - 选择适合的许可证
    - MIT License 比较常用
-
 
