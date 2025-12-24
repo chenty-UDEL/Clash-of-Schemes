@@ -675,8 +675,6 @@ export default function Home() {
               onClose={async () => {
                 // 关闭说明书，开始游戏
                 setStartingGame(true);
-              boardType={selectedBoardForManual as any}
-              playerId={myPlayerId}
                 try {
                   const res = await fetch(`/api/rooms/${roomCode}/start`, {
                     method: 'POST',
