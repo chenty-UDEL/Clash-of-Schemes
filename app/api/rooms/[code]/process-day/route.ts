@@ -143,6 +143,7 @@ export async function POST(
     Object.values(voteCounts).forEach(c => { if (c > maxVotes) maxVotes = c; });
     const candidates = Object.keys(voteCounts).filter(id => voteCounts[parseInt(id)] === maxVotes).map(Number);
     let eliminatedPlayerId: number | null = null;
+    let actualEliminatedId: number | null = null; // 实际被处决的玩家ID（考虑命运转移）
 
     if (!winner) {
       if (maxVotes === 0) {

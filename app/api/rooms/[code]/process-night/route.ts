@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase/server';
 import { parseRoundNumber, isFirstNight } from '@/lib/game/constants';
-import { NIGHT_ACTION_ORDER } from '@/lib/game/roles';
+import { NIGHT_ACTION_ORDER, getRoleConfig } from '@/lib/game/roles';
 import type { ActionType } from '@/types/game';
 
 export async function POST(
@@ -157,7 +157,6 @@ export async function POST(
               if (target && target.role) {
                 updates[player.id].copied_role = target.role;
                 updates[player.id].copied_from_id = action.target_id;
-                const roleConfig = getRoleConfig(target.role);
                 logs.push({
                   message: `复制成功！你已获得玩家【${getName(action.target_id)}】的角色【${target.role}】的技能。如果该玩家死亡，你也会死亡。`,
                   viewer_ids: [player.id],

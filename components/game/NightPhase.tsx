@@ -58,8 +58,6 @@ export default function NightPhase({
         return 'predict_vote';
       case '胜利夺取者':
         return 'victory_steal';
-      case '心灵胜者':
-        return 'predict_vote';
       default:
         return null;
     }
