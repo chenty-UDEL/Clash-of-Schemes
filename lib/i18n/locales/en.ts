@@ -370,7 +370,31 @@ export const en = {
     boardFateIncludes: 'Includes: Fate Copier, Fate Transferer, Mind Reader, etc.',
     boardBalanceIncludes: 'Includes: Balance Guardian, Tie Winner, Tie Breaker, etc.',
     boardStrategyIncludes: 'Includes: Vote Collector, Victory Stealer, Vote Gatherer, etc.',
-    otherSpecialRoles: 'And 6 other special roles...'
+    otherSpecialRoles: 'And 6 other special roles...',
+    skillDescriptions: {
+      '技能观测者': 'Each night, designate a player to check their skill.',
+      '利他守护者': 'Each night, choose a player other than yourself to make their votes count as 0 the next day.',
+      '投票阻断者': 'Designate a player to make their vote invalid this round.',
+      '沉默制裁者': 'Designate a player to make them unable to speak this round.',
+      '同盟者': 'You and the designated player\'s votes against each other are invalid. If you vote for the same person, +1 vote (can only be used on the first night, then effective until game end).',
+      '减票守护者': 'When you are voted, your total votes are reduced by 1.',
+      '双票使者': 'Each of your votes counts as 2 votes.',
+      '平票终结者': 'If there are a consecutive ties (a = total players / 3, rounded up), you win.',
+      '影子胜者': 'Within one round before or after you are voted out, if the designated player is eliminated, you win (can only be used on the first night, then effective until game end).',
+      '集票胜者': 'When you are voted by 2/3 (rounded up) of the players present, you immediately win.',
+      '三人王者': 'When only 3 players remain, you immediately win.',
+      '免票胜者': 'If you are not voted for a consecutive rounds (a = total players / 3, rounded up), you win.',
+      '平票赢家': 'When you tie with other players, you immediately win.',
+      '票数平衡者': 'If in consecutive a rounds of voting, your vote count is exactly the same (regardless of amount), you immediately win. (a = total players / 2, rounded up)',
+      '多选胜者': 'If you vote for different players in consecutive a rounds, and all these players are eliminated in the following a rounds, you immediately win. (a = total players / 3, rounded up)',
+      '反向投票者': 'When you are voted out, choose a player who voted for you to be eliminated instead. Can only be used once.',
+      '均衡守护者': 'When there is a tie, you can break the tie. Can only be used once.',
+      '命运复制者': 'On the first night, choose a role to copy its skills. If the chosen player dies, you die too.',
+      '心灵胜者': 'Each night, you can predict another player\'s vote. If you predict correctly a consecutive times, you immediately win (a = total players / 2, rounded up).',
+      '命运转移者': 'Each night, you can choose to swap fates with another player. If that player is eliminated next day, you will be eliminated instead, and vice versa.',
+      '投票回收者': 'You can store one unused vote each day, up to 3 votes. In any voting round, you can use all stored votes at once.',
+      '胜利夺取者': 'Each night, you can choose a player and steal their special victory condition. If that player wins this round, you win instead. Otherwise, you die. You can win normally.'
+    }
   },
 
   // Game Rules

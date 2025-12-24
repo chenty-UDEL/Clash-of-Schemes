@@ -8,6 +8,7 @@ import { getRoleName, getRoleTag, getRoleDescription } from '@/lib/game/roleTran
 interface GameManualProps {
   onClose: () => void;
   boardType?: BoardType;
+  playerId?: number | null;
 }
 
 // 获取技能描述（支持双语）
@@ -26,8 +27,8 @@ function getSkillDescription(role: string, config: any, t: (key: string) => stri
   );
 }
 
-export default function GameManual({ onClose, boardType }: GameManualProps) {
-  const { t } = useTranslation();
+export default function GameManual({ onClose, boardType, playerId }: GameManualProps) {
+  const { t } = useTranslation({ playerId });
   const [activeTab, setActiveTab] = useState<'basic' | 'roles' | 'boards'>('basic');
 
   // 如果指定了板子，显示该板子的详细信息
