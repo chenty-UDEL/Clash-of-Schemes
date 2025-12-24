@@ -1,6 +1,8 @@
 'use client';
 
 import type { Player } from '@/types/game';
+import { useTranslation } from '@/hooks/useTranslation';
+import { getRoleName } from '@/lib/game/roleTranslations';
 
 interface GameOverProps {
   winner?: {
@@ -13,6 +15,7 @@ interface GameOverProps {
 }
 
 export default function GameOver({ winner, players }: GameOverProps) {
+  const { t } = useTranslation();
   const alivePlayers = players.filter(p => p.is_alive);
   const deadPlayers = players.filter(p => !p.is_alive);
 
@@ -23,18 +26,18 @@ export default function GameOver({ winner, players }: GameOverProps) {
         {winner ? (
           <div className="text-center space-y-4">
             <div className="text-6xl mb-4">🎉</div>
-            <h1 className="text-4xl font-bold text-yellow-400 mb-2">游戏结束</h1>
+            <h1 className="text-4xl font-bold text-yellow-400 mb-2">{t('gameOver.title')}</h1>
             <div className="bg-gradient-to-r from-yellow-900/50 to-orange-900/50 p-6 rounded-lg border-2 border-yellow-500">
               <p className="text-2xl font-bold text-yellow-300 mb-2">{winner.name}</p>
-              <p className="text-lg text-yellow-400 mb-1">角色：{winner.role}</p>
+              <p className="text-lg text-yellow-400 mb-1">{t('gameOver.role')}：{getRoleName(winner.role as any)}</p>
               <p className="text-sm text-yellow-300/80">{winner.reason}</p>
             </div>
           </div>
         ) : (
           <div className="text-center space-y-4">
             <div className="text-6xl mb-4">💀</div>
-            <h1 className="text-4xl font-bold text-gray-400 mb-2">游戏结束</h1>
-            <p className="text-lg text-gray-500">无人获胜</p>
+            <h1 className="text-4xl font-bold text-gray-400 mb-2">{t('gameOver.title')}</h1>
+            <p className="text-lg text-gray-500">{t('gameOver.noWinner')}</p>
           </div>
         )}
 
@@ -43,7 +46,7 @@ export default function GameOver({ winner, players }: GameOverProps) {
           {/* 存活玩家 */}
           <div>
             <h3 className="text-green-400 font-bold mb-3 text-sm uppercase tracking-wider">
-              存活玩家 ({alivePlayers.length})
+              {t('gameOver.alivePlayers')} ({alivePlayers.length})
             </h3>
             <div className="space-y-2">
               {alivePlayers.map((p) => (
@@ -53,7 +56,7 @@ export default function GameOver({ winner, players }: GameOverProps) {
                 >
                   <span className="w-2 h-2 rounded-full bg-green-500"></span>
                   <span className="font-medium">{p.name}</span>
-                  <span className="text-xs text-green-400 ml-auto">({p.role})</span>
+                  <span className="text-xs text-green-400 ml-auto">({p.role ? getRoleName(p.role as any) : '-'})</span>
                 </div>
               ))}
             </div>
@@ -62,7 +65,7 @@ export default function GameOver({ winner, players }: GameOverProps) {
           {/* 已出局玩家 */}
           <div>
             <h3 className="text-red-400 font-bold mb-3 text-sm uppercase tracking-wider">
-              已出局 ({deadPlayers.length})
+              {t('gameOver.deadPlayers')} ({deadPlayers.length})
             </h3>
             <div className="space-y-2">
               {deadPlayers.map((p) => (
@@ -72,7 +75,7 @@ export default function GameOver({ winner, players }: GameOverProps) {
                 >
                   <span className="w-2 h-2 rounded-full bg-red-500"></span>
                   <span className="font-medium line-through">{p.name}</span>
-                  <span className="text-xs text-red-400 ml-auto">({p.role})</span>
+                  <span className="text-xs text-red-400 ml-auto">({p.role ? getRoleName(p.role as any) : '-'})</span>
                 </div>
               ))}
             </div>
@@ -82,11 +85,10 @@ export default function GameOver({ winner, players }: GameOverProps) {
         {/* 重新开始提示 */}
         <div className="text-center pt-4 border-t border-gray-700">
           <p className="text-gray-400 text-sm">
-            游戏已结束，感谢参与！
+            {t('gameOver.thanks')}
           </p>
         </div>
       </div>
     </div>
   );
 }
-

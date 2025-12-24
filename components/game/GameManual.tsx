@@ -2,6 +2,8 @@
 
 import React, { useState } from 'react';
 import { BOARDS, ROLE_CONFIG, type BoardType } from '@/lib/game/roles';
+import { useTranslation } from '@/hooks/useTranslation';
+import { getRoleName, getRoleTag, getRoleDescription } from '@/lib/game/roleTranslations';
 
 interface GameManualProps {
   onClose: () => void;
@@ -43,31 +45,32 @@ function getSkillDescription(role: string, config: any): React.JSX.Element {
 }
 
 export default function GameManual({ onClose, boardType }: GameManualProps) {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<'basic' | 'roles' | 'boards'>('basic');
 
   // 如果指定了板子，显示该板子的详细信息
   if (boardType) {
     const roles = BOARDS[boardType];
-    const boardInfo = {
+    const boardInfo: Record<BoardType, { name: string; desc: string; theme: string }> = {
       fate: {
-        name: '命运之轮',
-        desc: '以命运操作与投票预测为主题，通过复杂的投票与角色互动来推动胜利',
-        theme: '命运与预测'
+        name: t('gameManual.boardFate'),
+        desc: t('gameManual.boardFateDesc'),
+        theme: t('gameManual.boardFateTheme')
       },
       balance: {
-        name: '均衡法则',
-        desc: '围绕平票和投票平衡进行设计，投票机制成为博弈的核心',
-        theme: '平衡与投票'
+        name: t('gameManual.boardBalance'),
+        desc: t('gameManual.boardBalanceDesc'),
+        theme: t('gameManual.boardBalanceTheme')
       },
       strategy: {
-        name: '策略之巅',
-        desc: '强调投票策略和角色协同作用，通过精密策划和团队协作达成胜利',
-        theme: '策略与协作'
+        name: t('gameManual.boardStrategy'),
+        desc: t('gameManual.boardStrategyDesc'),
+        theme: t('gameManual.boardStrategyTheme')
       },
       custom: {
-        name: '自定义',
-        desc: '从所有22个角色中随机分配',
-        theme: '随机组合'
+        name: t('gameManual.customBoard'),
+        desc: t('gameManual.customBoardDesc'),
+        theme: t('gameManual.customBoardTheme')
       }
     };
 
@@ -81,7 +84,7 @@ export default function GameManual({ onClose, boardType }: GameManualProps) {
             <div>
               <h2 className="text-3xl font-bold text-yellow-400 mb-2">{info.name}</h2>
               <p className="text-gray-400">{info.desc}</p>
-              <p className="text-sm text-gray-500 mt-1">主题：{info.theme}</p>
+              <p className="text-sm text-gray-500 mt-1">{t('gameManual.boardTheme')}：{info.theme}</p>
             </div>
             <button
               onClick={onClose}
@@ -94,7 +97,7 @@ export default function GameManual({ onClose, boardType }: GameManualProps) {
           {/* 板子角色列表 */}
           <div className="p-6">
             <h3 className="text-xl font-bold text-blue-400 mb-4">
-              本板子包含的角色 ({roles.length}个)
+              {t('gameManual.boardRolesCount', { count: roles.length })}
             </h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -106,19 +109,19 @@ export default function GameManual({ onClose, boardType }: GameManualProps) {
                     className="bg-gray-800 p-4 rounded-lg border border-gray-700 hover:border-gray-600 transition"
                   >
                     <div className="flex items-start justify-between mb-2">
-                      <h4 className="font-bold text-white text-lg">{role}</h4>
+                      <h4 className="font-bold text-white text-lg">{getRoleName(role)}</h4>
                       <span className="text-xs text-gray-400 bg-gray-700 px-2 py-1 rounded whitespace-nowrap">
-                        {config.tag}
+                        {getRoleTag(role)}
                       </span>
                     </div>
                     <p className="text-sm text-gray-300 leading-relaxed mb-2">
-                      {config.desc}
+                      {getRoleDescription(role)}
                     </p>
                     
                     {/* 技能说明 */}
                     <div className="mt-3 pt-3 border-t border-gray-700">
-                      <p className="text-xs text-gray-500 mb-1">技能说明：</p>
-                      {getSkillDescription(role, config)}
+                      <p className="text-xs text-gray-500 mb-1">{t('gameManual.skillDescription')}：</p>
+                      {getSkillDescription(role, config, t)}
                     </div>
                   </div>
                 );
@@ -132,7 +135,7 @@ export default function GameManual({ onClose, boardType }: GameManualProps) {
               onClick={onClose}
               className="w-full bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg font-bold shadow-lg"
             >
-              已了解，开始游戏
+              {t('gameManual.understood')}
             </button>
           </div>
         </div>
@@ -146,7 +149,7 @@ export default function GameManual({ onClose, boardType }: GameManualProps) {
       <div className="bg-gray-900 rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-gray-700">
         {/* 头部 */}
         <div className="sticky top-0 bg-gray-900 p-6 border-b border-gray-700 flex justify-between items-center z-10">
-          <h2 className="text-3xl font-bold text-yellow-400">📖 游戏说明书</h2>
+          <h2 className="text-3xl font-bold text-yellow-400">📖 {t('gameManual.title')}</h2>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-white text-3xl leading-none"
@@ -165,7 +168,7 @@ export default function GameManual({ onClose, boardType }: GameManualProps) {
                 : 'text-gray-400 hover:text-gray-300'
             }`}
           >
-            基础规则
+            {t('gameManual.basicRules')}
           </button>
           <button
             onClick={() => setActiveTab('roles')}
@@ -175,7 +178,7 @@ export default function GameManual({ onClose, boardType }: GameManualProps) {
                 : 'text-gray-400 hover:text-gray-300'
             }`}
           >
-            角色概览
+            {t('gameManual.roles')}
           </button>
           <button
             onClick={() => setActiveTab('boards')}
@@ -185,7 +188,7 @@ export default function GameManual({ onClose, boardType }: GameManualProps) {
                 : 'text-gray-400 hover:text-gray-300'
             }`}
           >
-            游戏板子
+            {t('gameManual.boards')}
           </button>
         </div>
 
