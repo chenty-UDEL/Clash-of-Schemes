@@ -10,6 +10,7 @@ import NightPhase from '@/components/game/NightPhase';
 import DayPhase from '@/components/game/DayPhase';
 import GameOver from '@/components/game/GameOver';
 import RoleInfo from '@/components/game/RoleInfo';
+import GameRules from '@/components/game/GameRules';
 
 export default function Home() {
   const [name, setName] = useState('');
@@ -207,6 +208,7 @@ export default function Home() {
   if (!isInRoom) {
     return (
       <div className="min-h-screen bg-gray-950 text-white flex flex-col items-center justify-center p-4">
+        <GameRules />
         <div className="text-center mb-8">
           <h1 className="text-5xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-red-600">
             权谋决战完整版
@@ -301,6 +303,7 @@ export default function Home() {
 
     return (
       <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center p-4">
+        <GameRules />
         <div className="w-full max-w-lg bg-gray-800 p-6 rounded-xl shadow-2xl space-y-6 border border-gray-700">
           {/* 游戏状态显示 */}
           <div className="border-b border-gray-700 pb-4 text-center">
@@ -443,6 +446,7 @@ export default function Home() {
   // 显示大厅
   return (
     <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center p-4">
+      <GameRules />
       <div className="w-full max-w-md text-center bg-gray-800 p-8 rounded-xl shadow-2xl border border-gray-700">
         <h1 className="text-3xl font-bold mb-6 text-yellow-500">等待大厅</h1>
 

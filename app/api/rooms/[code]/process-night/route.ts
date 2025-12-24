@@ -157,8 +157,9 @@ export async function POST(
               if (target && target.role) {
                 updates[player.id].copied_role = target.role;
                 updates[player.id].copied_from_id = action.target_id;
+                const roleConfig = getRoleConfig(target.role);
                 logs.push({
-                  message: `复制成功！你已获得玩家【${getName(action.target_id)}】的角色【${target.role}】的技能。`,
+                  message: `复制成功！你已获得玩家【${getName(action.target_id)}】的角色【${target.role}】的技能。如果该玩家死亡，你也会死亡。`,
                   viewer_ids: [player.id],
                   tag: 'PRIVATE'
                 });
@@ -168,12 +169,29 @@ export async function POST(
 
           case 'fate_transfer': // 命运转移者
             if (action.target_id) {
-              updates[player.id].fate_target_id = action.target_id;
-              logs.push({
-                message: `命运已转移！你与玩家【${getName(action.target_id)}】的命运已调换。`,
-                viewer_ids: [player.id],
-                tag: 'PRIVATE'
-              });
+              const target = players.find(p => p.id === action.target_id);
+              if (target) {
+                updates[player.id].fate_target_id = action.target_id;
+                // 同时更新目标的 fate_target_id 指向自己（双向绑定）
+                if (updates[action.target_id]) {
+                  updates[action.target_id].fate_target_id = player.id;
+                } else {
+                  updates[action.target_id] = {
+                    ...target,
+                    fate_target_id: player.id
+                  };
+                }
+                logs.push({
+                  message: `命运已转移！你与玩家【${getName(action.target_id)}】的命运已调换。如果该玩家在接下来的白天被淘汰，你将代替他出局，反之亦然。`,
+                  viewer_ids: [player.id],
+                  tag: 'PRIVATE'
+                });
+                logs.push({
+                  message: `你的命运已与玩家【${getName(player.id)}】调换。`,
+                  viewer_ids: [action.target_id],
+                  tag: 'PRIVATE'
+                });
+              }
             }
             break;
 

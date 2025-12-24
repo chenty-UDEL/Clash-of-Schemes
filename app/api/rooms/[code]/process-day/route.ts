@@ -192,55 +192,103 @@ export async function POST(
           // 如果均衡守护者使用了技能，打破平局（这里需要前端触发）
           // 暂时跳过，等待前端实现
         }
-      } else {
-        // === 正常处决 ===
-        eliminatedPlayerId = candidates[0];
-        const eliminated = players.find(p => p.id === eliminatedPlayerId);
-        if (eliminated) {
-          // 4.4 [反向投票者] 反击
-          if (eliminated.role === '反向投票者' && !eliminated.reverse_vote_used) {
-            // 找到投他的人
-            const voters = votes.filter(v => v.target_id === eliminated.id).map(v => v.voter_id);
-            if (voters.length > 0) {
-              // 随机选择一个投他的人代替出局
-              const targetVoterId = voters[Math.floor(Math.random() * voters.length)];
-              const targetVoter = players.find(p => p.id === targetVoterId);
-              if (targetVoter && targetVoter.is_alive) {
-                eliminatedPlayerId = targetVoterId;
+        } else {
+          // === 正常处决 ===
+          eliminatedPlayerId = candidates[0];
+          const eliminated = players.find(p => p.id === eliminatedPlayerId);
+          let actualEliminatedId = eliminatedPlayerId;
+          
+          if (eliminated) {
+            // 4.4 [反向投票者] 反击
+            if (eliminated.role === '反向投票者' && !eliminated.reverse_vote_used) {
+              // 找到投他的人
+              const voters = votes.filter(v => v.target_id === eliminated.id).map(v => v.voter_id);
+              if (voters.length > 0) {
+                // 随机选择一个投他的人代替出局
+                const targetVoterId = voters[Math.floor(Math.random() * voters.length)];
+                const targetVoter = players.find(p => p.id === targetVoterId);
+                if (targetVoter && targetVoter.is_alive) {
+                  actualEliminatedId = targetVoterId;
+                  playerUpdates.push({
+                    ...eliminated,
+                    reverse_vote_used: true
+                  });
+                  logs.push({
+                    message: `【反向投票者】发动反击！玩家【${getName(targetVoterId)}】代替出局。`,
+                    viewer_ids: null,
+                    tag: 'PUBLIC'
+                  });
+                }
+              }
+            }
+
+            // [命运转移者] 检查是否需要调换
+            if (actualEliminatedId !== null) {
+              const actualEliminated = players.find(p => p.id === actualEliminatedId);
+              if (actualEliminated && actualEliminated.fate_target_id) {
+                // 命运转移：实际出局的是转移目标
+                const transferTarget = players.find(p => p.id === actualEliminated.fate_target_id);
+                if (transferTarget && transferTarget.is_alive) {
+                  const oldEliminatedId = actualEliminatedId;
+                  actualEliminatedId = actualEliminated.fate_target_id;
+                  playerUpdates.push({
+                    ...transferTarget,
+                    is_alive: false,
+                    death_round: currentRoundNum,
+                    death_type: 'VOTE'
+                  });
+                  logs.push({
+                    message: `【命运转移者】命运调换生效！玩家【${getName(oldEliminatedId)}】被投票，但玩家【${getName(actualEliminatedId)}】代替出局。`,
+                    viewer_ids: null,
+                    tag: 'PUBLIC'
+                  });
+                }
+              } else {
+                // 正常处决
                 playerUpdates.push({
-                  ...eliminated,
-                  reverse_vote_used: true
+                  ...actualEliminated,
+                  is_alive: false,
+                  death_round: currentRoundNum,
+                  death_type: 'VOTE'
                 });
                 logs.push({
-                  message: `【反向投票者】发动反击！玩家【${getName(targetVoterId)}】代替出局。`,
+                  message: `玩家【${getName(actualEliminatedId)}】被投票出局。`,
                   viewer_ids: null,
                   tag: 'PUBLIC'
                 });
               }
+
+              // [命运复制者] 如果复制的目标死亡，自己也死亡
+              const finalEliminatedId = actualEliminatedId;
+              const copyFatePlayers = players.filter(p => 
+                p.role === '命运复制者' && 
+                p.is_alive && 
+                p.copied_from_id === finalEliminatedId
+              );
+              copyFatePlayers.forEach(copyPlayer => {
+                playerUpdates.push({
+                  ...copyPlayer,
+                  is_alive: false,
+                  death_round: currentRoundNum,
+                  death_type: 'SKILL'
+                });
+                logs.push({
+                  message: `【命运复制者】玩家【${getName(copyPlayer.id)}】因复制的目标死亡而一同出局。`,
+                  viewer_ids: null,
+                  tag: 'PUBLIC'
+                });
+              });
             }
           }
 
-          // 执行处决
-          playerUpdates.push({
-            ...eliminated,
-            is_alive: false,
-            death_round: currentRoundNum,
-            death_type: 'VOTE'
-          });
-          if (eliminatedPlayerId !== null) {
-            logs.push({
-              message: `玩家【${getName(eliminatedPlayerId)}】被投票出局。`,
-              viewer_ids: null,
-              tag: 'PUBLIC'
-            });
-          }
-
           // 4.5 [影子胜者] 追魂
-          const shadowWinner = players.find(p => 
-            p.role === '影子胜者' && 
-            p.is_alive && 
-            p.flags?.shadow_target_id === eliminatedPlayerId
-          );
+          const finalEliminatedId = actualEliminatedId || eliminatedPlayerId;
+          if (finalEliminatedId !== null) {
+            const shadowWinner = players.find(p => 
+              p.role === '影子胜者' && 
+              p.is_alive && 
+              p.flags?.shadow_target_id === finalEliminatedId
+            );
           if (shadowWinner) {
             // 检查是否被胜利夺取者夺取
             if (victoryStealer && victoryStealTarget && victoryStealTarget.id === shadowWinner.id) {
@@ -253,7 +301,8 @@ export async function POST(
           }
 
           // 4.6 [三人王者] 检查
-          const remainingAlive = players.filter(p => p.is_alive && p.id !== eliminatedPlayerId);
+          const finalEliminatedId = actualEliminatedId || eliminatedPlayerId;
+          const remainingAlive = players.filter(p => p.is_alive && p.id !== finalEliminatedId);
           if (remainingAlive.length === 3) {
             const threeKing = remainingAlive.find(p => p.role === '三人王者');
             if (threeKing) {
@@ -499,7 +548,15 @@ export async function POST(
     });
 
     // 9. 检查游戏结束
-    const remainingAlive = players.filter(p => p.is_alive && (!eliminatedPlayerId || p.id !== eliminatedPlayerId));
+    // 需要排除被处决的玩家和命运复制者
+    const finalEliminatedId = actualEliminatedId || eliminatedPlayerId;
+    const remainingAlive = players.filter(p => {
+      if (!p.is_alive) return false;
+      if (finalEliminatedId && p.id === finalEliminatedId) return false;
+      // 排除命运复制者（如果复制的目标被处决）
+      if (p.role === '命运复制者' && p.copied_from_id === finalEliminatedId) return false;
+      return true;
+    });
     const finalAliveCount = remainingAlive.length;
 
     if (winner) {

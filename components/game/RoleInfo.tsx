@@ -33,10 +33,35 @@ export default function RoleInfo({ player }: RoleInfoProps) {
         </div>
       )}
       
-      {player.role === '命运复制者' && player.copied_role && (
+      {player.role === '命运复制者' && (
         <div className="mt-3 pt-3 border-t border-gray-700">
-          <p className="text-xs text-blue-300">
-            已复制角色: <span className="font-bold">{player.copied_role}</span>
+          {player.copied_role ? (
+            <p className="text-xs text-blue-300">
+              已复制角色: <span className="font-bold">{player.copied_role}</span>
+              {player.copied_from_id && (
+                <span className="text-blue-400 ml-2">
+                  (来自玩家 {player.copied_from_id})
+                </span>
+              )}
+            </p>
+          ) : (
+            <p className="text-xs text-gray-500">等待第一夜复制角色...</p>
+          )}
+        </div>
+      )}
+      
+      {player.role === '命运转移者' && player.fate_target_id && (
+        <div className="mt-3 pt-3 border-t border-gray-700">
+          <p className="text-xs text-purple-300">
+            命运已转移: 与玩家 {player.fate_target_id} 命运调换
+          </p>
+        </div>
+      )}
+      
+      {player.role === '胜利夺取者' && player.flags?.victory_steal_target_id && (
+        <div className="mt-3 pt-3 border-t border-gray-700">
+          <p className="text-xs text-red-300">
+            ⚠️ 已锁定目标: 玩家 {player.flags.victory_steal_target_id} 的特殊胜利条件
           </p>
         </div>
       )}
