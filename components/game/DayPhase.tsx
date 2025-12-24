@@ -187,12 +187,13 @@ export default function DayPhase({
             myPlayer={myPlayer}
             candidates={tieCandidates}
             players={players}
-            onBreak={() => {
+            onBreak={async () => {
+              // 刷新数据以更新状态，但不刷新页面
               onVoteSubmit();
               setIsTie(false);
-              // 刷新数据以更新状态
+              // 等待数据更新后重新检查平票状态
               setTimeout(() => {
-                window.location.reload();
+                checkTie();
               }, 1000);
             }}
           />
