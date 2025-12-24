@@ -566,41 +566,65 @@ export default function Home() {
         )}
       </div>
 
-      {/* 板子选择器 */}
-      {showBoardSelector && (
-        <BoardSelector
-          onSelect={async (boardType: BoardType) => {
-            setShowBoardSelector(false);
-            setStartingGame(true);
-            setError('');
+          {/* 简易说明书（选择板子前） */}
+          {showManual && !selectedBoardForManual && (
+            <GameManual
+              onClose={() => {
+                setShowManual(false);
+                setShowBoardSelector(true);
+              }}
+            />
+          )}
 
-            try {
-              const res = await fetch(`/api/rooms/${roomCode}/start`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ boardType })
-              });
+          {/* 板子选择器 */}
+          {showBoardSelector && !selectedBoardForManual && (
+            <BoardSelector
+              onSelect={(boardType: BoardType) => {
+                // 先显示该板子的详细说明
+                setSelectedBoardForManual(boardType);
+                setShowBoardSelector(false);
+              }}
+              onCancel={() => setShowBoardSelector(false)}
+              loading={startingGame}
+            />
+          )}
 
-              const result = await res.json();
+          {/* 板子详细说明（选择板子后） */}
+          {selectedBoardForManual && (
+            <GameManual
+              onClose={async () => {
+                // 关闭说明书，开始游戏
+                setStartingGame(true);
+                try {
+                  const res = await fetch(`/api/rooms/${roomCode}/start`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ boardType: selectedBoardForManual as any })
+                  });
 
-        if (!res.ok) {
-          throw new Error(result.error || '开始游戏失败');
-        }
+                  const result = await res.json();
 
-              // 刷新数据
-              fetchRoomState(roomCode);
-              fetchPlayers(roomCode);
-              fetchLogs(roomCode);
-            } catch (err: any) {
-              setError(err.message || '开始游戏失败');
-            } finally {
-              setStartingGame(false);
-            }
-          }}
-          onCancel={() => setShowBoardSelector(false)}
-          loading={startingGame}
-        />
-      )}
+                  if (!res.ok) {
+                    throw new Error(result.error || '开始游戏失败');
+                  }
+
+                  // 刷新数据
+                  fetchRoomState(roomCode);
+                  fetchPlayers(roomCode);
+                  fetchLogs(roomCode);
+                  
+                  // 重置状态
+                  setSelectedBoardForManual(null);
+                  setShowBoardSelector(false);
+                } catch (err: any) {
+                  setError(err.message || '开始游戏失败');
+                } finally {
+                  setStartingGame(false);
+                }
+              }}
+              boardType={selectedBoardForManual as any}
+            />
+          )}
     </div>
   );
 }
