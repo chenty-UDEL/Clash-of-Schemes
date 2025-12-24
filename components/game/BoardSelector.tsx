@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { BOARDS, ROLE_CONFIG, type BoardType } from '@/lib/game/roles';
+import { useTranslation } from '@/hooks/useTranslation';
+import { getRoleName, getRoleTag, getRoleDescription } from '@/lib/game/roleTranslations';
 
 interface BoardSelectorProps {
   onSelect: (boardType: BoardType) => void;
@@ -10,27 +12,28 @@ interface BoardSelectorProps {
 }
 
 export default function BoardSelector({ onSelect, onCancel, loading }: BoardSelectorProps) {
+  const { t } = useTranslation();
   const [selectedBoard, setSelectedBoard] = useState<BoardType | null>(null);
 
-  const boardInfo = {
+  const boardInfo: Record<BoardType, { name: string; desc: string; color: string }> = {
     fate: {
-      name: '命运之轮',
-      desc: '以命运操作与投票预测为主题，通过复杂的投票与角色互动来推动胜利',
+      name: t('gameManual.boardFate'),
+      desc: t('gameManual.boardFateDesc'),
       color: 'from-purple-600 to-indigo-600'
     },
     balance: {
-      name: '均衡法则',
-      desc: '围绕平票和投票平衡进行设计，投票机制成为博弈的核心',
+      name: t('gameManual.boardBalance'),
+      desc: t('gameManual.boardBalanceDesc'),
       color: 'from-blue-600 to-cyan-600'
     },
     strategy: {
-      name: '策略之巅',
-      desc: '强调投票策略和角色协同作用，通过精密策划和团队协作达成胜利',
+      name: t('gameManual.boardStrategy'),
+      desc: t('gameManual.boardStrategyDesc'),
       color: 'from-orange-600 to-red-600'
     },
     custom: {
-      name: '自定义',
-      desc: '从所有22个角色中随机分配',
+      name: t('gameManual.customBoard'),
+      desc: t('gameManual.customBoardDesc'),
       color: 'from-gray-600 to-gray-800'
     }
   };
@@ -39,8 +42,8 @@ export default function BoardSelector({ onSelect, onCancel, loading }: BoardSele
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-gray-900 rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-gray-700">
         <div className="p-6 border-b border-gray-700">
-          <h2 className="text-2xl font-bold text-yellow-400 mb-2">选择游戏板子</h2>
-          <p className="text-gray-400 text-sm">每个板子包含13个不同的角色</p>
+          <h2 className="text-2xl font-bold text-yellow-400 mb-2">{t('lobby.selectBoard')}</h2>
+          <p className="text-gray-400 text-sm">{t('gameManual.boardsDescription')}</p>
         </div>
 
         <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -64,17 +67,16 @@ export default function BoardSelector({ onSelect, onCancel, loading }: BoardSele
                 <p className="text-gray-400 text-sm mb-4">{info.desc}</p>
                 
                 <div className="mt-4">
-                  <p className="text-xs text-gray-500 mb-2">包含角色 ({roles.length}个):</p>
+                  <p className="text-xs text-gray-500 mb-2">{t('gameManual.includedRoles')} ({roles.length}):</p>
                   <div className="flex flex-wrap gap-2">
                     {roles.slice(0, 6).map((role) => {
-                      const config = ROLE_CONFIG[role];
                       return (
                         <span
                           key={role}
                           className="text-xs px-2 py-1 rounded bg-gray-700 text-gray-300"
-                          title={config.desc}
+                          title={getRoleDescription(role)}
                         >
-                          {role}
+                          {getRoleName(role)}
                         </span>
                       );
                     })}
@@ -96,7 +98,7 @@ export default function BoardSelector({ onSelect, onCancel, loading }: BoardSele
             disabled={loading}
             className="flex-1 px-6 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 font-bold disabled:opacity-50"
           >
-            取消
+            {t('common.cancel')}
           </button>
           <button
             onClick={() => selectedBoard && onSelect(selectedBoard)}
@@ -107,7 +109,7 @@ export default function BoardSelector({ onSelect, onCancel, loading }: BoardSele
                 : 'bg-gray-600 cursor-not-allowed opacity-50'
             }`}
           >
-            {loading ? '开始中...' : '查看板子详情'}
+            {loading ? t('common.loading') : t('lobby.startGame')}
           </button>
         </div>
       </div>

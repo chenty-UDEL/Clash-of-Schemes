@@ -9,6 +9,7 @@ import BoardSelector from '@/components/game/BoardSelector';
 import NightPhase from '@/components/game/NightPhase';
 import DayPhase from '@/components/game/DayPhase';
 import GameOver from '@/components/game/GameOver';
+import { getRoleName } from '@/lib/game/roleTranslations';
 import RoleInfo from '@/components/game/RoleInfo';
 import GameRules from '@/components/game/GameRules';
 import GameTips from '@/components/game/GameTips';

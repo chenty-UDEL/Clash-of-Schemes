@@ -436,7 +436,8 @@ export const en = {
     noWinner: 'No Winner',
     alivePlayers: 'Alive Players',
     deadPlayers: 'Eliminated',
-    thanks: 'Game ended, thank you for playing!'
+    thanks: 'Game ended, thank you for playing!',
+    playAgain: '🎮 Play Again'
   }
 };
 

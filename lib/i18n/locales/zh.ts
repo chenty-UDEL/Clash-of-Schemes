@@ -217,7 +217,9 @@ export const zh = {
     tieBroken: '平局已打破',
     balanceGuardBreakTie: '【均衡守护者】打破平局！玩家【{name}】被处决。',
     gameStarted: '🎮 游戏开始！板子：{board}，共 {count} 名玩家。',
-    mindReaderWin: '【{role}】连续 {streak} 次预测成功，获胜！'
+    gameRestarted: '🎮 再来一局！板子：{board}，共 {count} 名玩家。',
+    mindReaderWin: '【{role}】连续 {streak} 次预测成功，获胜！',
+    gameRestarted: '游戏已重新开始'
   },
 
   // 成功消息扩展
@@ -420,7 +422,8 @@ export const zh = {
     noWinner: '无人获胜',
     alivePlayers: '存活玩家',
     deadPlayers: '已出局',
-    thanks: '游戏已结束，感谢参与！'
+    thanks: '游戏已结束，感谢参与！',
+    playAgain: '🎮 再来一局'
   }
 };
 

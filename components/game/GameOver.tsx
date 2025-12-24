@@ -1,8 +1,11 @@
 'use client';
 
+import { useState } from 'react';
 import type { Player } from '@/types/game';
 import { useTranslation } from '@/hooks/useTranslation';
 import { getRoleName } from '@/lib/game/roleTranslations';
+import BoardSelector from './BoardSelector';
+import { translateError } from '@/lib/i18n/errorHandler';
 
 interface GameOverProps {
   winner?: {
@@ -12,12 +15,53 @@ interface GameOverProps {
     reason: string;
   };
   players: Player[];
+  roomCode: string;
+  isHost: boolean;
+  myPlayerId?: number | null;
+  onRestart: () => void;
 }
 
-export default function GameOver({ winner, players }: GameOverProps) {
-  const { t } = useTranslation();
+export default function GameOver({ winner, players, roomCode, isHost, myPlayerId, onRestart }: GameOverProps) {
+  const { t } = useTranslation({ playerId: myPlayerId });
+  const [showBoardSelector, setShowBoardSelector] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  
   const alivePlayers = players.filter(p => p.is_alive);
   const deadPlayers = players.filter(p => !p.is_alive);
+
+  const handleRestart = async (boardType: string) => {
+    if (!myPlayerId) return;
+    
+    setLoading(true);
+    setError('');
+
+    try {
+      const res = await fetch(`/api/rooms/${roomCode}/restart`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          boardType,
+          playerId: myPlayerId
+        })
+      });
+
+      const result = await res.json();
+
+      if (!res.ok) {
+        const errorMsg = result.error ? translateError(result.error, result.errorParams, myPlayerId) : t('error.restartFailed');
+        throw new Error(errorMsg);
+      }
+
+      // 成功重启后刷新数据
+      onRestart();
+      setShowBoardSelector(false);
+    } catch (err: any) {
+      setError(err.message || t('error.restartFailed'));
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center p-4">
@@ -83,12 +127,40 @@ export default function GameOver({ winner, players }: GameOverProps) {
         </div>
 
         {/* 重新开始提示 */}
-        <div className="text-center pt-4 border-t border-gray-700">
+        <div className="text-center pt-4 border-t border-gray-700 space-y-4">
           <p className="text-gray-400 text-sm">
             {t('gameOver.thanks')}
           </p>
+          
+          {/* 房主可以再来一局 */}
+          {isHost && (
+            <div className="mt-4">
+              <button
+                onClick={() => setShowBoardSelector(true)}
+                disabled={loading}
+                className="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-bold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                {loading ? t('common.loading') : t('gameOver.playAgain')}
+              </button>
+              {error && (
+                <p className="mt-2 text-red-400 text-sm">{error}</p>
+              )}
+            </div>
+          )}
         </div>
       </div>
+
+      {/* 板子选择器 */}
+      {showBoardSelector && (
+        <BoardSelector
+          onSelect={(boardType) => handleRestart(boardType)}
+          onCancel={() => {
+            setShowBoardSelector(false);
+            setError('');
+          }}
+          loading={loading}
+        />
+      )}
     </div>
   );
 }
