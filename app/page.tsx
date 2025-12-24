@@ -13,6 +13,7 @@ import RoleInfo from '@/components/game/RoleInfo';
 import GameRules from '@/components/game/GameRules';
 import GameTips from '@/components/game/GameTips';
 import GameManual from '@/components/game/GameManual';
+import RoleSelector from '@/components/game/RoleSelector';
 
 export default function Home() {
   const [name, setName] = useState('');
@@ -27,6 +28,7 @@ export default function Home() {
   const [startingGame, setStartingGame] = useState(false);
   const [showManual, setShowManual] = useState(false);
   const [selectedBoardForManual, setSelectedBoardForManual] = useState<string | null>(null);
+  const [showRoleSelector, setShowRoleSelector] = useState(false);
 
   // 获取我的玩家信息
   const getMyPlayer = () => players.find(p => p.name === name);
@@ -479,6 +481,29 @@ export default function Home() {
               <span>⚠️</span> {error}
             </div>
           )}
+
+          {/* 房主作弊按钮 - 左下角 */}
+          {isHost && myPlayer && (
+            <>
+              <button
+                onClick={() => setShowRoleSelector(true)}
+                className="fixed bottom-6 left-6 bg-purple-700 hover:bg-purple-600 text-white px-4 py-2 rounded-lg shadow-lg border border-purple-500 z-40 flex items-center gap-2 text-sm font-bold"
+                title="测试模式：选择角色"
+              >
+                🎭 选择角色
+              </button>
+              <RoleSelector
+                isOpen={showRoleSelector}
+                onClose={() => setShowRoleSelector(false)}
+                currentRole={myPlayer.role}
+                playerId={myPlayer.id}
+                roomCode={roomCode}
+                onRoleChange={() => {
+                  fetchPlayers(roomCode);
+                }}
+              />
+            </>
+          )}
         </div>
       </div>
     );
@@ -626,6 +651,29 @@ export default function Home() {
               }}
               boardType={selectedBoardForManual as any}
             />
+          )}
+
+          {/* 房主作弊按钮 - 左下角 */}
+          {isHost && myPlayer && (
+            <>
+              <button
+                onClick={() => setShowRoleSelector(true)}
+                className="fixed bottom-6 left-6 bg-purple-700 hover:bg-purple-600 text-white px-4 py-2 rounded-lg shadow-lg border border-purple-500 z-40 flex items-center gap-2 text-sm font-bold"
+                title="测试模式：选择角色"
+              >
+                🎭 选择角色
+              </button>
+              <RoleSelector
+                isOpen={showRoleSelector}
+                onClose={() => setShowRoleSelector(false)}
+                currentRole={myPlayer.role}
+                playerId={myPlayer.id}
+                roomCode={roomCode}
+                onRoleChange={() => {
+                  fetchPlayers(roomCode);
+                }}
+              />
+            </>
           )}
     </div>
   );
