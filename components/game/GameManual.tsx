@@ -10,7 +10,21 @@ interface GameManualProps {
   boardType?: BoardType;
 }
 
-// 获取技能描述（支持双语）- 这个函数现在不再使用，已改为使用getSkillDescription(role, config, t)
+// 获取技能描述（支持双语）
+function getSkillDescription(role: string, config: any, t: (key: string) => string): React.JSX.Element {
+  // 尝试从翻译文件中获取技能描述
+  const translationKey = `gameManual.skillDescriptions.${role}`;
+  let description = t(translationKey);
+  
+  // 如果翻译文件中没有，使用角色描述
+  if (description === translationKey || !description) {
+    description = getRoleDescription(role as any);
+  }
+
+  return (
+    <p className="text-xs text-blue-300 leading-relaxed">{description}</p>
+  );
+}
 
 export default function GameManual({ onClose, boardType }: GameManualProps) {
   const { t } = useTranslation();
