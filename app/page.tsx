@@ -295,7 +295,6 @@ export default function Home() {
 
   // 已加入房间
   const alivePlayers = players.filter(p => p.is_alive);
-  const myPlayer = getMyPlayer();
 
   // 如果游戏结束，显示结束界面
   if (roomState && roomState.round_state === 'GAME OVER') {
