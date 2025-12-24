@@ -542,13 +542,15 @@ export async function POST(
     }
 
     // 保存当前状态（用于死局检测）
-    await supabase.from('game_states').insert({
-      room_code: code,
-      round_number: currentRoundNum,
-      state_hash: stateHash
-    }).catch(() => {
+    try {
+      await supabase.from('game_states').insert({
+        room_code: code,
+        round_number: currentRoundNum,
+        state_hash: stateHash
+      });
+    } catch {
       // 忽略插入错误（可能是表不存在或权限问题）
-    });
+    }
 
     // 9. 检查游戏结束
     // 需要排除被处决的玩家和命运复制者

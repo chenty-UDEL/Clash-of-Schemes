@@ -344,7 +344,7 @@ export default function Home() {
                 <GameTips 
                   myPlayer={myPlayer} 
                   roomState={roomState.round_state}
-                  isHost={isHost}
+                  isHost={isHost || false}
                 />
               </>
             )}
@@ -585,7 +585,6 @@ export default function Home() {
         if (!res.ok) {
           throw new Error(result.error || '开始游戏失败');
         }
-        setSuccessMessage('游戏已开始！');
 
               // 刷新数据
               fetchRoomState(roomCode);
