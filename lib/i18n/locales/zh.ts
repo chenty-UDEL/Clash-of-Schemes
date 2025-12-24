@@ -218,8 +218,7 @@ export const zh = {
     balanceGuardBreakTie: '【均衡守护者】打破平局！玩家【{name}】被处决。',
     gameStarted: '🎮 游戏开始！板子：{board}，共 {count} 名玩家。',
     gameRestarted: '🎮 再来一局！板子：{board}，共 {count} 名玩家。',
-    mindReaderWin: '【{role}】连续 {streak} 次预测成功，获胜！',
-    gameRestarted: '游戏已重新开始'
+    mindReaderWin: '【{role}】连续 {streak} 次预测成功，获胜！'
   },
 
   // 成功消息扩展
