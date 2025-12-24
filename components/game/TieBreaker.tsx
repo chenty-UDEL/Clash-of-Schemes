@@ -45,9 +45,10 @@ export default function TieBreaker({
       const result = await res.json();
 
       if (!res.ok) {
-        throw new Error(result.error || '打破平局失败');
+        throw new Error(result.error || result.details || '打破平局失败');
       }
 
+      // 成功打破平局后刷新数据
       onBreak();
     } catch (err: any) {
       setError(err.message || '打破平局失败');

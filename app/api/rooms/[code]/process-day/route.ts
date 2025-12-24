@@ -188,11 +188,8 @@ export async function POST(
         }
 
         // 4.3 [均衡守护者] 打破平局
-        const balanceGuard = players.find(p => p.role === '均衡守护者' && p.is_alive && !p.balance_guard_used);
-        if (balanceGuard) {
-          // 如果均衡守护者使用了技能，打破平局（这里需要前端触发）
-          // 暂时跳过，等待前端实现
-        }
+        // 注意：均衡守护者的技能由前端在平票时触发，这里不自动处理
+        // 如果均衡守护者已经使用了技能（通过break-tie API），会在后续处理
         } else {
           // === 正常处决 ===
           eliminatedPlayerId = candidates[0];

@@ -38,9 +38,12 @@ export default function DayPhase({
   const isBalanceGuard = myPlayer.role === '均衡守护者' && !myPlayer.balance_guard_used;
   const maxStoredVotes = 3;
 
-  // 检查是否平票
+  // 检查是否平票（需要等待所有人投票后）
   useEffect(() => {
     const checkTie = async () => {
+      // 只有在已经投票后才检查平票
+      if (!hasVoted) return;
+      
       try {
         const res = await fetch(`/api/rooms/${roomCode}/tie-info`);
         const result = await res.json();
@@ -53,7 +56,7 @@ export default function DayPhase({
       }
     };
 
-    // 定期检查（每2秒）
+    // 定期检查（每2秒），但只在已投票后
     const interval = setInterval(checkTie, 2000);
     checkTie();
 
@@ -167,18 +170,24 @@ export default function DayPhase({
         )}
       </div>
 
-      {/* 均衡守护者打破平局 */}
+      {/* 均衡守护者打破平局 - 显示在投票区域上方，只有在平票时才显示 */}
       {isTie && isBalanceGuard && tieCandidates.length > 0 && (
-        <TieBreaker
-          roomCode={roomCode}
-          myPlayer={myPlayer}
-          candidates={tieCandidates}
-          players={players}
-          onBreak={() => {
-            onVoteSubmit();
-            setIsTie(false);
-          }}
-        />
+        <div className="mb-4">
+          <TieBreaker
+            roomCode={roomCode}
+            myPlayer={myPlayer}
+            candidates={tieCandidates}
+            players={players}
+            onBreak={() => {
+              onVoteSubmit();
+              setIsTie(false);
+              // 刷新数据以更新状态
+              setTimeout(() => {
+                window.location.reload();
+              }, 1000);
+            }}
+          />
+        </div>
       )}
 
       {/* 投票提示 */}
