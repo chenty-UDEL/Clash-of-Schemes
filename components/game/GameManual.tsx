@@ -353,7 +353,6 @@ export default function GameManual({ onClose, boardType }: GameManualProps) {
           </button>
         </div>
       </div>
-    );
-  }
+    </div>
+  );
 }
-
