@@ -2,7 +2,8 @@
 // 权谋决战完整版 - 游戏类型定义
 // ==========================================
 
-import type { RoleName, BoardType } from '@/lib/game/roles';
+// BoardType 从 roles.ts 导入
+export type { BoardType } from '@/lib/game/roles';
 
 // ==========================================
 // 1. 游戏状态类型

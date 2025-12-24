@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase/client';
 import type { Player, RoomState, GameLog } from '@/types/game';
+import type { BoardType } from '@/lib/game/roles';
+import BoardSelector from '@/components/game/BoardSelector';
 
 export default function Home() {
   const [name, setName] = useState('');
@@ -13,6 +15,8 @@ export default function Home() {
   const [logs, setLogs] = useState<GameLog[]>([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showBoardSelector, setShowBoardSelector] = useState(false);
+  const [startingGame, setStartingGame] = useState(false);
 
   // 获取我的玩家信息
   const getMyPlayer = () => players.find(p => p.name === name);
@@ -285,6 +289,7 @@ export default function Home() {
                 : `可以开始游戏 (${players.length}/12)`}
             </p>
             <button
+              onClick={() => setShowBoardSelector(true)}
               disabled={players.length < 4 || loading}
               className={`w-full p-4 rounded-lg font-bold shadow-lg transition ${
                 players.length < 4
@@ -305,6 +310,42 @@ export default function Home() {
           </div>
         )}
       </div>
+
+      {/* 板子选择器 */}
+      {showBoardSelector && (
+        <BoardSelector
+          onSelect={async (boardType: BoardType) => {
+            setShowBoardSelector(false);
+            setStartingGame(true);
+            setError('');
+
+            try {
+              const res = await fetch(`/api/rooms/${roomCode}/start`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ boardType })
+              });
+
+              const result = await res.json();
+
+              if (!res.ok) {
+                throw new Error(result.error || '开始游戏失败');
+              }
+
+              // 刷新数据
+              fetchRoomState(roomCode);
+              fetchPlayers(roomCode);
+              fetchLogs(roomCode);
+            } catch (err: any) {
+              setError(err.message || '开始游戏失败');
+            } finally {
+              setStartingGame(false);
+            }
+          }}
+          onCancel={() => setShowBoardSelector(false)}
+          loading={startingGame}
+        />
+      )}
     </div>
   );
 }
