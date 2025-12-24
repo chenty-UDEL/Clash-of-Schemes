@@ -8,6 +8,7 @@ import { isNightPhase, isDayPhase, parseRoundNumber } from '@/lib/game/constants
 import BoardSelector from '@/components/game/BoardSelector';
 import NightPhase from '@/components/game/NightPhase';
 import DayPhase from '@/components/game/DayPhase';
+import GameOver from '@/components/game/GameOver';
 
 export default function Home() {
   const [name, setName] = useState('');
@@ -271,8 +272,29 @@ export default function Home() {
   const alivePlayers = players.filter(p => p.is_alive);
   const myPlayer = getMyPlayer();
 
+  // 如果游戏结束，显示结束界面
+  if (roomState && roomState.round_state === 'GAME OVER') {
+    // 从日志中提取胜利者信息
+    const winnerLog = logs.find(l => l.message.includes('游戏结束') && l.message.includes('获胜'));
+    let winner: { id: number; name: string; role: string; reason: string } | undefined;
+    
+    if (winnerLog) {
+      const winnerPlayer = players.find(p => winnerLog.message.includes(p.name));
+      if (winnerPlayer) {
+        winner = {
+          id: winnerPlayer.id,
+          name: winnerPlayer.name,
+          role: winnerPlayer.role || '未知',
+          reason: winnerLog.message.split('！')[1] || winnerLog.message
+        };
+      }
+    }
+
+    return <GameOver winner={winner} players={players} />;
+  }
+
   // 如果游戏已开始，显示游戏界面
-  if (roomState && roomState.round_state !== 'LOBBY' && roomState.round_state !== 'GAME OVER') {
+  if (roomState && roomState.round_state !== 'LOBBY') {
     const isNight = isNightPhase(roomState.round_state);
     const isDay = isDayPhase(roomState.round_state);
 
@@ -381,12 +403,17 @@ export default function Home() {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' }
                       });
-                      if (!res.ok) throw new Error('结算失败');
-                      fetchRoomState(roomCode);
-                      fetchPlayers(roomCode);
-                      fetchLogs(roomCode);
-                    } catch (err) {
-                      alert('结算请求失败');
+                      const result = await res.json();
+                      if (!res.ok) throw new Error(result.error || '结算失败');
+                      
+                      // 延迟一下再刷新，确保数据库已更新
+                      setTimeout(() => {
+                        fetchRoomState(roomCode);
+                        fetchPlayers(roomCode);
+                        fetchLogs(roomCode);
+                      }, 500);
+                    } catch (err: any) {
+                      alert(err.message || '结算请求失败');
                     }
                   }}
                   className="w-full bg-gradient-to-r from-red-900 to-red-800 hover:from-red-800 hover:to-red-700 text-red-100 p-4 rounded-lg font-bold border border-red-600 shadow-xl"
