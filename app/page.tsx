@@ -14,6 +14,8 @@ import GameRules from '@/components/game/GameRules';
 import GameTips from '@/components/game/GameTips';
 import GameManual from '@/components/game/GameManual';
 import RoleSelector from '@/components/game/RoleSelector';
+import LanguageSwitcher from '@/components/common/LanguageSwitcher';
+import { useTranslation } from '@/hooks/useTranslation';
 
 export default function Home() {
   const [name, setName] = useState('');
@@ -29,6 +31,9 @@ export default function Home() {
   const [showManual, setShowManual] = useState(false);
   const [selectedBoardForManual, setSelectedBoardForManual] = useState<string | null>(null);
   const [showRoleSelector, setShowRoleSelector] = useState(false);
+
+  // 国际化
+  const { t } = useTranslation();
 
   // 获取我的玩家信息
   const getMyPlayer = () => players.find(p => p.name === name);
@@ -214,20 +219,25 @@ export default function Home() {
   if (!isInRoom) {
     return (
       <div className="min-h-screen bg-gray-950 text-white flex flex-col items-center justify-center p-4">
+        {/* 语言切换器 - 右上角 */}
+        <div className="fixed top-4 right-4 z-50">
+          <LanguageSwitcher />
+        </div>
+        
         <GameRules />
         <div className="text-center mb-8">
           <h1 className="text-5xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-red-600">
-            权谋决战完整版
+            {t('game.title')}
           </h1>
-          <p className="text-gray-400">22角色社交推理游戏</p>
+          <p className="text-gray-400">{t('game.subtitle')}</p>
         </div>
 
         <div className="bg-gray-900 p-8 rounded-xl shadow-2xl w-full max-w-md space-y-6 border border-gray-800">
           <div>
-            <label className="text-xs text-gray-400 ml-1 mb-1 block">昵称</label>
+            <label className="text-xs text-gray-400 ml-1 mb-1 block">{t('game.nickname')}</label>
             <input
               className="w-full p-4 rounded-lg bg-gray-800 border border-gray-700 focus:border-blue-500 outline-none text-white"
-              placeholder="输入你的名字"
+              placeholder={t('game.enterName')}
               value={name}
               onChange={(e) => setName(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleCreateRoom()}
@@ -240,20 +250,20 @@ export default function Home() {
               disabled={loading}
               className="flex-1 bg-blue-700 hover:bg-blue-600 p-4 rounded-lg font-bold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? '创建中...' : '创建房间'}
+              {loading ? t('common.loading') : t('game.createRoom')}
             </button>
           </div>
 
           <div className="relative flex py-2 items-center">
             <div className="flex-grow border-t border-gray-700"></div>
-            <span className="flex-shrink mx-4 text-gray-500 text-sm">或</span>
+            <span className="flex-shrink mx-4 text-gray-500 text-sm">{t('game.or')}</span>
             <div className="flex-grow border-t border-gray-700"></div>
           </div>
 
           <div className="flex gap-3">
             <input
               className="flex-1 p-4 rounded-lg bg-gray-800 border border-gray-700 focus:border-green-500 outline-none text-white"
-              placeholder="输入房间号"
+              placeholder={t('game.enterRoomCode')}
               value={roomCode}
               onChange={(e) => setRoomCode(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleJoinRoom()}
@@ -263,7 +273,7 @@ export default function Home() {
               disabled={loading}
               className="w-24 bg-green-700 hover:bg-green-600 p-4 rounded-lg font-bold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? '加入中...' : '加入'}
+              {loading ? t('common.loading') : t('game.joinRoom')}
             </button>
           </div>
 
