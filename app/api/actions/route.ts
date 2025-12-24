@@ -61,6 +61,30 @@ export async function POST(request: NextRequest) {
     // 4. 获取当前回合号
     const roundNumber = parseRoundNumber(room.round_state);
 
+    // 4.5 验证目标玩家（如果提供了targetId）
+    if (targetId) {
+      const { data: targetPlayer, error: targetError } = await supabase
+        .from('players')
+        .select('id, is_alive')
+        .eq('id', targetId)
+        .eq('room_code', roomCode)
+        .single();
+
+      if (targetError || !targetPlayer) {
+        return NextResponse.json(
+          { success: false, error: '目标玩家不存在' },
+          { status: 400 }
+        );
+      }
+
+      if (!targetPlayer.is_alive) {
+        return NextResponse.json(
+          { success: false, error: '目标玩家已出局' },
+          { status: 400 }
+        );
+      }
+    }
+
     // 5. 检查是否已经提交过行动（先删除旧记录，再插入新记录）
     // 先删除该玩家本回合的旧行动
     await supabase
@@ -83,6 +107,15 @@ export async function POST(request: NextRequest) {
 
     // 6. 如果是心灵胜者，保存预测记录
     if (actionType === 'predict_vote' && predictedVoterId) {
+      // 先删除旧预测
+      await supabase
+        .from('vote_predictions')
+        .delete()
+        .eq('room_code', roomCode)
+        .eq('predictor_id', actorId)
+        .eq('round_number', roundNumber);
+      
+      // 插入新预测
       await supabase
         .from('vote_predictions')
         .insert({
