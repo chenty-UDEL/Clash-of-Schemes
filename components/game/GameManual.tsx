@@ -197,57 +197,45 @@ export default function GameManual({ onClose, boardType }: GameManualProps) {
           {activeTab === 'basic' && (
             <div className="space-y-6">
               <section>
-                <h3 className="text-xl font-bold text-blue-400 mb-3">游戏概述</h3>
+                <h3 className="text-xl font-bold text-blue-400 mb-3">{t('gameManual.gameOverview')}</h3>
                 <div className="space-y-3 text-gray-300">
-                  <p>
-                    <strong className="text-yellow-400">权谋决战</strong>是一款支持4-12人的社交推理游戏。
-                    每个玩家扮演一个独特的角色，通过夜晚技能和白天投票来达成各自的胜利条件。
-                  </p>
-                  <p>
-                    游戏分为<strong className="text-purple-400">夜晚</strong>和<strong className="text-yellow-400">白天</strong>两个阶段，
-                    交替进行直到有玩家达成胜利条件或游戏结束。
-                  </p>
+                  <p>{t('gameManual.overviewDesc')}</p>
                 </div>
               </section>
 
               <section>
-                <h3 className="text-xl font-bold text-green-400 mb-3">游戏流程</h3>
+                <h3 className="text-xl font-bold text-green-400 mb-3">{t('gameManual.gameFlow')}</h3>
                 <div className="space-y-3">
                   <div className="bg-gray-800 p-4 rounded-lg">
-                    <h4 className="font-bold text-red-400 mb-2">🌙 夜晚阶段</h4>
+                    <h4 className="font-bold text-red-400 mb-2">🌙 {t('gameManual.nightPhase')}</h4>
                     <ul className="text-sm text-gray-300 space-y-1 list-disc list-inside">
-                      <li>有主动技能的玩家可以发动技能</li>
-                      <li>技能按固定顺序处理，确保公平性</li>
-                      <li>房主确认所有玩家行动后可以结算夜晚</li>
+                      <li>{t('gameManual.nightPhaseDesc')}</li>
+                      <li>{t('gameManual.skillOrderDesc')}</li>
                     </ul>
                   </div>
                   <div className="bg-gray-800 p-4 rounded-lg">
-                    <h4 className="font-bold text-yellow-400 mb-2">☀️ 白天阶段</h4>
+                    <h4 className="font-bold text-yellow-400 mb-2">☀️ {t('gameManual.dayPhase')}</h4>
                     <ul className="text-sm text-gray-300 space-y-1 list-disc list-inside">
-                      <li>所有存活玩家进行投票</li>
-                      <li>得票最多者被处决（平票则无人出局）</li>
-                      <li>房主确认所有玩家投票后可以结算白天</li>
+                      <li>{t('gameManual.dayPhaseDesc')}</li>
                     </ul>
                   </div>
                 </div>
               </section>
 
               <section>
-                <h3 className="text-xl font-bold text-purple-400 mb-3">胜利条件</h3>
+                <h3 className="text-xl font-bold text-purple-400 mb-3">{t('gameManual.victoryCondition')}</h3>
                 <div className="space-y-2 text-gray-300 text-sm">
-                  <p>• 每个角色都有独特的胜利条件，达成即可获胜</p>
-                  <p>• 胜利条件分为<strong className="text-orange-400">局面型</strong>和<strong className="text-blue-400">计数型</strong>两种</p>
-                  <p>• 游戏也可能因死局（连续3次相同情况）而结束</p>
+                  <p>• {t('gameManual.victoryConditionDesc')}</p>
                 </div>
               </section>
 
               <section>
-                <h3 className="text-xl font-bold text-orange-400 mb-3">特殊规则</h3>
+                <h3 className="text-xl font-bold text-orange-400 mb-3">{t('gameManual.specialRules')}</h3>
                 <div className="space-y-2 text-gray-300 text-sm">
-                  <p>• <strong>平票处理：</strong>平票时无人出局，但【平票赢家】可以立即获胜</p>
-                  <p>• <strong>第一夜限制：</strong>部分角色的技能只能在第一夜使用</p>
-                  <p>• <strong>死局判定：</strong>连续3次出现相同情况，游戏自动结束</p>
-                  <p>• <strong>技能顺序：</strong>夜晚技能按固定顺序处理，确保游戏公平</p>
+                  <p>• <strong>{t('gameManual.tieRule')}：</strong>{t('gameManual.tieDesc')}</p>
+                  <p>• <strong>{t('gameManual.firstNightRule')}：</strong>{t('gameManual.firstNightDesc')}</p>
+                  <p>• <strong>{t('gameManual.deadlockRule')}：</strong>{t('gameManual.deadlockDesc')}</p>
+                  <p>• <strong>{t('gameManual.skillOrderRule')}：</strong>{t('gameManual.skillOrderDesc')}</p>
                 </div>
               </section>
             </div>
@@ -256,48 +244,48 @@ export default function GameManual({ onClose, boardType }: GameManualProps) {
           {activeTab === 'roles' && (
             <div className="space-y-4">
               <p className="text-gray-400 text-sm mb-4">
-                游戏共有22个角色，分为4个类别。每个板子包含13个不同的角色。
+                {t('gameManual.allRoles')}
               </p>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="bg-gray-800 p-4 rounded-lg">
-                  <h4 className="font-bold text-blue-300 mb-3">主动与控制 (5个)</h4>
+                  <h4 className="font-bold text-blue-300 mb-3">{t('gameManual.activeControl')}</h4>
                   <ul className="text-sm text-gray-300 space-y-1">
-                    <li>• 技能观测者 - 查看目标技能</li>
-                    <li>• 利他守护者 - 保护目标</li>
-                    <li>• 投票阻断者 - 阻止投票</li>
-                    <li>• 沉默制裁者 - 禁言目标</li>
-                    <li>• 同盟者 - 第一夜绑定</li>
+                    <li>• {getRoleName('技能观测者')}</li>
+                    <li>• {getRoleName('利他守护者')}</li>
+                    <li>• {getRoleName('投票阻断者')}</li>
+                    <li>• {getRoleName('沉默制裁者')}</li>
+                    <li>• {getRoleName('同盟者')}</li>
                   </ul>
                 </div>
 
                 <div className="bg-gray-800 p-4 rounded-lg">
-                  <h4 className="font-bold text-green-300 mb-3">被动与防御 (2个)</h4>
+                  <h4 className="font-bold text-green-300 mb-3">{t('gameManual.passiveDefense')}</h4>
                   <ul className="text-sm text-gray-300 space-y-1">
-                    <li>• 减票守护者 - 减少得票</li>
-                    <li>• 双票使者 - 投票权重×2</li>
+                    <li>• {getRoleName('减票守护者')}</li>
+                    <li>• {getRoleName('双票使者')}</li>
                   </ul>
                 </div>
 
                 <div className="bg-gray-800 p-4 rounded-lg">
-                  <h4 className="font-bold text-yellow-300 mb-3">局面型胜利 (4个)</h4>
+                  <h4 className="font-bold text-yellow-300 mb-3">{t('gameManual.situationVictory')}</h4>
                   <ul className="text-sm text-gray-300 space-y-1">
-                    <li>• 三人王者 - 仅剩3人时获胜</li>
-                    <li>• 集票胜者 - 获得2/3票数</li>
-                    <li>• 平票赢家 - 平票时获胜</li>
-                    <li>• 影子胜者 - 目标被投出</li>
+                    <li>• {getRoleName('三人王者')}</li>
+                    <li>• {getRoleName('集票胜者')}</li>
+                    <li>• {getRoleName('平票赢家')}</li>
+                    <li>• {getRoleName('影子胜者')}</li>
                   </ul>
                 </div>
 
                 <div className="bg-gray-800 p-4 rounded-lg">
-                  <h4 className="font-bold text-orange-300 mb-3">计数型胜利 (11个)</h4>
+                  <h4 className="font-bold text-orange-300 mb-3">{t('gameManual.counterVictory')}</h4>
                   <ul className="text-sm text-gray-300 space-y-1">
-                    <li>• 平票终结者 - 连续平票</li>
-                    <li>• 免票胜者 - 连续未被投票</li>
-                    <li>• 票数平衡者 - 连续得票相同</li>
-                    <li>• 多选胜者 - 连续投死不同人</li>
-                    <li>• 心灵胜者 - 连续预测成功</li>
-                    <li>• 以及其他6个特殊角色...</li>
+                    <li>• {getRoleName('平票终结者')}</li>
+                    <li>• {getRoleName('免票胜者')}</li>
+                    <li>• {getRoleName('票数平衡者')}</li>
+                    <li>• {getRoleName('多选胜者')}</li>
+                    <li>• {getRoleName('心灵胜者')}</li>
+                    <li>• {t('gameManual.otherSpecialRoles')}</li>
                   </ul>
                 </div>
               </div>
@@ -307,38 +295,38 @@ export default function GameManual({ onClose, boardType }: GameManualProps) {
           {activeTab === 'boards' && (
             <div className="space-y-4">
               <p className="text-gray-400 text-sm mb-4">
-                游戏提供3个预设板子和1个自定义选项，每个板子包含13个不同的角色。
+                {t('gameManual.boardsDescription')}
               </p>
 
               <div className="space-y-4">
                 <div className="bg-gradient-to-r from-purple-900/30 to-indigo-900/30 p-5 rounded-lg border border-purple-500/50">
-                  <h4 className="font-bold text-purple-400 text-lg mb-2">命运之轮</h4>
+                  <h4 className="font-bold text-purple-400 text-lg mb-2">{t('gameManual.boardFate')}</h4>
                   <p className="text-gray-300 text-sm mb-3">
-                    以命运操作与投票预测为主题，通过复杂的投票与角色互动来推动胜利
+                    {t('gameManual.boardFateDesc')}
                   </p>
-                  <p className="text-xs text-gray-500">包含：命运复制者、命运转移者、心灵胜者等</p>
+                  <p className="text-xs text-gray-500">{t('gameManual.boardFateIncludes')}</p>
                 </div>
 
                 <div className="bg-gradient-to-r from-blue-900/30 to-cyan-900/30 p-5 rounded-lg border border-blue-500/50">
-                  <h4 className="font-bold text-blue-400 text-lg mb-2">均衡法则</h4>
+                  <h4 className="font-bold text-blue-400 text-lg mb-2">{t('gameManual.boardBalance')}</h4>
                   <p className="text-gray-300 text-sm mb-3">
-                    围绕平票和投票平衡进行设计，投票机制成为博弈的核心
+                    {t('gameManual.boardBalanceDesc')}
                   </p>
-                  <p className="text-xs text-gray-500">包含：均衡守护者、平票赢家、平票终结者等</p>
+                  <p className="text-xs text-gray-500">{t('gameManual.boardBalanceIncludes')}</p>
                 </div>
 
                 <div className="bg-gradient-to-r from-orange-900/30 to-red-900/30 p-5 rounded-lg border border-orange-500/50">
-                  <h4 className="font-bold text-orange-400 text-lg mb-2">策略之巅</h4>
+                  <h4 className="font-bold text-orange-400 text-lg mb-2">{t('gameManual.boardStrategy')}</h4>
                   <p className="text-gray-300 text-sm mb-3">
-                    强调投票策略和角色协同作用，通过精密策划和团队协作达成胜利
+                    {t('gameManual.boardStrategyDesc')}
                   </p>
-                  <p className="text-xs text-gray-500">包含：投票回收者、胜利夺取者、集票胜者等</p>
+                  <p className="text-xs text-gray-500">{t('gameManual.boardStrategyIncludes')}</p>
                 </div>
 
                 <div className="bg-gray-800 p-5 rounded-lg border border-gray-700">
-                  <h4 className="font-bold text-gray-400 text-lg mb-2">自定义</h4>
+                  <h4 className="font-bold text-gray-400 text-lg mb-2">{t('gameManual.customBoard')}</h4>
                   <p className="text-gray-300 text-sm">
-                    从所有22个角色中随机分配，适合想要体验所有角色的玩家
+                    {t('gameManual.customBoardDesc')}
                   </p>
                 </div>
               </div>

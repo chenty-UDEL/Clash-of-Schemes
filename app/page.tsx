@@ -365,7 +365,7 @@ export default function Home() {
                   ? 'bg-green-900/30 border-green-500 text-green-400'
                   : 'bg-red-900/30 border-red-500 text-red-500'
               }`}>
-                {myPlayer?.is_alive ? '● 存活' : '💀 已出局'}
+                {myPlayer?.is_alive ? `● ${t('player.alive')}` : `💀 ${t('player.dead')}`}
               </div>
             </div>
 

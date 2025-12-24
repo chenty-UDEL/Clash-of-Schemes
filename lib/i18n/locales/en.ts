@@ -364,7 +364,12 @@ export const en = {
     boardStrategyTheme: 'Strategy & Cooperation',
     customBoardTheme: 'Random Combination',
     understoodSelectBoard: 'Understood, Select Board',
-    rolesOverview: 'Roles Overview'
+    rolesOverview: 'Roles Overview',
+    boardsDescription: 'The game offers 3 preset boards and 1 custom option, each board contains 13 different roles.',
+    boardFateIncludes: 'Includes: Fate Copier, Fate Transferer, Mind Reader, etc.',
+    boardBalanceIncludes: 'Includes: Balance Guardian, Tie Winner, Tie Breaker, etc.',
+    boardStrategyIncludes: 'Includes: Vote Collector, Victory Stealer, Vote Gatherer, etc.',
+    otherSpecialRoles: 'And 6 other special roles...'
   },
 
   // Game Rules
