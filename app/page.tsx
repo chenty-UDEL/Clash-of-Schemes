@@ -12,6 +12,7 @@ import GameOver from '@/components/game/GameOver';
 import RoleInfo from '@/components/game/RoleInfo';
 import GameRules from '@/components/game/GameRules';
 import GameTips from '@/components/game/GameTips';
+import GameManual from '@/components/game/GameManual';
 
 export default function Home() {
   const [name, setName] = useState('');

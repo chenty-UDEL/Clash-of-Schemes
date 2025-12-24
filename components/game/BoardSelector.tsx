@@ -103,11 +103,11 @@ export default function BoardSelector({ onSelect, onCancel, loading }: BoardSele
             disabled={!selectedBoard || loading}
             className={`flex-1 px-6 py-3 rounded-lg font-bold shadow-lg transition ${
               selectedBoard && !loading
-                ? 'bg-red-600 hover:bg-red-500'
+                ? 'bg-blue-600 hover:bg-blue-500'
                 : 'bg-gray-600 cursor-not-allowed opacity-50'
             }`}
           >
-            {loading ? '开始中...' : '确认开始游戏'}
+            {loading ? '开始中...' : '查看板子详情'}
           </button>
         </div>
       </div>
