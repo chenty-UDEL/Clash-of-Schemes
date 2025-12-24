@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { BOARDS, ROLE_CONFIG, type BoardType } from '@/lib/game/roles';
 
 interface GameManualProps {
@@ -9,7 +9,7 @@ interface GameManualProps {
 }
 
 // 获取技能描述
-function getSkillDescription(role: string, config: any): JSX.Element {
+function getSkillDescription(role: string, config: any): React.JSX.Element {
   const skillDescriptions: Record<string, string> = {
     '技能观测者': '夜晚选择一名玩家，查看他当晚使用的技能类型',
     '利他守护者': '夜晚选择一名玩家，保护他免受所有技能影响',

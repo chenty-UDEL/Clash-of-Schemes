@@ -25,6 +25,8 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [showBoardSelector, setShowBoardSelector] = useState(false);
   const [startingGame, setStartingGame] = useState(false);
+  const [showManual, setShowManual] = useState(false);
+  const [selectedBoardForManual, setSelectedBoardForManual] = useState<string | null>(null);
 
   // 获取我的玩家信息
   const getMyPlayer = () => players.find(p => p.name === name);
