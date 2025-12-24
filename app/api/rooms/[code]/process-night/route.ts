@@ -67,7 +67,15 @@ export async function POST(
     const firstNightOnlyActions: ActionType[] = ['ally_bind', 'shadow_bind', 'copy_fate'];
     
     for (const roleName of NIGHT_ACTION_ORDER) {
-      const rolePlayers = players.filter(p => p.is_alive && p.role === roleName);
+      // 获取拥有该角色的玩家（包括命运复制者复制的角色）
+      const rolePlayers = players.filter(p => {
+        if (!p.is_alive) return false;
+        // 直接拥有该角色
+        if (p.role === roleName) return true;
+        // 命运复制者复制的角色
+        if (p.role === '命运复制者' && p.copied_role === roleName && !isFirst) return true;
+        return false;
+      });
       
       for (const player of rolePlayers) {
         // 检查是否是第一夜才能使用的技能
@@ -79,6 +87,11 @@ export async function POST(
         // 第一夜限制检查
         if (firstNightOnlyActions.includes(actionType) && !isFirst) {
           continue; // 跳过非第一夜的绑定类技能
+        }
+        
+        // 命运复制者：第一夜后只能使用复制的角色技能
+        if (player.role === '命运复制者' && !isFirst && !player.copied_role) {
+          continue; // 第一夜后但还没复制角色，跳过
         }
 
         // 处理各种技能

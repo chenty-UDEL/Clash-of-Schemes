@@ -36,6 +36,34 @@ export default function NightPhase({
   const getActionType = (): string | null => {
     if (!myPlayer.role) return null;
 
+    // 命运复制者：第一夜复制角色，后续夜晚使用复制的角色技能
+    if (myPlayer.role === '命运复制者') {
+      if (isFirst) {
+        return 'copy_fate';
+      } else if (myPlayer.copied_role) {
+        // 使用复制的角色技能
+        switch (myPlayer.copied_role) {
+          case '技能观测者':
+            return 'check';
+          case '利他守护者':
+            return 'protect';
+          case '沉默制裁者':
+            return 'silence';
+          case '投票阻断者':
+            return 'block_vote';
+          case '命运转移者':
+            return 'fate_transfer';
+          case '胜利夺取者':
+            return 'victory_steal';
+          case '心灵胜者':
+            return 'predict_vote';
+          default:
+            return null;
+        }
+      }
+      return null;
+    }
+
     switch (myPlayer.role) {
       case '技能观测者':
         return 'check';
@@ -49,16 +77,12 @@ export default function NightPhase({
         return isFirst ? 'ally_bind' : null;
       case '影子胜者':
         return isFirst ? 'shadow_bind' : null;
-      case '命运复制者':
-        return isFirst ? 'copy_fate' : null;
       case '命运转移者':
         return 'fate_transfer';
       case '胜利夺取者':
         return 'victory_steal';
       case '心灵胜者':
         return 'predict_vote';
-      case '胜利夺取者':
-        return 'victory_steal';
       default:
         return null;
     }
@@ -118,11 +142,17 @@ export default function NightPhase({
     }
   };
 
+  // 命运复制者：显示复制的角色信息
+  const isFateCopier = myPlayer.role === '命运复制者';
+  const effectiveRole = isFateCopier && !isFirst && myPlayer.copied_role ? myPlayer.copied_role : myPlayer.role;
+
   if (!actionType) {
     return (
       <div className="bg-gray-900 p-6 rounded-lg border border-gray-700 text-center">
         <p className="text-gray-400">
-          {myPlayer.role === '同盟者' || myPlayer.role === '影子胜者' || myPlayer.role === '命运复制者'
+          {isFateCopier && !isFirst && !myPlayer.copied_role ? (
+            '你尚未复制角色，无法使用技能。'
+          ) : myPlayer.role === '同盟者' || myPlayer.role === '影子胜者' || (isFateCopier && isFirst)
             ? '技能只能在第一夜发动。'
             : '今晚无主动技能，请等待天亮。'}
         </p>
@@ -144,7 +174,18 @@ export default function NightPhase({
         <div className="space-y-4">
           {roleConfig && (
             <div className="bg-gray-800 p-3 rounded text-sm text-gray-300">
-              <span className="font-bold text-purple-400">{myPlayer.role}:</span> {roleConfig.desc}
+              {isFateCopier && !isFirst && myPlayer.copied_role ? (
+                <>
+                  <div className="text-xs text-blue-400 mb-1">
+                    使用复制的角色技能: <span className="font-bold">{myPlayer.copied_role}</span>
+                  </div>
+                  <span className="font-bold text-purple-400">{myPlayer.copied_role}:</span> {getRoleConfig(myPlayer.copied_role)?.desc || '技能描述'}
+                </>
+              ) : (
+                <>
+                  <span className="font-bold text-purple-400">{myPlayer.role}:</span> {roleConfig.desc}
+                </>
+              )}
             </div>
           )}
 
