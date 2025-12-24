@@ -4,20 +4,29 @@ import { t, tWithParams, getLanguage } from './index';
 /**
  * 将后端返回的错误键转换为用户友好的错误消息
  */
-export function translateError(errorKey: string, errorParams?: Record<string, string | number>): string {
+export function translateError(
+  errorKey: string, 
+  errorParams?: Record<string, string | number>,
+  playerId?: number | null
+): string {
   // 如果已经是翻译后的文本（不包含点号），直接返回
-  if (!errorKey.includes('.')) {
-    return errorKey;
+  if (!errorKey || !errorKey.includes('.')) {
+    return errorKey || 'Unknown error';
   }
 
-  // 尝试翻译错误消息
-  const lang = getLanguage();
+  // 尝试翻译错误消息（使用玩家特定的语言）
+  const lang = getLanguage(playerId);
   
-  if (errorParams) {
-    return tWithParams(errorKey, errorParams, lang);
+  try {
+    if (errorParams) {
+      return tWithParams(errorKey, errorParams, lang);
+    }
+    
+    return t(errorKey, lang);
+  } catch (err) {
+    // 如果翻译失败，返回原始键
+    return errorKey;
   }
-  
-  return t(errorKey, lang);
 }
 
 /**

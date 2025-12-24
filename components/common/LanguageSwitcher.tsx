@@ -2,8 +2,12 @@
 
 import { useTranslation } from '@/hooks/useTranslation';
 
-export default function LanguageSwitcher() {
-  const { lang, changeLanguage } = useTranslation();
+interface LanguageSwitcherProps {
+  playerId?: number | null;
+}
+
+export default function LanguageSwitcher({ playerId }: LanguageSwitcherProps) {
+  const { lang, changeLanguage } = useTranslation({ playerId });
 
   return (
     <div className="flex items-center gap-2 bg-gray-800 rounded-lg p-1 border border-gray-700">
