@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase/server';
 import { BOARDS, ALL_ROLES, type BoardType } from '@/lib/game/roles';
 import { MIN_PLAYERS, MAX_PLAYERS } from '@/lib/game/constants';
+import { t, tWithParams, getLanguage } from '@/lib/i18n';
 
 export async function POST(
   request: NextRequest,
