@@ -324,6 +324,11 @@ export default function Home() {
 
     return (
       <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center p-4">
+        {/* 语言切换器 - 右上角，最高优先级 */}
+        <div className="fixed top-4 right-4 z-[9999]">
+          <LanguageSwitcher playerId={myPlayerId} />
+        </div>
+        
         <GameRules />
         <div className="w-full max-w-lg bg-gray-800 p-6 rounded-xl shadow-2xl space-y-6 border border-gray-700">
           {/* 游戏状态显示 */}
@@ -532,12 +537,12 @@ export default function Home() {
   }
 
   // 显示大厅
-  return (
-    <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center p-4">
-      {/* 语言切换器 - 右上角 */}
-      <div className="fixed top-4 right-4 z-50">
-        <LanguageSwitcher playerId={myPlayerId} />
-      </div>
+    return (
+      <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center p-4">
+        {/* 语言切换器 - 右上角，最高优先级，始终可见 */}
+        <div className="fixed top-4 right-4 z-[9999]">
+          <LanguageSwitcher playerId={myPlayerId} />
+        </div>
       
       <GameRules />
       <div className="w-full max-w-md text-center bg-gray-800 p-8 rounded-xl shadow-2xl border border-gray-700">
