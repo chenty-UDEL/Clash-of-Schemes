@@ -186,7 +186,7 @@ export default function NightPhase({
                 </>
               ) : (
                 <>
-                  <span className="font-bold text-purple-400">{myPlayer.role}:</span> {roleConfig.desc}
+                  <span className="font-bold text-purple-400">{getRoleName(myPlayer.role)}:</span> {getRoleDescription(myPlayer.role)}
                 </>
               )}
             </div>
