@@ -169,8 +169,8 @@ export interface GameConfig {
 }
 
 export const DEFAULT_GAME_CONFIG: GameConfig = {
-  minPlayers: 6,
-  maxPlayers: 13,
+  minPlayers: 4,
+  maxPlayers: 12,
   deadlockThreshold: 3
 };
 

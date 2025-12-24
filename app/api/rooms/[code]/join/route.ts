@@ -44,9 +44,9 @@ export async function POST(
       .select('*', { count: 'exact', head: true })
       .eq('room_code', code);
 
-    if (count && count >= 13) {
+    if (count && count >= 12) {
       return NextResponse.json(
-        { success: false, error: '房间已满（最多13人）' },
+        { success: false, error: '房间已满（最多12人）' },
         { status: 400 }
       );
     }

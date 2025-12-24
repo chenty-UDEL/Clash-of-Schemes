@@ -8,8 +8,8 @@ import { DEFAULT_GAME_CONFIG } from '@/types/game';
 // 1. 游戏配置常量
 // ==========================================
 
-export const MIN_PLAYERS = DEFAULT_GAME_CONFIG.minPlayers; // 6
-export const MAX_PLAYERS = DEFAULT_GAME_CONFIG.maxPlayers; // 13
+export const MIN_PLAYERS = 4; // 最小4人
+export const MAX_PLAYERS = 12; // 最大12人
 export const DEADLOCK_THRESHOLD = DEFAULT_GAME_CONFIG.deadlockThreshold; // 3
 
 // ==========================================

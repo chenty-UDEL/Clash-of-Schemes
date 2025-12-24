@@ -246,7 +246,7 @@ export default function Home() {
 
         <div className="mb-8">
           <p className="text-left text-gray-400 text-sm mb-3">
-            已加入玩家 ({players.length}/13)
+            已加入玩家 ({players.length}/12)
           </p>
           <div className="grid grid-cols-2 gap-3">
             {players.map((p) => (
@@ -280,19 +280,19 @@ export default function Home() {
         {isHost ? (
           <div className="space-y-4">
             <p className="text-gray-500 text-sm">
-              {players.length < 6
-                ? `等待更多玩家加入 (${players.length}/6)`
-                : `可以开始游戏 (${players.length}/13)`}
+              {players.length < 4
+                ? `等待更多玩家加入 (${players.length}/4)`
+                : `可以开始游戏 (${players.length}/12)`}
             </p>
             <button
-              disabled={players.length < 6 || loading}
+              disabled={players.length < 4 || loading}
               className={`w-full p-4 rounded-lg font-bold shadow-lg transition ${
-                players.length < 6
+                players.length < 4
                   ? 'bg-gray-600 cursor-not-allowed opacity-50'
                   : 'bg-red-600 hover:bg-red-500'
               }`}
             >
-              {players.length < 6 ? '等待玩家' : '🔥 开始游戏'}
+              {players.length < 4 ? '等待玩家' : '🔥 开始游戏'}
             </button>
           </div>
         ) : (
