@@ -135,12 +135,12 @@ export const zh = {
 
   // 游戏界面
   gameUI: {
-    roundState: '回合状态',
+    roundState: '公告',
     nightPhase: '🌙 夜晚阶段',
     dayPhase: '☀️ 白天阶段',
     lobby: '🏠 大厅',
-    skillActivation: '🔮 技能发动',
-    vote: '🗳️ 投票',
+    skillActivation: '技能发动',
+    vote: '🗳️ 选择一名玩家进行投票，得票最多者将被处决。平票则无人出局。',
     selectTarget: '选择目标',
     submit: '提交',
     submitted: '已提交',
@@ -148,6 +148,8 @@ export const zh = {
     selectPlayer: '选择玩家',
     noTarget: '无目标',
     abandon: '弃票',
+    noMessages: '暂无消息...',
+    private: '[私密]',
     storeVote: '存储投票',
     storedVotes: '存储的票数',
     useStoredVotes: '同时使用所有存储的票',

@@ -135,12 +135,12 @@ export const en = {
 
   // Game UI
   gameUI: {
-    roundState: 'Round State',
+    roundState: 'Announcements',
     nightPhase: '🌙 Night Phase',
     dayPhase: '☀️ Day Phase',
     lobby: '🏠 Lobby',
-    skillActivation: '🔮 Skill Activation',
-    vote: '🗳️ Vote',
+    skillActivation: 'Skill Activation',
+    vote: '🗳️ Select a player to vote. The player with the most votes will be executed. Tie means no elimination.',
     selectTarget: 'Select Target',
     submit: 'Submit',
     submitted: 'Submitted',
@@ -148,6 +148,8 @@ export const en = {
     selectPlayer: 'Select Player',
     noTarget: 'No Target',
     abandon: 'Abstain',
+    noMessages: 'No messages...',
+    private: '[PRIVATE]',
     storeVote: 'Store Vote',
     storedVotes: 'Stored Votes',
     useStoredVotes: 'Use All Stored Votes',

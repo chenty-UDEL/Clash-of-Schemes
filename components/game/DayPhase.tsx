@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import type { Player, GameLog } from '@/types/game';
 import TieBreaker from './TieBreaker';
+import { useTranslation } from '@/hooks/useTranslation';
 
 interface DayPhaseProps {
   roomCode: string;
@@ -34,6 +35,7 @@ export default function DayPhase({
     l.tag === 'PUBLIC' || (myPlayer && l.viewer_ids?.includes(myPlayer.id))
   );
   const cannotVote = myPlayer.flags?.cannot_vote;
+  const { t } = useTranslation();
   const isVoteCollector = myPlayer.role === '投票回收者';
   const isBalanceGuard = myPlayer.role === '均衡守护者' && !myPlayer.balance_guard_used;
   const maxStoredVotes = 3;
@@ -145,10 +147,10 @@ export default function DayPhase({
       {/* 公告区域 */}
       <div className="bg-gray-900 p-4 rounded-lg border border-gray-700 max-h-52 overflow-y-auto shadow-inner">
         <h3 className="text-gray-400 font-bold mb-2 sticky top-0 bg-gray-900 pb-2 border-b border-gray-800">
-          📢 公告
+          📢 {t('gameUI.roundState')}
         </h3>
         {myLogs.length === 0 ? (
-          <p className="text-gray-600 text-sm py-4 text-center">暂无消息...</p>
+          <p className="text-gray-600 text-sm py-4 text-center">{t('tips.waiting')}</p>
         ) : (
           myLogs.map((log) => (
             <div
@@ -161,7 +163,7 @@ export default function DayPhase({
             >
               {log.tag === 'PRIVATE' && (
                 <span className="text-indigo-400 font-bold text-xs uppercase mr-1">
-                  [私密]
+                  {t('gameUI.private')}
                 </span>
               )}
               {log.message}
@@ -194,7 +196,7 @@ export default function DayPhase({
       {!hasVoted && !cannotVote && (
         <div className="bg-blue-900/30 border border-blue-500/50 p-3 rounded-lg mb-4">
           <p className="text-sm text-blue-300">
-            💡 选择一名玩家进行投票，得票最多者将被处决。平票则无人出局。
+            💡 {t('gameUI.vote')}
           </p>
         </div>
       )}
