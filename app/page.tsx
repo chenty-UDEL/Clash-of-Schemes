@@ -703,6 +703,7 @@ export default function Home() {
                 }
               }}
               boardType={selectedBoardForManual as any}
+              playerId={myPlayerId}
             />
           )}
 
