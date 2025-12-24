@@ -347,9 +347,9 @@ export default function Home() {
                     ({myPlayer?.role ? (() => {
                       try {
                         const { getRoleName } = require('@/lib/game/roleTranslations');
-                        return getRoleName(myPlayer.role as any);
+                        return getRoleName(myPlayer!.role as any);
                       } catch {
-                        return myPlayer.role;
+                        return myPlayer!.role;
                       }
                     })() : t('common.loading')})
                   </span>
@@ -378,7 +378,7 @@ export default function Home() {
           </div>
 
           {/* 游戏阶段内容 */}
-          {myPlayer && myPlayer.is_alive ? (
+          {myPlayer && myPlayer.is_alive && roomState ? (
             isNight ? (
               <NightPhase
                 roomCode={roomCode}

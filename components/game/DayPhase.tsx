@@ -8,7 +8,7 @@ import { translateError } from '@/lib/i18n/errorHandler';
 
 interface DayPhaseProps {
   roomCode: string;
-  myPlayer: Player;
+  myPlayer: Player | undefined;
   players: Player[];
   logs: GameLog[];
   onVoteSubmit: () => void;

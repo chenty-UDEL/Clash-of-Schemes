@@ -10,7 +10,7 @@ import { translateError } from '@/lib/i18n/errorHandler';
 
 interface NightPhaseProps {
   roomCode: string;
-  myPlayer: Player;
+  myPlayer: Player | undefined;
   players: Player[];
   roomState: RoomState;
   onActionSubmit: () => void;
