@@ -378,7 +378,7 @@ export default function Home() {
           </div>
 
           {/* 游戏阶段内容 */}
-          {myPlayer?.is_alive ? (
+          {myPlayer && myPlayer.is_alive ? (
             isNight ? (
               <NightPhase
                 roomCode={roomCode}
