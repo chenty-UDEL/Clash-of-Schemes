@@ -315,7 +315,26 @@ export default function Home() {
       }
     }
 
-    return <GameOver winner={winner} players={players} />;
+    return (
+      <>
+        {/* 语言切换器 - 右上角，最高优先级 */}
+        <div className="fixed top-4 right-4 z-[9999]">
+          <LanguageSwitcher playerId={myPlayerId} />
+        </div>
+        <GameOver 
+          winner={winner} 
+          players={players}
+          roomCode={roomCode}
+          isHost={isHost || false}
+          myPlayerId={myPlayerId}
+          onRestart={() => {
+            fetchRoomState(roomCode);
+            fetchPlayers(roomCode);
+            fetchLogs(roomCode);
+          }}
+        />
+      </>
+    );
   }
 
   // 如果游戏已开始，显示游戏界面
