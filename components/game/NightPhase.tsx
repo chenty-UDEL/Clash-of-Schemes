@@ -23,6 +23,11 @@ export default function NightPhase({
   roomState,
   onActionSubmit
 }: NightPhaseProps) {
+  // 如果没有玩家信息，不渲染
+  if (!myPlayer) {
+    return null;
+  }
+
   const [selectedTargetId, setSelectedTargetId] = useState<string>('');
   const [predictedVoterId, setPredictedVoterId] = useState<string>(''); // 心灵胜者：预测谁投票
   const [predictedTargetId, setPredictedTargetId] = useState<string>(''); // 心灵胜者：预测投给谁
@@ -31,7 +36,7 @@ export default function NightPhase({
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
-  const { t } = useTranslation({ playerId: myPlayer?.id });
+  const { t } = useTranslation({ playerId: myPlayer.id });
   const roundNumber = parseRoundNumber(roomState.round_state);
   const isFirst = isFirstNight(roomState.round_state);
   const roleConfig = myPlayer.role ? getRoleConfig(myPlayer.role) : null;
