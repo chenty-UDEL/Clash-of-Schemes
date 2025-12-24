@@ -24,13 +24,29 @@ export async function POST(
       .select('*')
       .eq('room_code', code);
 
+    // 先获取房间状态以确定回合号
     const { data: room, error: roomError } = await supabase
       .from('rooms')
       .select('round_state')
       .eq('code', code)
       .single();
 
-    if (playersError || !players || actionsError || !actions || roomError || !room) {
+    if (roomError || !room) {
+      return NextResponse.json(
+        { success: false, error: 'error.dataReadFailed' },
+        { status: 500 }
+      );
+    }
+
+    const roundNumber = parseRoundNumber(room.round_state);
+
+    const { data: predictions, error: predictionsError } = await supabase
+      .from('vote_predictions')
+      .select('*')
+      .eq('room_code', code)
+      .eq('round_number', roundNumber);
+
+    if (playersError || !players || actionsError || !actions) {
       return NextResponse.json(
         { success: false, error: 'error.dataReadFailed' },
         { status: 500 }
@@ -216,10 +232,23 @@ export async function POST(
             break;
 
           case 'predict_vote': // 心灵胜者
-            // 需要从 action 中获取预测的投票者和目标
-            // 这里需要扩展 night_actions 表或使用其他方式存储预测信息
-            // 暂时使用 target_id 作为预测的目标，predicted_voter_id 需要从其他地方获取
-            if (action.target_id) {
+            // 从 vote_predictions 表中获取预测信息
+            const prediction = predictions?.find(p => p.predictor_id === player.id && p.round_number === roundNumber);
+            if (prediction) {
+              const predictedPlayer = players.find(p => p.id === prediction.predicted_player_id);
+              const predictedTarget = prediction.predicted_target_id ? players.find(p => p.id === prediction.predicted_target_id) : null;
+              const predictedPlayerName = predictedPlayer?.name || `玩家${prediction.predicted_player_id}`;
+              const predictedTargetName = predictedTarget?.name || (prediction.predicted_target_id === null ? '弃票' : `玩家${prediction.predicted_target_id}`);
+              logs.push({
+                message: tWithParams('gameLog.predictionRecorded', { 
+                  voter: predictedPlayerName, 
+                  target: predictedTargetName 
+                }, lang),
+                viewer_ids: [player.id],
+                tag: 'PRIVATE'
+              });
+            } else if (action.target_id) {
+              // 兼容旧逻辑：如果没有预测记录，使用target_id
               logs.push({
                 message: t('gameLog.predictionRecorded', lang),
                 viewer_ids: [player.id],
