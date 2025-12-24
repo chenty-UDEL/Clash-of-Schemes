@@ -1,0 +1,86 @@
+import { NextResponse } from 'next/server';
+import { supabase } from '@/lib/supabase/server';
+
+export async function POST(
+  request: Request,
+  { params }: { params: { code: string } }
+) {
+  try {
+    const { code } = params;
+    const { name } = await request.json();
+
+    if (!name) {
+      return NextResponse.json(
+        { success: false, error: '请输入名字' },
+        { status: 400 }
+      );
+    }
+
+    // 检查房间是否存在
+    const { data: room, error: roomError } = await supabase
+      .from('rooms')
+      .select('code, round_state')
+      .eq('code', code)
+      .single();
+
+    if (roomError || !room) {
+      return NextResponse.json(
+        { success: false, error: '房间不存在' },
+        { status: 404 }
+      );
+    }
+
+    // 检查房间是否已开始游戏
+    if (room.round_state !== 'LOBBY') {
+      return NextResponse.json(
+        { success: false, error: '游戏已开始，无法加入' },
+        { status: 400 }
+      );
+    }
+
+    // 检查玩家数量
+    const { count } = await supabase
+      .from('players')
+      .select('*', { count: 'exact', head: true })
+      .eq('room_code', code);
+
+    if (count && count >= 13) {
+      return NextResponse.json(
+        { success: false, error: '房间已满（最多13人）' },
+        { status: 400 }
+      );
+    }
+
+    // 创建玩家
+    const { data: player, error: playerError } = await supabase
+      .from('players')
+      .insert([{
+        room_code: code,
+        name,
+        is_host: false,
+        is_alive: true
+      }])
+      .select()
+      .single();
+
+    if (playerError) {
+      return NextResponse.json(
+        { success: false, error: '加入房间失败', details: playerError.message },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      data: {
+        playerId: player.id
+      }
+    });
+  } catch (error: any) {
+    return NextResponse.json(
+      { success: false, error: '服务器错误', details: error.message },
+      { status: 500 }
+    );
+  }
+}
+
