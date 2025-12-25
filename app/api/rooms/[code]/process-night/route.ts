@@ -277,38 +277,32 @@ export async function POST(
 
     // 4. 显示前一天的处决结果（如果有）
     if (roundNumber > 1) {
-      // 获取前一天的处决日志
-      const previousDay = roundNumber - 1;
+      // 获取前一天的处决日志（查找包含"被投票出局"或"eliminated"的日志）
       const { data: previousLogs } = await supabase
         .from('game_logs')
-        .select('message')
+        .select('message, created_at')
         .eq('room_code', code)
         .eq('tag', 'PUBLIC')
-        .like('message', '%被投票出局%')
+        .or('message.ilike.%被投票出局%,message.ilike.%eliminated%')
         .order('created_at', { ascending: false })
-        .limit(1);
+        .limit(5);
       
-      // 如果找到了处决日志，在第二天夜里重新显示
+      // 找到最近的一条处决日志（排除今天已经显示的）
       if (previousLogs && previousLogs.length > 0) {
-        const eliminatedMessage = previousLogs[0].message;
-        // 检查是否已经显示过（避免重复）
-        const { data: existingLog } = await supabase
-          .from('game_logs')
-          .select('id')
-          .eq('room_code', code)
-          .eq('message', eliminatedMessage)
-          .order('created_at', { ascending: false })
-          .limit(1);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
         
-        // 如果这个日志是今天创建的，说明已经显示过了，跳过
-        // 否则，重新显示前一天的处决结果
-        if (!existingLog || existingLog.length === 0 || 
-            (existingLog[0] && new Date(existingLog[0].created_at).getDate() !== new Date().getDate())) {
-          logs.push({
-            message: eliminatedMessage,
-            viewer_ids: null,
-            tag: 'PUBLIC'
-          });
+        for (const log of previousLogs) {
+          const logDate = new Date(log.created_at);
+          // 如果是昨天的日志，重新显示
+          if (logDate < today) {
+            logs.push({
+              message: log.message,
+              viewer_ids: null,
+              tag: 'PUBLIC'
+            });
+            break; // 只显示最近的一条
+          }
         }
       }
     }
