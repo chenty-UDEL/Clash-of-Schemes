@@ -104,7 +104,8 @@ export async function POST(
     // 2.2 [同盟者] 共投检测 (+1)
     const allies = players.filter(p => p.role === '同盟者' && p.is_alive && p.flags?.ally_id);
     allies.forEach(p1 => {
-      if (p1.id > p1.flags!.ally_id!) return; // 去重
+      if (!p1.flags?.ally_id) return;
+      if (p1.id > p1.flags.ally_id) return; // 去重
       const p2 = players.find(p => p.id === p1.flags!.ally_id);
       if (p2 && p2.is_alive) {
         const v1 = votes.find(v => v.voter_id === p1.id);
@@ -136,8 +137,8 @@ export async function POST(
       p.is_alive && 
       p.flags?.victory_steal_target_id
     );
-    if (victoryStealer) {
-      victoryStealTarget = players.find(p => p.id === victoryStealer.flags?.victory_steal_target_id);
+    if (victoryStealer && victoryStealer.flags?.victory_steal_target_id) {
+      victoryStealTarget = players.find(p => p.id === victoryStealer.flags!.victory_steal_target_id);
     }
 
     // 3.1 [集票胜者]

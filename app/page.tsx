@@ -109,7 +109,6 @@ function HomeContent() {
       // 如果有URL中的名字，直接使用；否则从数据库获取
       if (urlName) {
         setName(decodeURIComponent(urlName));
-        setRoomCode(urlRoomCode);
         setIsInRoom(true);
         // 延迟一下确保状态设置完成
         setTimeout(() => {
@@ -131,10 +130,9 @@ function HomeContent() {
             
             if (playersData && playersData.length > 0) {
               // 找到非AI玩家（不是以AI-开头的）
-              const realPlayer = playersData.find(p => !p.name.startsWith('AI-'));
+              const realPlayer = playersData.find(p => p.name && !p.name.startsWith('AI-'));
               if (realPlayer) {
                 setName(realPlayer.name);
-                setRoomCode(urlRoomCode);
                 setIsInRoom(true);
                 // 延迟一下确保状态设置完成
                 setTimeout(() => {

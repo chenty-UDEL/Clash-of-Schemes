@@ -144,7 +144,7 @@ export async function POST(request: NextRequest) {
       if ((p as any).is_bot !== undefined) {
         return (p as any).is_bot === true;
       }
-      return p.name.startsWith('AI-');
+      return p.name?.startsWith('AI-') || false;
     });
     const allPlayers = players;
 
