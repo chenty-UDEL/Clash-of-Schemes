@@ -48,8 +48,8 @@ export default function TestModePage() {
         throw new Error(result.error || '创建测试房间失败');
       }
 
-      // 跳转到游戏页面，并传递房间号
-      router.push(`/?room=${result.data.roomCode}&test=true`);
+      // 跳转到游戏页面，并传递房间号和玩家名称
+      router.push(`/?room=${result.data.roomCode}&test=true&name=${encodeURIComponent(playerName.trim())}`);
     } catch (err: any) {
       setError(err.message || '创建测试房间失败');
     } finally {

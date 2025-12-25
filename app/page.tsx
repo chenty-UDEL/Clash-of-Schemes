@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase/client';
 import type { Player, RoomState, GameLog } from '@/types/game';
 import type { BoardType } from '@/lib/game/roles';
@@ -20,6 +21,7 @@ import { useTranslation } from '@/hooks/useTranslation';
 import { translateError } from '@/lib/i18n/errorHandler';
 
 export default function Home() {
+  const searchParams = useSearchParams();
   const [name, setName] = useState('');
   const [roomCode, setRoomCode] = useState('');
   const [isInRoom, setIsInRoom] = useState(false);
@@ -34,6 +36,7 @@ export default function Home() {
   const [selectedBoardForManual, setSelectedBoardForManual] = useState<string | null>(null);
   const [showRoleSelector, setShowRoleSelector] = useState(false);
   const [isTestMode, setIsTestMode] = useState(false);
+  const [urlProcessed, setUrlProcessed] = useState(false);
 
   // 获取我的玩家信息
   const getMyPlayer = () => players.find(p => p.name === name);
@@ -90,6 +93,62 @@ export default function Home() {
       .limit(20);
     if (data) setLogs(data as GameLog[]);
   };
+
+  // 处理URL参数（测试模式跳转）
+  useEffect(() => {
+    if (urlProcessed) return;
+    
+    const urlRoomCode = searchParams?.get('room');
+    const urlTestMode = searchParams?.get('test') === 'true';
+    const urlName = searchParams?.get('name');
+    
+    if (urlRoomCode && !isInRoom) {
+      setRoomCode(urlRoomCode);
+      setIsTestMode(urlTestMode);
+      
+      // 如果有URL中的名字，直接使用；否则从数据库获取
+      if (urlName) {
+        setName(decodeURIComponent(urlName));
+        setIsInRoom(true);
+        fetchPlayers(urlRoomCode);
+        fetchRoomState(urlRoomCode);
+        fetchLogs(urlRoomCode);
+        setUrlProcessed(true);
+      } else {
+        // 从数据库获取房间信息，找到真实玩家的名字
+        const fetchTestRoomInfo = async () => {
+          try {
+            // 获取房间中的玩家列表
+            const { data: playersData } = await supabase
+              .from('players')
+              .select('*')
+              .eq('room_code', urlRoomCode)
+              .order('id');
+            
+            if (playersData && playersData.length > 0) {
+              // 找到非AI玩家（不是以AI-开头的）
+              const realPlayer = playersData.find(p => !p.name.startsWith('AI-'));
+              if (realPlayer) {
+                setName(realPlayer.name);
+                setIsInRoom(true);
+                fetchPlayers(urlRoomCode);
+                fetchRoomState(urlRoomCode);
+                fetchLogs(urlRoomCode);
+              }
+            }
+          } catch (err) {
+            console.error('获取测试房间信息失败:', err);
+          } finally {
+            setUrlProcessed(true);
+          }
+        };
+        
+        fetchTestRoomInfo();
+      }
+    } else {
+      setUrlProcessed(true);
+    }
+  }, [searchParams, urlProcessed, isInRoom]);
 
   // 实时订阅
   useEffect(() => {
