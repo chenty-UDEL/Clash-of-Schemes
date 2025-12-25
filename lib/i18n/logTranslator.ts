@@ -86,9 +86,38 @@ export function translateLogMessage(
     // 匹配未翻译的翻译键（如 "gameLog.gameStarted"）
     if (message.startsWith('gameLog.')) {
       // 尝试直接翻译
-      const translated = t(message as any, lang);
-      if (translated !== message) {
-        return translated;
+      try {
+        const translated = t(message as any, lang);
+        if (translated !== message && !translated.startsWith('gameLog.')) {
+          return translated;
+        }
+      } catch (e) {
+        // 如果翻译失败，尝试匹配带参数的情况
+      }
+      
+      // 对于 gameLog.gameStarted，尝试使用 success.gameStarted（因为 gameLog.gameStarted 可能不存在）
+      if (message === 'gameLog.gameStarted') {
+        try {
+          return t('success.gameStarted', lang);
+        } catch (e) {
+          return lang === 'zh' ? '🎮 游戏开始！' : '🎮 Game started!';
+        }
+      }
+      
+      // 尝试匹配带参数的游戏开始消息
+      // 格式可能是：gameLog.gameStarted 或带参数的消息
+      if (message.includes('gameLog.gameStarted')) {
+        // 尝试提取参数（如果有）
+        const paramMatch = message.match(/gameLog\.gameStarted.*?board[:\s]+(.+?)[,\s]+count[:\s]+(\d+)/);
+        if (paramMatch) {
+          return tWithParams('success.gameStarted', { board: paramMatch[1], count: parseInt(paramMatch[2]) }, lang);
+        }
+        // 如果没有参数，使用默认翻译
+        try {
+          return t('success.gameStarted', lang);
+        } catch (e) {
+          return lang === 'zh' ? '🎮 游戏开始！' : '🎮 Game started!';
+        }
       }
     }
   }
@@ -103,9 +132,20 @@ export function translateLogMessage(
     
     // 匹配未翻译的翻译键
     if (message.startsWith('gameLog.')) {
-      const translated = t(message as any, lang);
-      if (translated !== message) {
-        return translated;
+      try {
+        const translated = t(message as any, lang);
+        if (translated !== message && !translated.startsWith('gameLog.')) {
+          return translated;
+        }
+      } catch (e) {
+        // 如果 gameLog.gameStarted 不存在，尝试使用 success.gameStarted
+        if (message === 'gameLog.gameStarted' || message.includes('gameLog.gameStarted')) {
+          try {
+            return t('success.gameStarted', lang);
+          } catch (e2) {
+            return '🎮 Game started!';
+          }
+        }
       }
     }
   }

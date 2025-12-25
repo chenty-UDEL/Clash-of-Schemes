@@ -213,11 +213,11 @@ export default function DayPhase({
 
       {/* 投票区域 */}
       <div className="bg-gray-800 p-5 rounded-lg border border-gray-600 shadow-lg">
-        <h3 className="text-lg font-bold text-yellow-500 mb-4">🗳️ 投票处决</h3>
+        <h3 className="text-lg font-bold text-yellow-500 mb-4">🗳️ {t('gameUI.voteExecution')}</h3>
 
         {hasVoted ? (
           <div className="bg-green-900/30 border border-green-600 text-green-400 font-bold p-4 rounded text-center">
-            ✅ 已投票
+            ✅ {t('gameUI.voted')}
           </div>
         ) : (
           <div className="space-y-4">
@@ -262,7 +262,7 @@ export default function DayPhase({
               onChange={(e) => setSelectedTargetId(e.target.value)}
               disabled={!!cannotVote}
             >
-              <option value="">-- 投票给谁 (不选为弃票) --</option>
+              <option value="">-- {t('gameUI.voteForWhom')} --</option>
               {alivePlayers.map((p) => (
                 <option key={p.id} value={p.id}>
                   {p.name}
