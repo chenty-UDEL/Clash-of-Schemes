@@ -8,4 +8,5 @@ node_modules
 docs/
 test-*.js
 *.tsbuildinfo
+# 注意：.vercel-deploy-trigger 不应该被忽略，需要包含在部署中
 
