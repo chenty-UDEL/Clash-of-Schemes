@@ -91,7 +91,7 @@ npm run dev
    - `SUPABASE_SERVICE_KEY`
 4. 部署
 
-详细部署步骤请参考 [docs/部署指南.md](./docs/部署指南.md)
+详细部署步骤请参考 [docs/Vercel部署指南.md](./docs/Vercel部署指南.md)
 
 ## 项目结构
 
@@ -126,7 +126,6 @@ quan-mou-jue-zhan-full/
 - [ ] 测试与优化
 - [ ] 部署上线
 
-详细计划请参考 [docs/完整版实施计划.md](./docs/完整版实施计划.md)
 
 ## 贡献
 
