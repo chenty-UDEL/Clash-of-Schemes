@@ -38,11 +38,18 @@ function main() {
     console.log('✅ Git 仓库已初始化\n');
   }
 
-  // 2. 添加所有文件
+  // 2. 创建部署触发文件（确保 Vercel 检测到更改）
+  const fs = require('fs');
+  const triggerFile = path.join(__dirname, '..', 'public', '.vercel-deploy');
+  const triggerTimestamp = new Date().toISOString();
+  fs.writeFileSync(triggerFile, `deploy\n${triggerTimestamp}\n`);
+  console.log('📌 更新部署触发文件...');
+
+  // 3. 添加所有文件
   console.log('📝 添加所有文件...');
   exec('git add .');
 
-  // 3. 提交更改
+  // 4. 提交更改
   const timestamp = new Date().toLocaleString('zh-CN', { 
     timeZone: 'Asia/Shanghai',
     year: 'numeric',
@@ -57,7 +64,7 @@ function main() {
   console.log(`💾 提交更改: ${commitMessage}`);
   exec(`git commit -m "${commitMessage}"`);
 
-  // 4. 检查是否有远程仓库
+  // 5. 检查是否有远程仓库
   let hasRemote = false;
   try {
     exec('git remote get-url origin', { stdio: 'pipe' });
@@ -70,7 +77,7 @@ function main() {
     return;
   }
 
-  // 5. 推送到远程
+  // 6. 推送到远程
   console.log('📤 推送到远程仓库...');
   try {
     exec('git push origin main');
