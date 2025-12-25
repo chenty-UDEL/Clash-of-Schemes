@@ -91,9 +91,9 @@ export async function POST(request: NextRequest) {
       .eq('id', targetId)
       .single();
 
-    // 获取语言（从请求头或使用默认）
-    const acceptLanguage = request.headers.get('accept-language') || 'zh-CN';
-    const lang: 'zh' | 'en' = acceptLanguage.startsWith('en') ? 'en' : 'zh';
+    // 使用默认中文生成日志消息（服务端无法访问sessionStorage）
+    // 前端显示时会根据玩家语言设置进行翻译
+    const lang: 'zh' | 'en' = 'zh';
 
     await supabase.from('game_logs').insert({
       room_code: roomCode,

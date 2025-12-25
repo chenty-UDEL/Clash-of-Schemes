@@ -76,6 +76,38 @@ export function translateLogMessage(
     if (message === 'Day breaks. It was a peaceful night.') {
       return t('gameLog.nightEndPeaceful', lang);
     }
+    
+    // 匹配平票消息：Tie! {names} all received {votes} votes. No elimination.
+    const tieVoteMatch = message.match(/Tie! (.+?) all received (\d+) votes?\. No elimination\./);
+    if (tieVoteMatch) {
+      return tWithParams('gameLog.tieVote', { names: tieVoteMatch[1], votes: parseInt(tieVoteMatch[2]) }, lang);
+    }
+    
+    // 匹配未翻译的翻译键（如 "gameLog.gameStarted"）
+    if (message.startsWith('gameLog.')) {
+      // 尝试直接翻译
+      const translated = t(message as any, lang);
+      if (translated !== message) {
+        return translated;
+      }
+    }
+  }
+  
+  // 如果玩家选择英文，但消息是中文，尝试翻译为英文
+  if (lang === 'en') {
+    // 匹配中文平票消息
+    const tieVoteZhMatch = message.match(/平票！【(.+?)】都获得了 (\d+) 票。无人出局。/);
+    if (tieVoteZhMatch) {
+      return tWithParams('gameLog.tieVote', { names: tieVoteZhMatch[1], votes: parseInt(tieVoteZhMatch[2]) }, lang);
+    }
+    
+    // 匹配未翻译的翻译键
+    if (message.startsWith('gameLog.')) {
+      const translated = t(message as any, lang);
+      if (translated !== message) {
+        return translated;
+      }
+    }
   }
   
   // 如果无法翻译，返回原消息

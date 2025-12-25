@@ -48,9 +48,9 @@ export async function POST(
     const alivePlayers = players.filter(p => p.is_alive);
     const aliveCount = alivePlayers.length;
     
-    // 获取语言（从请求头或使用默认）
-    const acceptLanguage = request.headers.get('accept-language') || 'zh-CN';
-    const lang: 'zh' | 'en' = acceptLanguage.startsWith('en') ? 'en' : 'zh';
+    // 使用默认中文生成日志消息（服务端无法访问sessionStorage）
+    // 前端显示时会根据玩家语言设置进行翻译
+    const lang: 'zh' | 'en' = 'zh';
 
     const logs: Array<{ message: string; viewer_ids: number[] | null; tag: 'PUBLIC' | 'PRIVATE' }> = [];
     const playerUpdates: any[] = [];

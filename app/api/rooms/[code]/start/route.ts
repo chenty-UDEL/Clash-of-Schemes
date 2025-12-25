@@ -144,8 +144,10 @@ export async function POST(
     }
 
     // 11. 创建游戏日志
-    const lang = getLanguage();
-    const boardName = boardType === 'custom' ? (lang === 'zh' ? '自定义' : 'Custom') : boardType;
+    // 使用默认中文生成日志消息（服务端无法访问sessionStorage）
+    // 前端显示时会根据玩家语言设置进行翻译
+    const lang: 'zh' | 'en' = 'zh';
+    const boardName = boardType === 'custom' ? '自定义' : boardType;
     const logMessage = tWithParams('gameLog.gameStarted', { board: boardName, count: players.length }, lang);
     
     await supabase.from('game_logs').insert([{
