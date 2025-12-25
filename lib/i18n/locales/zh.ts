@@ -223,7 +223,7 @@ export const zh = {
 
   // 提示和说明
   tips: {
-    hostControl: '房主控制面板 (上帝视角)',
+    hostControl: '房主控制面板',
     waitForActions: '等待所有玩家行动后再结算',
     noAction: '今晚无主动技能，请等待天亮。',
     firstNightOnly: '技能只能在第一夜发动。',
@@ -235,7 +235,9 @@ export const zh = {
     skillSubmitted: '技能已提交',
     voteSubmitted: '投票已提交',
     confirmProcessNight: '确定要结束夜晚并进行结算吗？',
-    confirmProcessDay: '确定要结束投票并公布结果吗？'
+    confirmProcessDay: '确定要结束投票并公布结果吗？',
+    processNightFailed: '结算夜晚失败',
+    processDayFailed: '结算白天失败'
   },
 
   // 大厅相关

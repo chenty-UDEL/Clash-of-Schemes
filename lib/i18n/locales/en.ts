@@ -275,7 +275,7 @@ export const en = {
 
   // Tips and instructions
   tips: {
-    hostControl: 'Host Control Panel (God View)',
+    hostControl: 'Host Control Panel',
     waitForActions: 'Wait for all players to act before processing',
     noAction: 'No active skill tonight, please wait for dawn.',
     firstNightOnly: 'Skill can only be used on the first night.',
@@ -287,7 +287,9 @@ export const en = {
     skillSubmitted: 'Skill submitted',
     voteSubmitted: 'Vote submitted',
     confirmProcessNight: 'Are you sure you want to end the night and process?',
-    confirmProcessDay: 'Are you sure you want to end voting and announce results?'
+    confirmProcessDay: 'Are you sure you want to end voting and announce results?',
+    processNightFailed: 'Failed to process night',
+    processDayFailed: 'Failed to process day'
   },
 
   // Lobby related

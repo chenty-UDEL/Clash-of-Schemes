@@ -526,12 +526,18 @@ export default function Home() {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' }
                       });
-                      if (!res.ok) throw new Error('结算失败');
+                      if (!res.ok) {
+                        const result = await res.json();
+                        const errorMsg = result?.error 
+                          ? translateError(result.error, result.errorParams, myPlayerId) 
+                          : t('tips.processNightFailed');
+                        throw new Error(errorMsg);
+                      }
                       fetchRoomState(roomCode);
                       fetchPlayers(roomCode);
                       fetchLogs(roomCode);
-                    } catch (err) {
-                      alert(t('common.error'));
+                    } catch (err: any) {
+                      alert(err.message || t('tips.processNightFailed'));
                     }
                   }}
                   className="w-full bg-red-900 hover:bg-red-800 text-white p-4 rounded-lg font-bold border border-red-600 shadow-lg"
@@ -548,7 +554,12 @@ export default function Home() {
                         headers: { 'Content-Type': 'application/json' }
                       });
                       const result = await res.json();
-                      if (!res.ok) throw new Error(result.error || '结算失败');
+                      if (!res.ok) {
+                        const errorMsg = result.error 
+                          ? translateError(result.error, result.errorParams, myPlayerId) 
+                          : t('tips.processDayFailed');
+                        throw new Error(errorMsg);
+                      }
                       
                       // 延迟一下再刷新，确保数据库已更新
                       setTimeout(() => {
@@ -557,7 +568,7 @@ export default function Home() {
                         fetchLogs(roomCode);
                       }, 500);
                     } catch (err: any) {
-                      alert(err.message || '结算请求失败');
+                      alert(err.message || t('tips.processDayFailed'));
                     }
                   }}
                   className="w-full bg-gradient-to-r from-red-900 to-red-800 hover:from-red-800 hover:to-red-700 text-red-100 p-4 rounded-lg font-bold border border-red-600 shadow-xl"
@@ -731,7 +742,10 @@ export default function Home() {
                   const result = await res.json();
 
                   if (!res.ok) {
-                    throw new Error(result.error || t('error.gameStartFailed'));
+                    const errorMsg = result.error 
+                      ? translateError(result.error, result.errorParams, myPlayerId) 
+                      : t('error.gameStartFailed');
+                    throw new Error(errorMsg);
                   }
 
                   // 刷新数据
