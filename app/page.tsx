@@ -109,10 +109,14 @@ function HomeContent() {
       // 如果有URL中的名字，直接使用；否则从数据库获取
       if (urlName) {
         setName(decodeURIComponent(urlName));
+        setRoomCode(urlRoomCode);
         setIsInRoom(true);
-        fetchPlayers(urlRoomCode);
-        fetchRoomState(urlRoomCode);
-        fetchLogs(urlRoomCode);
+        // 延迟一下确保状态设置完成
+        setTimeout(() => {
+          fetchPlayers(urlRoomCode);
+          fetchRoomState(urlRoomCode);
+          fetchLogs(urlRoomCode);
+        }, 100);
         setUrlProcessed(true);
       } else {
         // 从数据库获取房间信息，找到真实玩家的名字
@@ -130,10 +134,14 @@ function HomeContent() {
               const realPlayer = playersData.find(p => !p.name.startsWith('AI-'));
               if (realPlayer) {
                 setName(realPlayer.name);
+                setRoomCode(urlRoomCode);
                 setIsInRoom(true);
-                fetchPlayers(urlRoomCode);
-                fetchRoomState(urlRoomCode);
-                fetchLogs(urlRoomCode);
+                // 延迟一下确保状态设置完成
+                setTimeout(() => {
+                  fetchPlayers(urlRoomCode);
+                  fetchRoomState(urlRoomCode);
+                  fetchLogs(urlRoomCode);
+                }, 100);
               }
             }
           } catch (err) {
