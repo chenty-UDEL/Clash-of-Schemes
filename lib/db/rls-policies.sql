@@ -106,3 +106,4 @@ CREATE POLICY "Service role can manage vote predictions"
 
 
 
+

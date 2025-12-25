@@ -224,3 +224,4 @@ CREATE POLICY "Service role can manage vote predictions"
 -- 可以开始使用数据库了
 
 
+

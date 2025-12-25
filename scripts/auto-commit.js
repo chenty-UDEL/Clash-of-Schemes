@@ -118,10 +118,35 @@ function main() {
   try {
     exec('git push origin main');
     console.log('\n✅ 代码已成功推送到 GitHub');
-    console.log('🔗 Vercel 将自动检测并部署更新');
   } catch (error) {
     console.log('\n❌ 推送失败，请检查 Git 配置');
     console.log('你可以稍后手动推送: git push origin main');
+    return;
+  }
+
+  // 6. 部署到 Vercel
+  console.log('\n🚀 开始部署到 Vercel...');
+  try {
+    // 检查是否安装了 Vercel CLI
+    try {
+      exec('vercel --version', { stdio: 'pipe' });
+    } catch {
+      console.log('📦 安装 Vercel CLI...');
+      exec('npm install -g vercel', { ignoreError: true });
+    }
+
+    // 部署到生产环境
+    console.log('📦 部署到 Vercel 生产环境...');
+    exec('vercel --prod --yes', { ignoreError: false });
+    console.log('\n✅ 已成功部署到 Vercel');
+    console.log('🔗 请访问 Vercel Dashboard 查看部署状态');
+  } catch (error) {
+    console.log('\n⚠️  Vercel 部署失败，但代码已推送到 GitHub');
+    console.log('可能的原因：');
+    console.log('1. 未登录 Vercel: 运行 vercel login');
+    console.log('2. 未链接项目: 运行 vercel link');
+    console.log('3. 环境变量未配置');
+    console.log('\n你可以稍后手动部署: npm run deploy');
   }
 }
 
