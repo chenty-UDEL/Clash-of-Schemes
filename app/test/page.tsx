@@ -6,6 +6,7 @@ import { ALL_ROLES, BOARDS, type BoardType } from '@/lib/game/roles';
 import { getRoleName, getRoleTag, getRoleDescription } from '@/lib/game/roleTranslations';
 import { useTranslation } from '@/hooks/useTranslation';
 import LanguageSwitcher from '@/components/common/LanguageSwitcher';
+import Link from 'next/link';
 
 export default function TestModePage() {
   const router = useRouter();
@@ -23,7 +24,7 @@ export default function TestModePage() {
     }
 
     if (!selectedRole) {
-      setError('请选择一个角色进行测试');
+      setError(t('testMode.selectRoleFirst') || '请选择一个角色进行测试');
       return;
     }
 

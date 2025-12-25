@@ -193,7 +193,11 @@ export default function NightPhase({
                 </>
               ) : (
                 <>
-                  <span className="font-bold text-purple-400">{getRoleName(myPlayer.role, myPlayer.id)}:</span> {getRoleDescription(myPlayer.role, myPlayer.id)}
+                  {myPlayer.role && (
+                    <>
+                      <span className="font-bold text-purple-400">{getRoleName(myPlayer.role, myPlayer.id)}:</span> {getRoleDescription(myPlayer.role, myPlayer.id)}
+                    </>
+                  )}
                 </>
               )}
             </div>

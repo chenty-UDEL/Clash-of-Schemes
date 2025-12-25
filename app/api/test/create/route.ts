@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase/server';
 import { ALL_ROLES, BOARDS, type BoardType } from '@/lib/game/roles';
+import { getLanguage } from '@/lib/i18n';
 
 // 虚拟玩家名称池
 const BOT_NAMES = [
@@ -12,6 +13,7 @@ const BOT_NAMES = [
 export async function POST(request: NextRequest) {
   try {
     const { playerName, selectedRole, boardType = 'custom' } = await request.json();
+    const lang = getLanguage();
 
     if (!playerName) {
       return NextResponse.json(
@@ -21,8 +23,11 @@ export async function POST(request: NextRequest) {
     }
 
     if (!selectedRole) {
+      const errorMsg = lang === 'en' 
+        ? 'Please select a role to test' 
+        : '请选择要测试的角色';
       return NextResponse.json(
-        { success: false, error: '请选择要测试的角色' },
+        { success: false, error: errorMsg },
         { status: 400 }
       );
     }

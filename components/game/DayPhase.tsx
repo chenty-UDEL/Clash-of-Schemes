@@ -46,24 +46,25 @@ export default function DayPhase({
   const isBalanceGuard = myPlayer.role === '均衡守护者' && !myPlayer.balance_guard_used;
   const maxStoredVotes = 3;
 
+  // 检查是否平票的函数
+  const checkTie = async () => {
+    // 只有在已经投票后才检查平票
+    if (!hasVoted) return;
+    
+    try {
+      const res = await fetch(`/api/rooms/${roomCode}/tie-info`);
+      const result = await res.json();
+      if (result.success) {
+        setIsTie(result.isTie);
+        setTieCandidates(result.candidates || []);
+      }
+    } catch (err) {
+      console.error('检查平票失败:', err);
+    }
+  };
+
   // 检查是否平票（需要等待所有人投票后）
   useEffect(() => {
-    const checkTie = async () => {
-      // 只有在已经投票后才检查平票
-      if (!hasVoted) return;
-      
-      try {
-        const res = await fetch(`/api/rooms/${roomCode}/tie-info`);
-        const result = await res.json();
-        if (result.success) {
-          setIsTie(result.isTie);
-          setTieCandidates(result.candidates || []);
-        }
-      } catch (err) {
-        console.error('检查平票失败:', err);
-      }
-    };
-
     // 定期检查（每2秒），但只在已投票后
     const interval = setInterval(checkTie, 2000);
     checkTie();

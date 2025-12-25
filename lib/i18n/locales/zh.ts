@@ -203,8 +203,7 @@ export const zh = {
     assignRoleFailed: '分配角色失败',
     updateRoomFailed: '更新房间状态失败',
     gameStartFailed: '开始游戏失败',
-    enterNameAndRoom: '请输入名字和房间号',
-    enterName: '请输入名字'
+    enterNameAndRoom: '请输入名字和房间号'
   },
 
   // 成功消息
@@ -212,27 +211,14 @@ export const zh = {
     actionSubmitted: '行动已提交',
     voteSubmitted: '投票已提交',
     roleUpdated: '角色已更新',
-    gameStarted: '游戏已开始',
+    gameStarted: '🎮 游戏开始！板子：{board}，共 {count} 名玩家。',
     voteStored: '投票已存储',
     nightProcessed: '夜晚结算完成',
     dayProcessed: '白天结算完成',
     tieBroken: '平局已打破',
     balanceGuardBreakTie: '【均衡守护者】打破平局！玩家【{name}】被处决。',
-    gameStarted: '🎮 游戏开始！板子：{board}，共 {count} 名玩家。',
     gameRestarted: '🎮 再来一局！板子：{board}，共 {count} 名玩家。',
     mindReaderWin: '【{role}】连续 {streak} 次预测成功，获胜！'
-  },
-
-  // 成功消息扩展
-  success: {
-    actionSubmitted: '行动已提交',
-    voteSubmitted: '投票已提交',
-    roleUpdated: '角色已更新',
-    gameStarted: '游戏已开始',
-    voteStored: '投票已存储',
-    nightProcessed: '夜晚结算完成',
-    dayProcessed: '白天结算完成',
-    gameEndedNoWinner: '游戏结束，无人获胜'
   },
 
   // 提示和说明
@@ -497,7 +483,8 @@ export const zh = {
     info1: '测试模式会自动创建6-8个AI玩家',
     info2: 'AI玩家会自动进行夜晚行动和白天投票',
     info3: '你可以随时手动结算夜晚或白天阶段',
-    info4: '测试房间以TEST开头，方便识别'
+    info4: '测试房间以TEST开头，方便识别',
+    selectRoleFirst: '请选择一个角色进行测试'
   }
 };
 

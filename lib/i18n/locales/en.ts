@@ -203,8 +203,7 @@ export const en = {
     assignRoleFailed: 'Failed to assign roles',
     updateRoomFailed: 'Failed to update room state',
     gameStartFailed: 'Failed to start game',
-    enterNameAndRoom: 'Please enter name and room code',
-    enterName: 'Please enter name'
+    enterNameAndRoom: 'Please enter name and room code'
   },
 
   // Game log messages (for process-night and process-day)
@@ -264,10 +263,14 @@ export const en = {
     actionSubmitted: 'Action submitted',
     voteSubmitted: 'Vote submitted',
     roleUpdated: 'Role updated',
-    gameStarted: 'Game started',
+    gameStarted: '🎮 Game started! Board: {board}, {count} players.',
     voteStored: 'Vote stored',
     nightProcessed: 'Night phase processed',
-    dayProcessed: 'Day phase processed'
+    dayProcessed: 'Day phase processed',
+    tieBroken: 'Tie broken',
+    balanceGuardBreakTie: '[Balance Guardian] broke the tie! Player 【{name}】 is eliminated.',
+    gameRestarted: '🎮 Play again! Board: {board}, {count} players.',
+    mindReaderWin: '[{role}] had {streak} consecutive successful predictions, wins!'
   },
 
   // Tips and instructions
@@ -511,7 +514,8 @@ export const en = {
     info1: 'Test mode will automatically create 6-8 AI players',
     info2: 'AI players will automatically perform night actions and day votes',
     info3: 'You can manually process night or day phases at any time',
-    info4: 'Test rooms start with TEST prefix for easy identification'
+    info4: 'Test rooms start with TEST prefix for easy identification',
+    selectRoleFirst: 'Please select a role to test'
   }
 };
 
