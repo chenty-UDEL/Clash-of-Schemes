@@ -128,25 +128,39 @@ function main() {
   console.log('\n🚀 开始部署到 Vercel...');
   try {
     // 检查是否安装了 Vercel CLI
+    let vercelInstalled = false;
     try {
       exec('vercel --version', { stdio: 'pipe' });
+      vercelInstalled = true;
     } catch {
       console.log('📦 安装 Vercel CLI...');
-      exec('npm install -g vercel', { ignoreError: true });
+      try {
+        exec('npm install -g vercel', { stdio: 'pipe' });
+        vercelInstalled = true;
+      } catch {
+        console.log('⚠️  无法安装 Vercel CLI，跳过自动部署');
+      }
     }
 
-    // 部署到生产环境
-    console.log('📦 部署到 Vercel 生产环境...');
-    exec('vercel --prod --yes', { ignoreError: false });
-    console.log('\n✅ 已成功部署到 Vercel');
-    console.log('🔗 请访问 Vercel Dashboard 查看部署状态');
+    if (vercelInstalled) {
+      // 检查是否已登录和链接
+      try {
+        exec('vercel whoami', { stdio: 'pipe' });
+        // 部署到生产环境
+        console.log('📦 部署到 Vercel 生产环境...');
+        exec('vercel --prod --yes', { ignoreError: false });
+        console.log('\n✅ 已成功部署到 Vercel');
+        console.log('🔗 请访问 Vercel Dashboard 查看部署状态');
+      } catch (error) {
+        console.log('\n⚠️  Vercel 部署失败');
+        console.log('提示：如果 Vercel 已连接 GitHub，推送后会自动部署');
+        console.log('如需手动部署，请先运行: vercel login && vercel link');
+        console.log('然后运行: npm run deploy');
+      }
+    }
   } catch (error) {
     console.log('\n⚠️  Vercel 部署失败，但代码已推送到 GitHub');
-    console.log('可能的原因：');
-    console.log('1. 未登录 Vercel: 运行 vercel login');
-    console.log('2. 未链接项目: 运行 vercel link');
-    console.log('3. 环境变量未配置');
-    console.log('\n你可以稍后手动部署: npm run deploy');
+    console.log('提示：如果 Vercel 已连接 GitHub，推送后会自动部署');
   }
 }
 
