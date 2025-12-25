@@ -298,19 +298,50 @@ export async function POST(
           // 4.5 [影子胜者] 追魂
           const finalEliminatedId = actualEliminatedId || eliminatedPlayerId;
           if (finalEliminatedId !== null) {
-            const shadowWinner = players.find(p => 
+            // 检查两种情况：
+            // 1. 影子胜者活着，目标被淘汰（原有逻辑）
+            // 2. 影子胜者已死（被投死），目标现在被淘汰，且死亡回合差 <= 1
+            const allShadowWinners = players.filter(p => 
               p.role === '影子胜者' && 
-              p.is_alive && 
               p.flags?.shadow_target_id === finalEliminatedId
             );
-          if (shadowWinner) {
-            // 检查是否被胜利夺取者夺取
-            if (victoryStealer && victoryStealTarget && victoryStealTarget.id === shadowWinner.id) {
-              winner = victoryStealer;
-              winReason = t('gameLog.winReasonShadowWinnerStolen', lang);
-            } else {
-              winner = shadowWinner;
-              winReason = t('gameLog.winReasonShadowWinner', lang);
+            
+            for (const shadowWinner of allShadowWinners) {
+              if (winner) break; // 如果已经有胜利者，不再检查
+              
+              // 情况1：影子胜者活着，目标被淘汰
+              if (shadowWinner.is_alive) {
+                // 检查是否被胜利夺取者夺取
+                if (victoryStealer && victoryStealTarget && victoryStealTarget.id === shadowWinner.id) {
+                  winner = victoryStealer;
+                  winReason = t('gameLog.winReasonShadowWinnerStolen', lang);
+                } else {
+                  winner = shadowWinner;
+                  winReason = t('gameLog.winReasonShadowWinner', lang);
+                }
+                break;
+              }
+              
+              // 情况2：影子胜者已死（被投死），目标现在被淘汰
+              // 检查影子胜者的死亡信息（可能在playerUpdates中，也可能在原始players中）
+              const shadowUpdate = playerUpdates.find(u => u.id === shadowWinner.id);
+              const shadowFinal = shadowUpdate || shadowWinner;
+              
+              if (
+                shadowFinal.is_alive === false &&
+                shadowFinal.death_type === 'VOTE' &&
+                Math.abs((shadowFinal.death_round || 0) - currentRoundNum) <= 1
+              ) {
+                // 检查是否被胜利夺取者夺取
+                if (victoryStealer && victoryStealTarget && victoryStealTarget.id === shadowWinner.id) {
+                  winner = victoryStealer;
+                  winReason = t('gameLog.winReasonShadowWinnerStolen', lang);
+                } else {
+                  winner = shadowWinner;
+                  winReason = t('gameLog.winReasonShadowWinner', lang);
+                }
+                break;
+              }
             }
           }
 
