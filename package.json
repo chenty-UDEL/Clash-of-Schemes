@@ -11,8 +11,9 @@
     "type-check": "tsc --noEmit",
     "deploy": "vercel --prod",
     "deploy:preview": "vercel",
+    "deploy:manual": "node scripts/manual-deploy.js",
     "auto-commit": "node scripts/auto-commit.js",
-    "update": "npm run auto-commit"
+    "update": "npm run auto-commit && npm run deploy:manual"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.86.2",

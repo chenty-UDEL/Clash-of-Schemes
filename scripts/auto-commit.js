@@ -75,14 +75,22 @@ function main() {
     console.log('✅ Git 仓库已初始化\n');
   }
 
-  // 2. 检查是否有更改
-  if (!hasChanges()) {
-    console.log('ℹ️  没有未提交的更改，跳过提交');
-    return;
-  }
+  // 2. 创建/更新部署触发文件（强制触发 Vercel 重新部署）
+  const fs = require('fs');
+  const triggerFile = path.join(__dirname, '..', '.vercel-deploy-trigger');
+  const timestamp = new Date().toISOString();
+  fs.writeFileSync(triggerFile, `# Vercel 部署触发文件\n# 更新时间: ${timestamp}\n# 此文件用于强制触发 Vercel 重新部署\n`);
+  console.log('📌 更新部署触发文件...');
 
-  console.log('📝 发现未提交的更改，正在添加...');
-  exec('git add .');
+  // 3. 检查是否有更改（包括触发文件）
+  if (!hasChanges()) {
+    // 即使没有其他更改，也提交触发文件
+    console.log('📝 添加部署触发文件...');
+    exec('git add .vercel-deploy-trigger');
+  } else {
+    console.log('📝 发现未提交的更改，正在添加...');
+    exec('git add .');
+  }
 
   // 3. 提交更改
   const commitMessage = getCommitMessage();
