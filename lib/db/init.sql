@@ -223,3 +223,4 @@ CREATE POLICY "Service role can manage vote predictions"
 -- 所有表、索引、触发器和 RLS 策略已创建
 -- 可以开始使用数据库了
 
+

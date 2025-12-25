@@ -39,6 +39,7 @@ export async function POST(
     }
 
     const roundNumber = parseRoundNumber(room.round_state);
+    const isFirst = isFirstNight(room.round_state);
 
     const { data: predictions, error: predictionsError } = await supabase
       .from('vote_predictions')
@@ -52,9 +53,6 @@ export async function POST(
         { status: 500 }
       );
     }
-
-    const roundNumber = parseRoundNumber(room.round_state);
-    const isFirst = isFirstNight(room.round_state);
     
     // 获取语言（从请求头或使用默认）
     const acceptLanguage = request.headers.get('accept-language') || 'zh-CN';
@@ -81,7 +79,9 @@ export async function POST(
     // 辅助函数：获取玩家名字
     const getName = (id: number) => {
       const player = updates[id] || players.find(p => p.id === id);
-      return player?.name || `未知玩家(${id})`;
+      if (player?.name) return player.name;
+      // 使用翻译
+      return lang === 'en' ? `Unknown Player(${id})` : `未知玩家(${id})`;
     };
 
     // 3. 按顺序处理夜晚技能
@@ -279,8 +279,8 @@ export async function POST(
     const silencedCount = Object.values(updates).filter((u: any) => u.flags?.is_silenced).length;
     logs.push({
       message: silencedCount > 0
-        ? `天亮了。昨晚有 ${silencedCount} 名玩家被禁言。`
-        : '天亮了，昨晚风平浪静。',
+        ? tWithParams('gameLog.nightEndWithSilence', { count: silencedCount }, lang)
+        : t('gameLog.nightEndPeaceful', lang),
       viewer_ids: null,
       tag: 'PUBLIC'
     });

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase/server';
 import { parseRoundNumber, isDayPhase } from '@/lib/game/constants';
+import { tWithParams, getLanguage } from '@/lib/i18n';
 
 export async function POST(request: NextRequest) {
   try {
@@ -90,9 +91,13 @@ export async function POST(request: NextRequest) {
       .eq('id', targetId)
       .single();
 
+    // 获取语言（从请求头或使用默认）
+    const acceptLanguage = request.headers.get('accept-language') || 'zh-CN';
+    const lang: 'zh' | 'en' = acceptLanguage.startsWith('en') ? 'en' : 'zh';
+
     await supabase.from('game_logs').insert({
       room_code: roomCode,
-      message: `gameLog.balanceGuardBreakTie:${targetPlayer?.name || targetId}`,
+      message: tWithParams('gameLog.balanceGuardBreakTie', { name: targetPlayer?.name || `玩家${targetId}` }, lang),
       viewer_ids: null,
       tag: 'PUBLIC'
     });

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import type { Player } from '@/types/game';
+import { useTranslation } from '@/hooks/useTranslation';
 
 interface TieBreakerProps {
   roomCode: string;
@@ -18,13 +19,14 @@ export default function TieBreaker({
   players,
   onBreak
 }: TieBreakerProps) {
+  const { t } = useTranslation({ playerId: myPlayer.id });
   const [selectedCandidate, setSelectedCandidate] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   const handleBreakTie = async () => {
     if (!selectedCandidate) {
-      setError('请选择要处决的玩家');
+      setError(t('gameUI.selectEliminationTarget'));
       return;
     }
 
@@ -45,13 +47,13 @@ export default function TieBreaker({
       const result = await res.json();
 
       if (!res.ok) {
-        throw new Error(result.error || result.details || '打破平局失败');
+        throw new Error(result.error || result.details || t('error.breakTieFailed'));
       }
 
       // 成功打破平局后刷新数据
       onBreak();
     } catch (err: any) {
-      setError(err.message || '打破平局失败');
+      setError(err.message || t('error.breakTieFailed'));
     } finally {
       setLoading(false);
     }
@@ -59,9 +61,9 @@ export default function TieBreaker({
 
   return (
     <div className="bg-orange-900/30 border-2 border-orange-500 p-4 rounded-lg">
-      <h4 className="text-orange-400 font-bold mb-2">⚖️ 均衡守护者 - 打破平局</h4>
+      <h4 className="text-orange-400 font-bold mb-2">⚖️ {t('gameUI.balanceGuardian')} - {t('gameUI.breakTie')}</h4>
       <p className="text-sm text-orange-300 mb-3">
-        出现平票！你可以使用技能打破平局，选择一名玩家处决。
+        {t('gameUI.tieOccurred')}
       </p>
       
       <select
@@ -69,12 +71,12 @@ export default function TieBreaker({
         value={selectedCandidate}
         onChange={(e) => setSelectedCandidate(e.target.value)}
       >
-        <option value="">-- 选择要处决的玩家 --</option>
+        <option value="">-- {t('gameUI.selectEliminationTarget')} --</option>
         {candidates.map((id) => {
           const candidatePlayer = players.find(p => p.id === id);
           return (
             <option key={id} value={id}>
-              {candidatePlayer?.name || `玩家 ${id}`}
+              {candidatePlayer?.name || `${t('gameUI.player')} ${id}`}
             </option>
           );
         })}
@@ -85,7 +87,7 @@ export default function TieBreaker({
         disabled={!selectedCandidate || loading}
         className="w-full bg-orange-600 hover:bg-orange-700 p-2 rounded font-bold disabled:opacity-50"
       >
-        {loading ? '处理中...' : '打破平局'}
+        {loading ? t('common.loading') : t('gameUI.breakTie')}
       </button>
 
       {error && (

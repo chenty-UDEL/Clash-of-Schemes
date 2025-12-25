@@ -19,13 +19,13 @@ export default function RoleInfo({ player }: RoleInfoProps) {
     <div className="bg-gray-900 p-4 rounded-lg border border-gray-700 mb-4">
       <div className="flex items-start justify-between mb-2">
         <div>
-          <h3 className="text-lg font-bold text-yellow-400">{getRoleName(player.role)}</h3>
+          <h3 className="text-lg font-bold text-yellow-400">{getRoleName(player.role, player.id)}</h3>
           <span className="text-xs text-gray-400 bg-gray-800 px-2 py-1 rounded">
-            {getRoleTag(player.role)}
+            {getRoleTag(player.role, player.id)}
           </span>
         </div>
       </div>
-      <p className="text-sm text-gray-300 mt-2 leading-relaxed">{getRoleDescription(player.role)}</p>
+      <p className="text-sm text-gray-300 mt-2 leading-relaxed">{getRoleDescription(player.role, player.id)}</p>
       
       {/* 特殊状态显示 */}
       {player.role === '投票回收者' && (
@@ -40,7 +40,7 @@ export default function RoleInfo({ player }: RoleInfoProps) {
         <div className="mt-3 pt-3 border-t border-gray-700">
           {player.copied_role ? (
             <p className="text-xs text-blue-300">
-              {t('gameUI.copiedRole')}: <span className="font-bold">{getRoleName(player.copied_role as any)}</span>
+              {t('gameUI.copiedRole')}: <span className="font-bold">{getRoleName(player.copied_role as any, player.id)}</span>
               {player.copied_from_id && (
                 <span className="text-blue-400 ml-2">
                   ({t('gameUI.fromPlayer')} {player.copied_from_id})

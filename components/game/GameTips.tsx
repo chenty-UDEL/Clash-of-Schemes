@@ -37,8 +37,8 @@ export default function GameTips({ myPlayer, roomState, isHost }: GameTipsProps)
     if (myPlayer.role && roleConfig) {
       const actionType = getActionType(myPlayer.role, roomState);
       if (actionType) {
-        tips.push(`🌙 ${t('gameTips.nightCanUse', { role: getRoleName(myPlayer.role) })}`);
-        tips.push(`📖 ${getRoleDescription(myPlayer.role as any)}`);
+        tips.push(`🌙 ${t('gameTips.nightCanUse', { role: getRoleName(myPlayer.role, myPlayer.id) })}`);
+        tips.push(`📖 ${getRoleDescription(myPlayer.role as any, myPlayer.id)}`);
         if (myPlayer.role === '命运复制者' && !myPlayer.copied_role) {
           tips.push(`⚠️ ${t('gameTips.fateCopierFirstNight')}`);
         }

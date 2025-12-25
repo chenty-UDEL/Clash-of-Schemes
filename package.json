@@ -8,7 +8,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "deploy": "vercel --prod",
+    "deploy:preview": "vercel",
+    "auto-commit": "node scripts/auto-commit.js",
+    "update": "npm run auto-commit"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.86.2",
@@ -27,5 +31,6 @@
     "typescript": "^5"
   }
 }
+
 
 

@@ -33,6 +33,7 @@ export default function Home() {
   const [showManual, setShowManual] = useState(false);
   const [selectedBoardForManual, setSelectedBoardForManual] = useState<string | null>(null);
   const [showRoleSelector, setShowRoleSelector] = useState(false);
+  const [isTestMode, setIsTestMode] = useState(false);
 
   // 获取我的玩家信息
   const getMyPlayer = () => players.find(p => p.name === name);
@@ -231,12 +232,18 @@ export default function Home() {
           <LanguageSwitcher playerId={myPlayerId} />
         </div>
         
-        <GameRules />
+        <GameRules playerId={myPlayerId} />
         <div className="text-center mb-8">
           <h1 className="text-5xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-red-600">
             {t('game.title')}
           </h1>
           <p className="text-gray-400">{t('game.subtitle')}</p>
+          <a
+            href="/test"
+            className="inline-block mt-4 bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-bold shadow-lg transition"
+          >
+            🧪 {t('testMode.enterTestMode') || '进入测试模式'}
+          </a>
         </div>
 
         <div className="bg-gray-900 p-8 rounded-xl shadow-2xl w-full max-w-md space-y-6 border border-gray-800">
@@ -349,7 +356,7 @@ export default function Home() {
           <LanguageSwitcher playerId={myPlayerId} />
         </div>
         
-        <GameRules />
+        <GameRules playerId={myPlayerId} />
         <div className="w-full max-w-lg bg-gray-800 p-6 rounded-xl shadow-2xl space-y-6 border border-gray-700">
           {/* 游戏状态显示 */}
           <div className="border-b border-gray-700 pb-4 text-center">
@@ -410,10 +417,29 @@ export default function Home() {
                 myPlayer={myPlayer}
                 players={players}
                 roomState={roomState}
-                onActionSubmit={() => {
+                onActionSubmit={async () => {
                   fetchRoomState(roomCode);
                   fetchPlayers(roomCode);
                   fetchLogs(roomCode);
+                  
+                  // 测试模式：自动触发AI行动
+                  if (isTestMode) {
+                    try {
+                      await fetch('/api/test/auto-action', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ roomCode, phase: 'night' })
+                      });
+                      // 延迟后刷新数据
+                      setTimeout(() => {
+                        fetchPlayers(roomCode);
+                        fetchRoomState(roomCode);
+                        fetchLogs(roomCode);
+                      }, 500);
+                    } catch (err) {
+                      console.error('AI行动失败:', err);
+                    }
+                  }
                 }}
               />
             ) : (
@@ -422,10 +448,29 @@ export default function Home() {
                 myPlayer={myPlayer}
                 players={players}
                 logs={logs}
-                onVoteSubmit={() => {
+                onVoteSubmit={async () => {
                   fetchRoomState(roomCode);
                   fetchPlayers(roomCode);
                   fetchLogs(roomCode);
+                  
+                  // 测试模式：自动触发AI投票
+                  if (isTestMode) {
+                    try {
+                      await fetch('/api/test/auto-action', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ roomCode, phase: 'day' })
+                      });
+                      // 延迟后刷新数据
+                      setTimeout(() => {
+                        fetchPlayers(roomCode);
+                        fetchRoomState(roomCode);
+                        fetchLogs(roomCode);
+                      }, 500);
+                    } catch (err) {
+                      console.error('AI投票失败:', err);
+                    }
+                  }
                 }}
               />
             )
@@ -666,6 +711,7 @@ export default function Home() {
               }}
               onCancel={() => setShowBoardSelector(false)}
               loading={startingGame}
+              playerId={myPlayerId}
             />
           )}
 
@@ -685,7 +731,7 @@ export default function Home() {
                   const result = await res.json();
 
                   if (!res.ok) {
-                    throw new Error(result.error || '开始游戏失败');
+                    throw new Error(result.error || t('error.gameStartFailed'));
                   }
 
                   // 刷新数据
@@ -697,7 +743,7 @@ export default function Home() {
                   setSelectedBoardForManual(null);
                   setShowBoardSelector(false);
                 } catch (err: any) {
-                  setError(err.message || '开始游戏失败');
+                  setError(err.message || t('error.gameStartFailed'));
                 } finally {
                   setStartingGame(false);
                 }

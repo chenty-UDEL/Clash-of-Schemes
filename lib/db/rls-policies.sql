@@ -105,3 +105,4 @@ CREATE POLICY "Service role can manage vote predictions"
 -- 4. API 路由使用 Service Role Key，可以绕过 RLS
 
 
+

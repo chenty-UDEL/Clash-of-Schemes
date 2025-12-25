@@ -6,8 +6,12 @@ import type { BoardType } from '@/lib/game/roles';
 import { useTranslation } from '@/hooks/useTranslation';
 import { getRoleName, getRoleTag, getRoleDescription } from '@/lib/game/roleTranslations';
 
-export default function GameRules() {
-  const { t } = useTranslation();
+interface GameRulesProps {
+  playerId?: number | null;
+}
+
+export default function GameRules({ playerId }: GameRulesProps = {}) {
+  const { t } = useTranslation({ playerId });
   const [showRules, setShowRules] = useState(false);
   const [selectedBoard, setSelectedBoard] = useState<BoardType | null>(null);
 
@@ -61,37 +65,37 @@ export default function GameRules() {
               <div className="bg-gray-800 p-4 rounded">
                 <h4 className="font-bold text-blue-300 mb-2">{t('gameRules.activeControl')}</h4>
                 <ul className="text-sm text-gray-300 space-y-1">
-                  <li>• {getRoleName('技能观测者')}</li>
-                  <li>• {getRoleName('利他守护者')}</li>
-                  <li>• {getRoleName('投票阻断者')}</li>
-                  <li>• {getRoleName('沉默制裁者')}</li>
-                  <li>• {getRoleName('同盟者')}</li>
+                  <li>• {getRoleName('技能观测者', playerId)}</li>
+                  <li>• {getRoleName('利他守护者', playerId)}</li>
+                  <li>• {getRoleName('投票阻断者', playerId)}</li>
+                  <li>• {getRoleName('沉默制裁者', playerId)}</li>
+                  <li>• {getRoleName('同盟者', playerId)}</li>
                 </ul>
               </div>
               <div className="bg-gray-800 p-4 rounded">
                 <h4 className="font-bold text-green-300 mb-2">{t('gameRules.passiveDefense')}</h4>
                 <ul className="text-sm text-gray-300 space-y-1">
-                  <li>• {getRoleName('减票守护者')}</li>
-                  <li>• {getRoleName('双票使者')}</li>
+                  <li>• {getRoleName('减票守护者', playerId)}</li>
+                  <li>• {getRoleName('双票使者', playerId)}</li>
                 </ul>
               </div>
               <div className="bg-gray-800 p-4 rounded">
                 <h4 className="font-bold text-yellow-300 mb-2">{t('gameRules.situationVictory')}</h4>
                 <ul className="text-sm text-gray-300 space-y-1">
-                  <li>• {getRoleName('三人王者')}</li>
-                  <li>• {getRoleName('集票胜者')}</li>
-                  <li>• {getRoleName('平票赢家')}</li>
-                  <li>• {getRoleName('影子胜者')}</li>
+                  <li>• {getRoleName('三人王者', playerId)}</li>
+                  <li>• {getRoleName('集票胜者', playerId)}</li>
+                  <li>• {getRoleName('平票赢家', playerId)}</li>
+                  <li>• {getRoleName('影子胜者', playerId)}</li>
                 </ul>
               </div>
               <div className="bg-gray-800 p-4 rounded">
                 <h4 className="font-bold text-orange-300 mb-2">{t('gameRules.counterVictory')}</h4>
                 <ul className="text-sm text-gray-300 space-y-1">
-                  <li>• {getRoleName('平票终结者')}</li>
-                  <li>• {getRoleName('免票胜者')}</li>
-                  <li>• {getRoleName('票数平衡者')}</li>
-                  <li>• {getRoleName('多选胜者')}</li>
-                  <li>• {getRoleName('心灵胜者')}</li>
+                  <li>• {getRoleName('平票终结者', playerId)}</li>
+                  <li>• {getRoleName('免票胜者', playerId)}</li>
+                  <li>• {getRoleName('票数平衡者', playerId)}</li>
+                  <li>• {getRoleName('多选胜者', playerId)}</li>
+                  <li>• {getRoleName('心灵胜者', playerId)}</li>
                 </ul>
               </div>
             </div>
@@ -143,9 +147,9 @@ export default function GameRules() {
                     <span
                       key={role}
                       className="text-xs px-2 py-1 rounded bg-gray-700 text-gray-300"
-                      title={getRoleDescription(role)}
+                      title={getRoleDescription(role, playerId)}
                     >
-                      {getRoleName(role)}
+                      {getRoleName(role, playerId)}
                     </span>
                   ))}
                 </div>
@@ -165,12 +169,12 @@ export default function GameRules() {
                     className="bg-gray-800 p-3 rounded border border-gray-700"
                   >
                     <div className="flex items-start justify-between mb-1">
-                      <h4 className="font-bold text-white text-sm">{getRoleName(role)}</h4>
+                      <h4 className="font-bold text-white text-sm">{getRoleName(role, playerId)}</h4>
                       <span className="text-xs text-gray-400 bg-gray-700 px-2 py-0.5 rounded">
-                        {getRoleTag(role)}
+                        {getRoleTag(role, playerId)}
                       </span>
                     </div>
-                    <p className="text-xs text-gray-400 leading-relaxed">{getRoleDescription(role)}</p>
+                    <p className="text-xs text-gray-400 leading-relaxed">{getRoleDescription(role, playerId)}</p>
                   </div>
                 );
               })}

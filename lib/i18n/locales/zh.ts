@@ -186,6 +186,7 @@ export const zh = {
     dataReadFailed: '数据读取失败',
     updatePlayerFailed: '更新玩家失败',
     serverError: '服务器错误',
+    breakTieFailed: '打破平局失败',
     onlyHost: '只有房主可以使用此功能',
     roomMismatch: '房间不匹配',
     storedVotesInsufficient: '存储的票数不足',
@@ -201,6 +202,7 @@ export const zh = {
     maxPlayers: '最多支持 {max} 人',
     assignRoleFailed: '分配角色失败',
     updateRoomFailed: '更新房间状态失败',
+    gameStartFailed: '开始游戏失败',
     enterNameAndRoom: '请输入名字和房间号',
     enterName: '请输入名字'
   },
@@ -279,6 +281,7 @@ export const zh = {
     submitted: '已提交',
     processing: '处理中...',
     selectPlayer: '选择玩家',
+    player: '玩家',
     noTarget: '无目标',
     abandon: '弃票',
     noMessages: '暂无消息...',
@@ -291,9 +294,13 @@ export const zh = {
     confirmVote: '确认投票 (使用 {count} 张票)',
     tieBreaker: '打破平局',
     selectCandidate: '选择要处决的玩家',
+    selectEliminationTarget: '选择要处决的玩家',
     breakTie: '打破平局',
+    balanceGuardian: '均衡守护者',
+    tieOccurred: '出现平票！你可以使用技能打破平局，选择一名玩家处决。',
     testingMode: '测试模式：选择角色',
     selectRole: '选择角色',
+    selectPredictionTarget: '请选择预测的投票者和目标',
     copiedRole: '已复制角色',
     fromPlayer: '来自玩家',
     waitingCopy: '等待第一夜复制角色...',
@@ -351,6 +358,7 @@ export const zh = {
     boardRolesCount: '本板子包含的角色 ({count}个)',
     skillDescription: '技能说明',
     understood: '已了解，开始游戏',
+    understoodAndSelectBoard: '已了解，选择板子',
     boardFateTheme: '命运与预测',
     boardBalanceTheme: '平衡与投票',
     boardStrategyTheme: '策略与协作',
@@ -413,6 +421,57 @@ export const zh = {
     currentTips: '当前提示'
   },
 
+  // 游戏日志消息（用于process-night和process-day）
+  gameLog: {
+    observationResult: '观察结果：玩家【{name}】的角色是【{role}】。',
+    protectionSuccess: '你成功保护了玩家【{name}】，他们明天将免疫投票。',
+    silenced: '你被【沉默制裁者】禁言了！明天无法发言，但技能仍然有效。',
+    voteBlocked: '你感到一股无形的力量阻止了你，明天将无法投票。',
+    allyFormed: '同盟已形成！你与玩家【{name}】结为同盟。',
+    shadowTarget: '目标已锁定！你已选择玩家【{name}】作为你的影子目标。',
+    copySuccess: '复制成功！你已获得玩家【{name}】的角色【{role}】技能。如果该玩家死亡，你也会死亡。',
+    fateTransferred: '命运已转移！你与玩家【{name}】调换了命运。如果该玩家在接下来的白天被淘汰，你将代替他出局，反之亦然。',
+    fateTransferredTarget: '你的命运已与玩家【{name}】调换。',
+    predictionRecorded: '预测已记录：你预测玩家【{voter}】将投票给【{target}】。',
+    victoryStealLocked: '胜利夺取已锁定！你已锁定玩家【{name}】的特殊胜利条件。如果该玩家本轮获胜，则改为你获胜。',
+    noVotesToday: '今天无人投票。',
+    tieVote: '平票！【{names}】都获得了 {votes} 票。无人出局。',
+    reverseVoteActivated: '【反向投票者】发动反击！玩家【{name}】代替出局。',
+    fateTransferActivated: '【命运转移者】命运调换生效！玩家【{oldName}】被投票，但玩家【{newName}】代替出局。',
+    playerEliminated: '玩家【{name}】被投票出局。',
+    copyPlayerDied: '【命运复制者】玩家【{name}】因复制的目标死亡而死亡。',
+    predictionSuccess: '预测成功！连续 {streak}/{threshold} 次。',
+    predictionFailed: '预测失败，连续次数重置。',
+    nightProcessed: '夜晚阶段已处理',
+    dayProcessed: '白天阶段已处理',
+    nightEndWithSilence: '天亮了。昨晚有 {count} 名玩家被禁言。',
+    nightEndPeaceful: '天亮了，昨晚风平浪静。',
+    deadlock: '⚠️ 死局！连续3次出现相同情况，游戏结束。',
+    deadlockGameOver: '游戏结束（死局）',
+    gameEndWithWinner: '🎉 游戏结束！【{name}】{reason}',
+    gameEnd: '游戏结束',
+    gameEndNoWinner: '游戏结束，无人获胜。',
+    // 胜利原因
+    winReasonCollector: '【集票胜者】获得超过 2/3 票数，直接获胜！',
+    winReasonCollectorStolen: '【胜利夺取者】夺取了【集票胜者】的胜利条件，获胜！',
+    winReasonTieWinner: '【平票赢家】在平局中幸存并获胜！',
+    winReasonTieWinnerStolen: '【胜利夺取者】夺取了【平票赢家】的胜利条件，获胜！',
+    winReasonTieBreaker: '【平票终结者】连续 {streak} 局平票，获胜！',
+    winReasonTieBreakerStolen: '【胜利夺取者】夺取了【平票终结者】的胜利条件，获胜！',
+    winReasonShadowWinner: '【影子胜者】的目标被投出，获胜！',
+    winReasonShadowWinnerStolen: '【胜利夺取者】夺取了【影子胜者】的胜利条件，获胜！',
+    winReasonThreeKing: '【三人王者】在仅剩3人时获胜！',
+    winReasonThreeKingStolen: '【胜利夺取者】夺取了【三人王者】的胜利条件，获胜！',
+    winReasonNoVote: '【免票胜者】连续 {streak} 局未被投票，获胜！',
+    winReasonNoVoteStolen: '【胜利夺取者】夺取了【免票胜者】的胜利条件，获胜！',
+    winReasonBalance: '【票数平衡者】连续 {streak} 局得票相同，获胜！',
+    winReasonBalanceStolen: '【胜利夺取者】夺取了【票数平衡者】的胜利条件，获胜！',
+    winReasonMindReader: '【心灵胜者】连续 {streak} 次预测成功，获胜！',
+    winReasonMindReaderStolen: '【胜利夺取者】夺取了【心灵胜者】的胜利条件，获胜！',
+    winReasonMultiKill: '【多选胜者】连续投死 {streak} 个不同玩家，获胜！',
+    winReasonMultiKillStolen: '【胜利夺取者】夺取了【多选胜者】的胜利条件，获胜！'
+  },
+
   // 游戏结束
   gameOver: {
     title: '游戏结束',
@@ -423,6 +482,22 @@ export const zh = {
     deadPlayers: '已出局',
     thanks: '游戏已结束，感谢参与！',
     playAgain: '🎮 再来一局'
+  },
+
+  // 测试模式
+  testMode: {
+    title: '测试模式',
+    description: '选择角色进行单机测试，AI会自动创建其他玩家并辅助测试',
+    playerInfo: '玩家信息',
+    selectBoard: '选择板子',
+    selectRole: '选择要测试的角色',
+    startTest: '🚀 开始测试',
+    enterTestMode: '进入测试模式',
+    info: '测试说明',
+    info1: '测试模式会自动创建6-8个AI玩家',
+    info2: 'AI玩家会自动进行夜晚行动和白天投票',
+    info3: '你可以随时手动结算夜晚或白天阶段',
+    info4: '测试房间以TEST开头，方便识别'
   }
 };
 

@@ -3,26 +3,26 @@ import { t, getLanguage } from '@/lib/i18n';
 import type { RoleName } from './roles';
 
 /**
- * 获取角色名称（根据当前语言）
+ * 获取角色名称（根据当前语言，支持按玩家ID）
  */
-export function getRoleName(role: RoleName): string {
-  const lang = getLanguage();
+export function getRoleName(role: RoleName, playerId?: number | null): string {
+  const lang = getLanguage(playerId);
   return t(`role.names.${role}`, lang);
 }
 
 /**
- * 获取角色标签（根据当前语言）
+ * 获取角色标签（根据当前语言，支持按玩家ID）
  */
-export function getRoleTag(role: RoleName): string {
-  const lang = getLanguage();
+export function getRoleTag(role: RoleName, playerId?: number | null): string {
+  const lang = getLanguage(playerId);
   return t(`role.tags.${role}`, lang);
 }
 
 /**
- * 获取角色描述（根据当前语言）
+ * 获取角色描述（根据当前语言，支持按玩家ID）
  */
-export function getRoleDescription(role: RoleName): string {
-  const lang = getLanguage();
+export function getRoleDescription(role: RoleName, playerId?: number | null): string {
+  const lang = getLanguage(playerId);
   return t(`role.descriptions.${role}`, lang);
 }
 

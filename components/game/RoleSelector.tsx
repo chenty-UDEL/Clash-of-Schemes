@@ -32,7 +32,7 @@ export default function RoleSelector({
 
   const handleSetRole = async () => {
     if (!selectedRole) {
-      setError('请选择一个角色');
+      setError(t('gameUI.selectRole'));
       return;
     }
 
@@ -52,13 +52,13 @@ export default function RoleSelector({
       const result = await res.json();
 
       if (!res.ok) {
-        throw new Error(result.error || '设置角色失败');
+        throw new Error(result.error || t('error.updateRoleFailed'));
       }
 
       onRoleChange();
       onClose();
     } catch (err: any) {
-      setError(err.message || '设置角色失败');
+      setError(err.message || t('error.updateRoleFailed'));
     } finally {
       setLoading(false);
     }
@@ -77,7 +77,7 @@ export default function RoleSelector({
               ×
             </button>
           </div>
-          <p className="text-sm text-gray-400 mt-2">{t('gameUI.currentRole')}: {currentRole ? getRoleName(currentRole as RoleName) : t('gameUI.unassigned')}</p>
+          <p className="text-sm text-gray-400 mt-2">{t('gameUI.currentRole')}: {currentRole ? getRoleName(currentRole as RoleName, playerId) : t('gameUI.unassigned')}</p>
         </div>
 
         <div className="flex-1 overflow-y-auto p-6">
@@ -102,12 +102,12 @@ export default function RoleSelector({
                   }`}
                 >
                   <div className="flex items-start justify-between mb-2">
-                    <h3 className="font-bold text-white">{getRoleName(role)}</h3>
+                    <h3 className="font-bold text-white">{getRoleName(role, playerId)}</h3>
                     <span className="text-xs text-gray-400 bg-gray-700 px-2 py-1 rounded">
-                      {getRoleTag(role)}
+                      {getRoleTag(role, playerId)}
                     </span>
                   </div>
-                  <p className="text-xs text-gray-400 line-clamp-2">{getRoleDescription(role)}</p>
+                  <p className="text-xs text-gray-400 line-clamp-2">{getRoleDescription(role, playerId)}</p>
                 </button>
               );
             })}

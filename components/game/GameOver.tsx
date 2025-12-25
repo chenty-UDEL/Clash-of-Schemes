@@ -73,7 +73,7 @@ export default function GameOver({ winner, players, roomCode, isHost, myPlayerId
             <h1 className="text-4xl font-bold text-yellow-400 mb-2">{t('gameOver.title')}</h1>
             <div className="bg-gradient-to-r from-yellow-900/50 to-orange-900/50 p-6 rounded-lg border-2 border-yellow-500">
               <p className="text-2xl font-bold text-yellow-300 mb-2">{winner.name}</p>
-              <p className="text-lg text-yellow-400 mb-1">{t('gameOver.role')}：{getRoleName(winner.role as any)}</p>
+              <p className="text-lg text-yellow-400 mb-1">{t('gameOver.role')}：{getRoleName(winner.role as any, myPlayerId)}</p>
               <p className="text-sm text-yellow-300/80">{winner.reason}</p>
             </div>
           </div>
@@ -100,7 +100,7 @@ export default function GameOver({ winner, players, roomCode, isHost, myPlayerId
                 >
                   <span className="w-2 h-2 rounded-full bg-green-500"></span>
                   <span className="font-medium">{p.name}</span>
-                  <span className="text-xs text-green-400 ml-auto">({p.role ? getRoleName(p.role as any) : '-'})</span>
+                  <span className="text-xs text-green-400 ml-auto">({p.role ? getRoleName(p.role as any, myPlayerId) : '-'})</span>
                 </div>
               ))}
             </div>
@@ -119,7 +119,7 @@ export default function GameOver({ winner, players, roomCode, isHost, myPlayerId
                 >
                   <span className="w-2 h-2 rounded-full bg-red-500"></span>
                   <span className="font-medium line-through">{p.name}</span>
-                  <span className="text-xs text-red-400 ml-auto">({p.role ? getRoleName(p.role as any) : '-'})</span>
+                  <span className="text-xs text-red-400 ml-auto">({p.role ? getRoleName(p.role as any, myPlayerId) : '-'})</span>
                 </div>
               ))}
             </div>

@@ -9,10 +9,11 @@ interface BoardSelectorProps {
   onSelect: (boardType: BoardType) => void;
   onCancel: () => void;
   loading?: boolean;
+  playerId?: number | null;
 }
 
-export default function BoardSelector({ onSelect, onCancel, loading }: BoardSelectorProps) {
-  const { t } = useTranslation();
+export default function BoardSelector({ onSelect, onCancel, loading, playerId }: BoardSelectorProps) {
+  const { t } = useTranslation({ playerId });
   const [selectedBoard, setSelectedBoard] = useState<BoardType | null>(null);
 
   const boardInfo: Record<BoardType, { name: string; desc: string; color: string }> = {
@@ -74,9 +75,9 @@ export default function BoardSelector({ onSelect, onCancel, loading }: BoardSele
                         <span
                           key={role}
                           className="text-xs px-2 py-1 rounded bg-gray-700 text-gray-300"
-                          title={getRoleDescription(role)}
+                          title={getRoleDescription(role, playerId)}
                         >
-                          {getRoleName(role)}
+                          {getRoleName(role, playerId)}
                         </span>
                       );
                     })}

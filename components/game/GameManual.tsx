@@ -12,14 +12,14 @@ interface GameManualProps {
 }
 
 // 获取技能描述（支持双语）
-function getSkillDescription(role: string, config: any, t: (key: string) => string): React.JSX.Element {
+function getSkillDescription(role: string, config: any, t: (key: string) => string, playerId?: number | null): React.JSX.Element {
   // 尝试从翻译文件中获取技能描述
   const translationKey = `gameManual.skillDescriptions.${role}`;
   let description = t(translationKey);
   
   // 如果翻译文件中没有，使用角色描述
   if (description === translationKey || !description) {
-    description = getRoleDescription(role as any);
+    description = getRoleDescription(role as any, playerId);
   }
 
   return (
@@ -92,19 +92,19 @@ export default function GameManual({ onClose, boardType, playerId }: GameManualP
                     className="bg-gray-800 p-4 rounded-lg border border-gray-700 hover:border-gray-600 transition"
                   >
                     <div className="flex items-start justify-between mb-2">
-                      <h4 className="font-bold text-white text-lg">{getRoleName(role)}</h4>
+                      <h4 className="font-bold text-white text-lg">{getRoleName(role, playerId)}</h4>
                       <span className="text-xs text-gray-400 bg-gray-700 px-2 py-1 rounded whitespace-nowrap">
-                        {getRoleTag(role)}
+                        {getRoleTag(role, playerId)}
                       </span>
                     </div>
                     <p className="text-sm text-gray-300 leading-relaxed mb-2">
-                      {getRoleDescription(role)}
+                      {getRoleDescription(role, playerId)}
                     </p>
                     
                     {/* 技能说明 */}
                     <div className="mt-3 pt-3 border-t border-gray-700">
                       <p className="text-xs text-gray-500 mb-1">{t('gameManual.skillDescription')}：</p>
-                      {getSkillDescription(role, config, t)}
+                      {getSkillDescription(role, config, t, playerId)}
                     </div>
                   </div>
                 );
@@ -234,40 +234,40 @@ export default function GameManual({ onClose, boardType, playerId }: GameManualP
                 <div className="bg-gray-800 p-4 rounded-lg">
                   <h4 className="font-bold text-blue-300 mb-3">{t('gameManual.activeControl')}</h4>
                   <ul className="text-sm text-gray-300 space-y-1">
-                    <li>• {getRoleName('技能观测者')}</li>
-                    <li>• {getRoleName('利他守护者')}</li>
-                    <li>• {getRoleName('投票阻断者')}</li>
-                    <li>• {getRoleName('沉默制裁者')}</li>
-                    <li>• {getRoleName('同盟者')}</li>
+                    <li>• {getRoleName('技能观测者', playerId)}</li>
+                    <li>• {getRoleName('利他守护者', playerId)}</li>
+                    <li>• {getRoleName('投票阻断者', playerId)}</li>
+                    <li>• {getRoleName('沉默制裁者', playerId)}</li>
+                    <li>• {getRoleName('同盟者', playerId)}</li>
                   </ul>
                 </div>
 
                 <div className="bg-gray-800 p-4 rounded-lg">
                   <h4 className="font-bold text-green-300 mb-3">{t('gameManual.passiveDefense')}</h4>
                   <ul className="text-sm text-gray-300 space-y-1">
-                    <li>• {getRoleName('减票守护者')}</li>
-                    <li>• {getRoleName('双票使者')}</li>
+                    <li>• {getRoleName('减票守护者', playerId)}</li>
+                    <li>• {getRoleName('双票使者', playerId)}</li>
                   </ul>
                 </div>
 
                 <div className="bg-gray-800 p-4 rounded-lg">
                   <h4 className="font-bold text-yellow-300 mb-3">{t('gameManual.situationVictory')}</h4>
                   <ul className="text-sm text-gray-300 space-y-1">
-                    <li>• {getRoleName('三人王者')}</li>
-                    <li>• {getRoleName('集票胜者')}</li>
-                    <li>• {getRoleName('平票赢家')}</li>
-                    <li>• {getRoleName('影子胜者')}</li>
+                    <li>• {getRoleName('三人王者', playerId)}</li>
+                    <li>• {getRoleName('集票胜者', playerId)}</li>
+                    <li>• {getRoleName('平票赢家', playerId)}</li>
+                    <li>• {getRoleName('影子胜者', playerId)}</li>
                   </ul>
                 </div>
 
                 <div className="bg-gray-800 p-4 rounded-lg">
                   <h4 className="font-bold text-orange-300 mb-3">{t('gameManual.counterVictory')}</h4>
                   <ul className="text-sm text-gray-300 space-y-1">
-                    <li>• {getRoleName('平票终结者')}</li>
-                    <li>• {getRoleName('免票胜者')}</li>
-                    <li>• {getRoleName('票数平衡者')}</li>
-                    <li>• {getRoleName('多选胜者')}</li>
-                    <li>• {getRoleName('心灵胜者')}</li>
+                    <li>• {getRoleName('平票终结者', playerId)}</li>
+                    <li>• {getRoleName('免票胜者', playerId)}</li>
+                    <li>• {getRoleName('票数平衡者', playerId)}</li>
+                    <li>• {getRoleName('多选胜者', playerId)}</li>
+                    <li>• {getRoleName('心灵胜者', playerId)}</li>
                     <li>• {t('gameManual.otherSpecialRoles')}</li>
                   </ul>
                 </div>
@@ -323,7 +323,7 @@ export default function GameManual({ onClose, boardType, playerId }: GameManualP
             onClick={onClose}
             className="w-full bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg font-bold shadow-lg"
           >
-            已了解，选择板子
+            {t('gameManual.understoodAndSelectBoard')}
           </button>
         </div>
       </div>

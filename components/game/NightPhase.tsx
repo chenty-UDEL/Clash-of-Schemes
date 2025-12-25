@@ -109,7 +109,7 @@ export default function NightPhase({
     // 心灵胜者需要两个目标
     if (isMindReader) {
       if (!predictedVoterId || !predictedTargetId) {
-        setError('请选择预测的投票者和目标');
+        setError(t('gameUI.selectPredictionTarget'));
         return;
       }
     } else if (!selectedTargetId && actionType !== 'store_vote') {
@@ -187,13 +187,13 @@ export default function NightPhase({
               {isFateCopier && !isFirst && myPlayer.copied_role ? (
                 <>
                   <div className="text-xs text-blue-400 mb-1">
-                    {t('gameUI.usingCopiedRole')}: <span className="font-bold">{getRoleName(myPlayer.copied_role as any)}</span>
+                    {t('gameUI.usingCopiedRole')}: <span className="font-bold">{getRoleName(myPlayer.copied_role as any, myPlayer.id)}</span>
                   </div>
-                  <span className="font-bold text-purple-400">{getRoleName(myPlayer.copied_role as any)}:</span> {getRoleDescription(myPlayer.copied_role as any)}
+                  <span className="font-bold text-purple-400">{getRoleName(myPlayer.copied_role as any, myPlayer.id)}:</span> {getRoleDescription(myPlayer.copied_role as any, myPlayer.id)}
                 </>
               ) : (
                 <>
-                  <span className="font-bold text-purple-400">{getRoleName(myPlayer.role)}:</span> {getRoleDescription(myPlayer.role)}
+                  <span className="font-bold text-purple-400">{getRoleName(myPlayer.role, myPlayer.id)}:</span> {getRoleDescription(myPlayer.role, myPlayer.id)}
                 </>
               )}
             </div>

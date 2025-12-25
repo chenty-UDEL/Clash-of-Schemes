@@ -186,6 +186,7 @@ export const en = {
     dataReadFailed: 'Failed to read data',
     updatePlayerFailed: 'Failed to update player',
     serverError: 'Server error',
+    breakTieFailed: 'Failed to break tie',
     onlyHost: 'Only host can use this feature',
     roomMismatch: 'Room mismatch',
     storedVotesInsufficient: 'Insufficient stored votes',
@@ -201,6 +202,7 @@ export const en = {
     maxPlayers: 'Maximum {max} players supported',
     assignRoleFailed: 'Failed to assign roles',
     updateRoomFailed: 'Failed to update room state',
+    gameStartFailed: 'Failed to start game',
     enterNameAndRoom: 'Please enter name and room code',
     enterName: 'Please enter name'
   },
@@ -228,7 +230,33 @@ export const en = {
     predictionFailed: 'Prediction failed, streak reset.',
     nightProcessed: 'Night phase processed',
     dayProcessed: 'Day phase processed',
-    gameRestarted: '🎮 Play again! Board: {board}, {count} players.'
+    gameRestarted: '🎮 Play again! Board: {board}, {count} players.',
+    nightEndWithSilence: 'Day breaks. {count} players were silenced last night.',
+    nightEndPeaceful: 'Day breaks. It was a peaceful night.',
+    deadlock: '⚠️ Deadlock! The same situation occurred 3 times in a row. Game over.',
+    deadlockGameOver: 'Game over (deadlock)',
+    gameEndWithWinner: '🎉 Game over! 【{name}】{reason}',
+    gameEnd: 'Game over',
+    gameEndNoWinner: 'Game over. No winner.',
+    // Victory reasons
+    winReasonCollector: '[Vote Gatherer] received more than 2/3 of votes, wins immediately!',
+    winReasonCollectorStolen: '[Victory Stealer] stole [Vote Gatherer]\'s victory condition, wins!',
+    winReasonTieWinner: '[Tie Winner] survived the tie and wins!',
+    winReasonTieWinnerStolen: '[Victory Stealer] stole [Tie Winner]\'s victory condition, wins!',
+    winReasonTieBreaker: '[Tie Breaker] had {streak} consecutive ties, wins!',
+    winReasonTieBreakerStolen: '[Victory Stealer] stole [Tie Breaker]\'s victory condition, wins!',
+    winReasonShadowWinner: '[Shadow Winner]\'s target was eliminated, wins!',
+    winReasonShadowWinnerStolen: '[Victory Stealer] stole [Shadow Winner]\'s victory condition, wins!',
+    winReasonThreeKing: '[Three King] wins when only 3 players remain!',
+    winReasonThreeKingStolen: '[Victory Stealer] stole [Three King]\'s victory condition, wins!',
+    winReasonNoVote: '[Vote-Free Winner] had {streak} consecutive rounds without votes, wins!',
+    winReasonNoVoteStolen: '[Victory Stealer] stole [Vote-Free Winner]\'s victory condition, wins!',
+    winReasonBalance: '[Balance Winner] had {streak} consecutive rounds with the same vote count, wins!',
+    winReasonBalanceStolen: '[Victory Stealer] stole [Balance Winner]\'s victory condition, wins!',
+    winReasonMindReader: '[Mind Reader] had {streak} consecutive successful predictions, wins!',
+    winReasonMindReaderStolen: '[Victory Stealer] stole [Mind Reader]\'s victory condition, wins!',
+    winReasonMultiKill: '[Multi-Kill Winner] eliminated {streak} different players consecutively, wins!',
+    winReasonMultiKillStolen: '[Victory Stealer] stole [Multi-Kill Winner]\'s victory condition, wins!'
   },
 
   // Success messages
@@ -288,6 +316,7 @@ export const en = {
     submitted: 'Submitted',
     processing: 'Processing...',
     selectPlayer: 'Select Player',
+    player: 'Player',
     noTarget: 'No Target',
     abandon: 'Abstain',
     noMessages: 'No messages...',
@@ -300,9 +329,13 @@ export const en = {
     confirmVote: 'Confirm Vote (using {count} votes)',
     tieBreaker: 'Break Tie',
     selectCandidate: 'Select Player to Execute',
+    selectEliminationTarget: 'Select player to eliminate',
     breakTie: 'Break Tie',
+    balanceGuardian: 'Balance Guardian',
+    tieOccurred: 'A tie occurred! You can use your skill to break the tie and select a player to eliminate.',
     testingMode: 'Testing Mode: Select Role',
     selectRole: 'Select Role',
+    selectPredictionTarget: 'Please select the predicted voter and target',
     copiedRole: 'Copied Role',
     fromPlayer: 'from Player',
     waitingCopy: 'Waiting to copy role on first night...',
@@ -360,11 +393,11 @@ export const en = {
     boardRolesCount: 'Roles in this board ({count})',
     skillDescription: 'Skill Description',
     understood: 'Understood, Start Game',
+    understoodAndSelectBoard: 'Understood, Select Board',
     boardFateTheme: 'Fate & Prediction',
     boardBalanceTheme: 'Balance & Voting',
     boardStrategyTheme: 'Strategy & Cooperation',
     customBoardTheme: 'Random Combination',
-    understoodSelectBoard: 'Understood, Select Board',
     rolesOverview: 'Roles Overview',
     boardsDescription: 'The game offers 3 preset boards and 1 custom option, each board contains 13 different roles.',
     boardFateIncludes: 'Includes: Fate Copier, Fate Transferer, Mind Reader, etc.',
@@ -463,6 +496,22 @@ export const en = {
     deadPlayers: 'Eliminated',
     thanks: 'Game ended, thank you for playing!',
     playAgain: '🎮 Play Again'
+  },
+
+  // Test Mode
+  testMode: {
+    title: 'Test Mode',
+    description: 'Select a role for single-player testing. AI will automatically create other players and assist in testing',
+    playerInfo: 'Player Info',
+    selectBoard: 'Select Board',
+    selectRole: 'Select Role to Test',
+    startTest: '🚀 Start Test',
+    enterTestMode: 'Enter Test Mode',
+    info: 'Test Instructions',
+    info1: 'Test mode will automatically create 6-8 AI players',
+    info2: 'AI players will automatically perform night actions and day votes',
+    info3: 'You can manually process night or day phases at any time',
+    info4: 'Test rooms start with TEST prefix for easy identification'
   }
 };
 
