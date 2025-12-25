@@ -442,6 +442,9 @@ export const zh = {
     gameEndWithWinner: '🎉 游戏结束！【{name}】{reason}',
     gameEnd: '游戏结束',
     gameEndNoWinner: '游戏结束，无人获胜。',
+    normalVictory: '🎉 普通胜利！【{names}】获胜！',
+    normalVictoryReason: '普通胜利（仅剩2人）',
+    specialVictoryPlayersOnly: '⚠️ 仅剩2人，但都是特殊胜利角色，无法普通胜利。',
     // 胜利原因
     winReasonCollector: '【集票胜者】获得超过 2/3 票数，直接获胜！',
     winReasonCollectorStolen: '【胜利夺取者】夺取了【集票胜者】的胜利条件，获胜！',

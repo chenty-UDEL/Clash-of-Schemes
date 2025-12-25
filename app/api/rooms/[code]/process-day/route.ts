@@ -637,6 +637,76 @@ export async function POST(
           reason: winReason
         }
       });
+    } else if (finalAliveCount === 2) {
+      // 游戏结束 - 2人存活，进行普通胜利判定
+      const normalWinners: any[] = [];
+      const specialVictoryPlayers: any[] = [];
+      
+      // 定义有特殊胜利条件的角色（不能普通胜利）
+      const specialVictoryRoles = [
+        '集票胜者', '平票赢家', '影子胜者', '三人王者', 
+        '平票终结者', '免票胜者', '票数平衡者', '多选胜者',
+        '心灵胜者', '胜利夺取者'
+      ];
+      
+      remainingAlive.forEach(player => {
+        if (specialVictoryRoles.includes(player.role)) {
+          specialVictoryPlayers.push(player);
+        } else {
+          normalWinners.push(player);
+        }
+      });
+      
+      // 如果有能普通胜利的玩家，他们获胜
+      if (normalWinners.length > 0) {
+        const winnerNames = normalWinners.map(p => p.name).join('、');
+        await supabase
+          .from('rooms')
+          .update({ round_state: 'GAME OVER' })
+          .eq('code', code);
+        
+        await supabase.from('game_logs').insert({
+          room_code: code,
+          message: tWithParams('gameLog.normalVictory', { names: winnerNames }, lang),
+          viewer_ids: null,
+          tag: 'PUBLIC'
+        });
+
+        return NextResponse.json({
+          success: true,
+          message: t('gameLog.gameEnd', lang),
+          winners: normalWinners.map(p => ({
+            id: p.id,
+            name: p.name,
+            role: p.role,
+            reason: t('gameLog.normalVictoryReason', lang)
+          }))
+        });
+      } else {
+        // 所有玩家都有特殊胜利条件，显示？？？
+        await supabase
+          .from('rooms')
+          .update({ round_state: 'GAME OVER' })
+          .eq('code', code);
+        
+        await supabase.from('game_logs').insert({
+          room_code: code,
+          message: t('gameLog.specialVictoryPlayersOnly', lang),
+          viewer_ids: null,
+          tag: 'PUBLIC'
+        });
+
+        return NextResponse.json({
+          success: true,
+          message: t('gameLog.gameEnd', lang),
+          winners: specialVictoryPlayers.map(p => ({
+            id: p.id,
+            name: '？？？',
+            role: '？？？',
+            reason: t('gameLog.specialVictoryPlayersOnly', lang)
+          }))
+        });
+      }
     } else if (finalAliveCount <= 1) {
       // 游戏结束 - 无人获胜
       await supabase

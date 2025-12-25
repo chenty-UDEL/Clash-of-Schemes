@@ -275,7 +275,45 @@ export async function POST(
       }
     }
 
-    // 4. 生成公告
+    // 4. 显示前一天的处决结果（如果有）
+    if (roundNumber > 1) {
+      // 获取前一天的处决日志
+      const previousDay = roundNumber - 1;
+      const { data: previousLogs } = await supabase
+        .from('game_logs')
+        .select('message')
+        .eq('room_code', code)
+        .eq('tag', 'PUBLIC')
+        .like('message', '%被投票出局%')
+        .order('created_at', { ascending: false })
+        .limit(1);
+      
+      // 如果找到了处决日志，在第二天夜里重新显示
+      if (previousLogs && previousLogs.length > 0) {
+        const eliminatedMessage = previousLogs[0].message;
+        // 检查是否已经显示过（避免重复）
+        const { data: existingLog } = await supabase
+          .from('game_logs')
+          .select('id')
+          .eq('room_code', code)
+          .eq('message', eliminatedMessage)
+          .order('created_at', { ascending: false })
+          .limit(1);
+        
+        // 如果这个日志是今天创建的，说明已经显示过了，跳过
+        // 否则，重新显示前一天的处决结果
+        if (!existingLog || existingLog.length === 0 || 
+            (existingLog[0] && new Date(existingLog[0].created_at).getDate() !== new Date().getDate())) {
+          logs.push({
+            message: eliminatedMessage,
+            viewer_ids: null,
+            tag: 'PUBLIC'
+          });
+        }
+      }
+    }
+
+    // 5. 生成公告
     const silencedCount = Object.values(updates).filter((u: any) => u.flags?.is_silenced).length;
     logs.push({
       message: silencedCount > 0
@@ -285,7 +323,7 @@ export async function POST(
       tag: 'PUBLIC'
     });
 
-    // 5. 提交数据库
+    // 6. 提交数据库
     const playerUpdates = Object.values(updates);
     const { error: updateError } = await supabase
       .from('players')
@@ -298,7 +336,7 @@ export async function POST(
       );
     }
 
-    // 6. 插入日志
+    // 7. 插入日志
     if (logs.length > 0) {
       const logsPayload = logs.map(l => ({
         room_code: code,
