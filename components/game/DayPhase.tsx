@@ -5,6 +5,7 @@ import type { Player, GameLog } from '@/types/game';
 import TieBreaker from './TieBreaker';
 import { useTranslation } from '@/hooks/useTranslation';
 import { translateError } from '@/lib/i18n/errorHandler';
+import { translateLogMessage } from '@/lib/i18n/logTranslator';
 
 interface DayPhaseProps {
   roomCode: string;
@@ -174,7 +175,7 @@ export default function DayPhase({
                   {t('gameUI.private')}
                 </span>
               )}
-              {log.message}
+              {translateLogMessage(log.message, myPlayer.id)}
             </div>
           ))
         )}
