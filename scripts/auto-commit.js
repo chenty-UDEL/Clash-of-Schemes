@@ -58,10 +58,17 @@ function getCommitMessage() {
     month: '2-digit',
     day: '2-digit',
     hour: '2-digit',
-    minute: '2-digit'
+    minute: '2-digit',
+    second: '2-digit'
   });
   
-  return `chore: 自动更新 - ${timestamp}`;
+  // 读取 package.json 获取版本号
+  try {
+    const packageJson = require(path.join(__dirname, '..', 'package.json'));
+    return `chore: 自动更新 v${packageJson.version} - ${timestamp}`;
+  } catch {
+    return `chore: 自动更新 - ${timestamp}`;
+  }
 }
 
 function main() {
