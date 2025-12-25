@@ -75,7 +75,11 @@ function main() {
   try {
     exec('git push origin main');
     console.log('\n✅ 代码已成功推送到 GitHub');
-    console.log('🔗 Vercel 将自动检测并部署更新');
+    console.log('🔗 Vercel 应该会自动检测并部署更新');
+    console.log('\n⚠️  如果 Vercel 没有自动更新，请：');
+    console.log('1. 在 Vercel Dashboard 手动点击 "Redeploy"');
+    console.log('2. 或检查 Vercel 项目设置中的 GitHub 连接');
+    console.log('3. 或运行: npm run deploy (需要先 vercel login)');
   } catch (error) {
     console.log('\n❌ 推送失败，请检查 Git 配置');
     console.log('你可以稍后手动推送: git push origin main');
